@@ -28,6 +28,7 @@ export default {
         'desktop-landing-page': "url('/Keis3.JPG')",
         'mobile-landing-page': "url('/KeiMobileLanding2.jpg')",
         'kei-footer': "url('/Kei-footer.png')",
+        'landing-page-kei-lineup': "url('/LandingKeiLineUp2.png')",
       },
     },
   },
