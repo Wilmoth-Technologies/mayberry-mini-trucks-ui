@@ -9,6 +9,11 @@ export default {
       fontFamily: {
         sans: ['como', 'sans-serif']
       },
+      colors: {
+        'grey-primary': '#252826',
+        'grey-footer': '#151515',
+        'action-yello': '#FFAC00',
+      },
       keyframes: {
         'open-menu': {
           '0%': { transform: 'scaleY(0)' },
@@ -20,8 +25,9 @@ export default {
         'open-menu': 'open-menu 0.5s ease-in-out forwards',
       },
       backgroundImage: {
-        'desktop-landing-page': "url('/Keis2.JPG')",
+        'desktop-landing-page': "url('/Keis3.JPG')",
         'mobile-landing-page': "url('/KeiMobileLanding2.jpg')",
+        'kei-footer': "url('/Kei-footer.png')",
       },
     },
   },

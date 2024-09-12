@@ -17,22 +17,22 @@ export default function NavBar() {
     return (
         <nav className='flex flex-row pt-4 md:text-center' ref={wrapperRef}>
             <button className={'basis-1/6 text-center my-auto ' + (isBurgerOpen ? 'hidden' : 'md:block')} onClick={() => mobileBurgerClick()}>
-                <div className='burger w-8 h-0.5 bg-black md:bg-white rounded-xl my-1.5 ml-4 md:ml-8' />
-                <div className='burger w-8 h-0.5 bg-black md:bg-white rounded-xl my-1 ml-4 md:ml-8' />
+                <div className='burger w-8 h-1 bg-black md:bg-white rounded-xl my-1.5 ml-4 md:ml-12' />
+                <div className='burger w-8 h-1 bg-black md:bg-white rounded-xl my-1 ml-4 md:ml-12' />
             </button>
-            <a href='/inventory' className={"hidden basis-1/6 text-xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
+            <a href='/inventory' className={"hidden basis-1/6 text-xl lg:text-2xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
                 Inventory
             </a>
-            <a href='/contact' className={"hidden basis-1/6 text-xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
+            <a href='/contact' className={"hidden basis-1/6 text-xl lg:text-2xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
                 Contact Us
             </a>
-            <a href='/' className={"font-medium text-3xl my-auto text-black md:text-white " + (isBurgerOpen ? 'hidden md:block md:basis-full' : 'basis-5/6 md:basis-2/6')}>
+            <a href='/' className={"font-medium text-3xl lg:text-5xl my-auto text-black md:text-white " + (isBurgerOpen ? 'hidden md:block md:basis-full' : 'basis-5/6 md:basis-2/6')}>
                 Mayberry Mini Trucks
             </a>
-            <a href='/testimonials' className={"hidden basis-1/6 text-xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
+            <a href='/testimonials' className={"hidden basis-1/6 text-xl lg:text-2xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
                 Testimonials
             </a>
-            <a href='/faq' className={"hidden basis-1/6 text-xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
+            <a href='/faq' className={"hidden basis-1/6 text-xl lg:text-2xl my-auto text-white " + (isBurgerOpen ? '' : 'md:block')}>
                 FAQ
             </a>
             <div className={'hidden basis-1/6 ' + (isBurgerOpen ? '' : 'md:block')} />
