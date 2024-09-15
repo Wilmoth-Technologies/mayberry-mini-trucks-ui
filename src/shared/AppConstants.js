@@ -1,0 +1,1 @@
+export const CURRENCY_FORMAT_STYLE = 'currency';

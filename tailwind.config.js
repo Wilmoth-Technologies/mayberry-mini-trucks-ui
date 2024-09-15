@@ -12,7 +12,7 @@ export default {
       colors: {
         'grey-primary': '#252826',
         'grey-footer': '#151515',
-        'action-yello': '#FFAC00',
+        'action-yellow': '#FFAC00',
       },
       keyframes: {
         'open-menu': {

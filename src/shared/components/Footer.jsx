@@ -5,14 +5,14 @@ export default function Footer() {
                 Proudly Serving the United States!
             </h1>
             <div className="col-span-3 flex md:text-2xl">
-                <a href='/inventory' className="text-action-yello hover:opacity-80 w-1/3">
+                <a href='/inventory' className="text-action-yellow hover:opacity-80 w-1/3">
                     Inventory
                 </a>
                 <br />
-                <a href='/contact' className="text-action-yello hover:opacity-80 w-1/3">
+                <a href='/contact' className="text-action-yellow hover:opacity-80 w-1/3">
                     Contact Us
                 </a>
-                <a href='/faq' className="text-action-yello hover:opacity-80 w-1/3">
+                <a href='/faq' className="text-action-yellow hover:opacity-80 w-1/3">
                     FAQ
                 </a>
             </div>
