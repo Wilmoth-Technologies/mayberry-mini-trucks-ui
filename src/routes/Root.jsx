@@ -16,9 +16,8 @@ export default function Root() {
             {/* Find Your Truck */}
             <div className="bg-grey-primary text-white pb-4">
                 <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">Find Your Truck Today!</h1>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 pt-6 px-6 place-items-center md:gap-x-4">
-                    <h2 className="text-center text-lg md:text-xl font-medium pt-2 md:pt-4 pb-2">North Carolina Titling of Mini Trucks</h2>
+                    <h2 className="text-center text-lg md:text-xl font-medium pt-2 pb-2">North Carolina Titling of Mini Trucks</h2>
                     <img className="hidden md:block bg-contain bg-no-repeat bg-center rounded pb-4 md:row-span-4" src="/MiniHauler.png" />
                     <p className="text-lg text-center md:text-left pb-4">HB 179 was signed by Governor Cooper on June 21, 2019. Japanese mini trucks can be licensed and driven on the NC roadways. Many thanks to House Rep Sarah Stevens, Senator Deanna Ballard and their staff for partnering with Mayberry Mini Trucks to overcome this significant legal hurdle. We at Mayberry Mini Trucks would like to invite you to now partner with us to help you with all your mini truck needs.</p>
                     <img className="h-[188px] bg-contain bg-no-repeat bg-center rounded-md pb-4 md:row-span-4 md:hidden" src="/MiniHauler.png" />
@@ -26,7 +25,7 @@ export default function Root() {
                     <p className="text-lg text-center md:text-left pb-2">Here at Mayberry Mini Trucks we make our customers the priority. With that we offer delivery services. We’ll deliver your truck right to where you need it, whether that is a place of business, residence, or anywhere else. We’ll work with you to get the truck where it needs to go. Let us know when and where you need your truck delivered!</p>
                     <Link className="mx-16 bg-action-yellow text-black font-medium rounded-full p-2 text-center mb-6" to="/tempLink">VIEW DETAILS HERE</Link>
                 </div>
-                <div className="flex-row text-center space-y-2 md:mx-6">
+                <div className="flex-row text-center space-y-2 md:mx-6 md:-mt-10">
                     <h2 className="text-lg md:text-xl font-medium">See Our Inventory</h2>
                     <InventoryScroller className="basis-full" />
                 </div>
@@ -37,11 +36,13 @@ export default function Root() {
                 </div>
             </div>
             {/* Newsletter Sub & Button */}
-            <div className="flex flex-row py-4 px-2 gap-1">
-                <p className="basis-7/12 font-medium">Subscribe to learn about new arrivals and our latest news</p>
-                <Link className="basis-5/12 text-white text-center items-center font-medium pt-2">
-                    <p className="bg-black rounded-full p-2">STAY IN TOUCH</p>
+            <div className="flex flex-row py-4 px-2 gap-2 md:gap-8 text-center">
+                <div className="hidden md:block md:basis-3/12"/>
+                <p className="basis-7/12 md:basis-3/12 font-medium">Subscribe to learn about new arrivals and our latest news</p>
+                <Link className="basis-5/12 md:basis-2/12 bg-black rounded-full p-2 text-white text-center items-center font-medium pt-2 mb-8">
+                    STAY IN TOUCH
                 </Link>
+                <div className="hidden md:block md:basis-4/12"/>
             </div>
         </>
 
