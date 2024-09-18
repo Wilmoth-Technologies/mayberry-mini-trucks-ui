@@ -36,7 +36,7 @@ export default function Root() {
                 </div>
             </div>
             {/* Newsletter Sub & Button */}
-            <div className="flex flex-row py-4 px-2 gap-2 md:gap-8 text-center">
+            <div className="flex flex-row py-4 px-2 gap-2 md:gap-8 text-center md:-mb-8">
                 <div className="hidden md:block md:basis-3/12"/>
                 <p className="basis-7/12 md:basis-3/12 font-medium">Subscribe to learn about new arrivals and our latest news</p>
                 <Link className="basis-5/12 md:basis-2/12 bg-black rounded-full p-2 text-white text-center items-center font-medium pt-2 mb-8">
