@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import GoogleReviews from "../shared/components/GoogleReviews.jsx";
-import InventoryScroller from "../shared/components/InventoryScroller.jsx";
+import GoogleReviews from "../shared/components/reviews/GoogleReviews.jsx";
+import InventoryScroller from "../shared/components/inventory/InventoryScroller.jsx";
 
 export default function Root() {
     return (

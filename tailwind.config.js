@@ -13,6 +13,7 @@ export default {
         'grey-primary': '#252826',
         'grey-footer': '#151515',
         'action-yellow': '#FFAC00',
+        'comment-card-color': '#F1F1F1',
       },
       keyframes: {
         'open-menu': {

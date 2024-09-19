@@ -1,4 +1,4 @@
-import InventoryCard from "./inventory/InventoryCard.jsx";
+import InventoryCard from "./InventoryCard.jsx";
 
 export default function InventoryScroller() {
 
