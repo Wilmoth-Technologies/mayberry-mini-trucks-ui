@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 
 export default function ReviewCard({ reviewProfilePic, reviewProfileName, rating, reviewDate, review }) {
     return (
-        <div className="grid grid-cols-4 bg-comment-card-color rounded-lg gap-2">
-            <p className="h-12 w-12 rounded-full bg-green-800 text-white text-center align-middle pt-3 ml-2 mt-2">{reviewProfilePic}</p>
-            <div className="col-span-3 ml-3">
+        <div className="grid grid-cols-4 bg-comment-card-color rounded-lg gap-2 w-[183px]">
+            <p className="h-12 w-12 rounded-full bg-green-800 text-white text-center align-middle pt-3 ml-1 mt-2">{reviewProfilePic}</p>
+            <div className="col-span-3 ml-2">
                 <p>{reviewProfileName}</p>
-                <p>{reviewDate}</p>
+                <p className='text-comment-card-review-date-color font-light text-sm'>{reviewDate}</p>
                 <div className="inline-flex items-center">
                     <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={(rating >= 0.1 ? "currentColor" : "none")} stroke="currentColor" strokeWidth={(rating >= 0.1 ? "0" : "1.5")}
                         className={"w-4 h-4 cursor-pointer " + (rating >= 0.1 ? "text-orange-400" : "text-blue-gray-500")}>

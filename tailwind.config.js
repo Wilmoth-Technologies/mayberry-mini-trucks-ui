@@ -14,6 +14,7 @@ export default {
         'grey-footer': '#151515',
         'action-yellow': '#FFAC00',
         'comment-card-color': '#F1F1F1',
+        'comment-card-review-date-color': '#838383',
       },
       keyframes: {
         'open-menu': {
