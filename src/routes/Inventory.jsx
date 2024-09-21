@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 
 export default function Inventory() {
@@ -73,9 +74,9 @@ export default function Inventory() {
                         <span className="sr-only">Search</span>
                         <span className="absolute inset-y-0 left-0 flex items-center pl-2">
                             <svg className="h-5 w-5 fill-gray-600" viewBox="0 0 20 20"><path
-                                fill-rule="evenodd"
+                                fillRule="evenodd"
                                 d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                clip-rule="evenodd"
+                                clipRule="evenodd"
                             /></svg>
                         </span>
                         <input className="placeholder:italic placeholder:text-gray-text block bg-white w-auto largerMobile:w-72 border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
@@ -98,12 +99,23 @@ export default function Inventory() {
                 </div>
             </div>
 
-            <div className="bg-grey-footer p-2 rounded-lg grid auto-cols grid-flow-col overflow-x-auto gap-2">
+            <div className="p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
                 {props.inventoryItems.map((inventoryItem) => (
                     <a key={inventoryItem.link} href={inventoryItem.link}>
                         <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
                     </a>
                 ))}
+            </div>
+
+            {/* Newsletter Sub & Button */}
+            {/* TODO: Move to Main and then render based on what route we are currently on... */}
+            <div className="grid place-content-center p-3">
+                <div className="flex text-center gap-3 items-center">
+                    <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
+                    <Link className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1">
+                        STAY IN TOUCH
+                    </Link>
+                </div>
             </div>
         </>
     );

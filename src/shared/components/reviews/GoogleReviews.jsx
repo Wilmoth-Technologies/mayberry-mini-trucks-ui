@@ -3,7 +3,7 @@ import ReviewCard from "./ReviewCard";
 export default function GoogleReviews() {
 
     let props = {
-        "rating": 3.2
+        "rating": 5.0
     };
 
     let reviewProps = [{
