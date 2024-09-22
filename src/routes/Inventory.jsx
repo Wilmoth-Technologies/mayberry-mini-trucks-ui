@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
+import { TbTrash } from "react-icons/tb";
 
 export default function Inventory() {
 
@@ -55,7 +56,56 @@ export default function Inventory() {
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114399",
-        }],
+        },
+        {
+            "title": "1994 Honda Attack",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65148Z4114392",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL6584824114393",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65348Z4114394",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65845Z4114395",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65648Z4114396",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65847Z4114397",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65888Z4114398",
+        },
+        {
+            "title": "1990 Suzuki Carry",
+            "price": 6800,
+            "mileage": 56000,
+            "link": "/4Y1SL65849Z4114399",
+        }
+        ],
     };
 
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
@@ -63,6 +113,9 @@ export default function Inventory() {
     const keiComparisonClick = () => {
         setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
     };
+
+    //TODO: Implement Filtering Logic after API Setup...
+    // const [showFilterModal, setShowFilterModal] = useState(false);
 
     return (
         <>
@@ -72,116 +125,191 @@ export default function Inventory() {
             </div>
 
             {/* Kei Truck Comparison DropDown */}
-            <button className="flex px-3 gap-2 largerMobile:gap-4 items-center" onClick={() => keiComparisonClick()}>
-                <h2 className="font-medium text-2xl">Kei Truck Comparison</h2>
-                <div className="bg-gray-500 h-0.5 w-16 largerMobile:w-28 rounded-full" />
-                <div className={"w-4 h-4 border-black border-r-2 border-b-2 transform -mt-2 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-            </button>
-            <div className={"flex-col gap-4 px-3 pb-2 border-gray-500 border-2 border-t-0 mx-3 " + (isKeiComparisonOpen ? '' : 'hidden')}>
-                {/* <table className="table-auto">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th><img className="h-[150px] w-[190px]" src="/Subaru.png" /></th>
-                            <th><img className="h-[150px] w-[190px]" src="/Suzuki.png" /></th>
-                            <th><img className="h-[150px] w-[190px]" src="/Honda.png" /></th>
-                            <th><img className="h-[150px] w-[190px]" src="/Mitsubishi.png" /></th>
-                            <th><img className="h-[150px] w-[190px]" src="/Daihatsu.png" /></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Est. Range</td>
-                            <td>Gross Weight</td>
-                            <td>Drive Train</td>
-                            <td>Load Capacity</td>
-                            <td>Dump Offerings?</td>
-                        </tr>
-                        <tr>
-                            <td>Est. Range</td>
-                            <td>Gross Weight</td>
-                            <td>Drive Train</td>
-                            <td>Load Capacity</td>
-                            <td>Dump Offerings?</td>
-                        </tr>
-                        <tr>
-                            <td>Est. Range</td>
-                            <td>Gross Weight</td>
-                            <td>Drive Train</td>
-                            <td>Load Capacity</td>
-                            <td>Dump Offerings?</td>
-                        </tr>
-                        <tr>
-                            <td>Est. Range</td>
-                            <td>Gross Weight</td>
-                            <td>Drive Train</td>
-                            <td>Load Capacity</td>
-                            <td>Dump Offerings?</td>
-                        </tr>
-                        <tr>
-                            <td>Est. Range</td>
-                            <td>Gross Weight</td>
-                            <td>Drive Train</td>
-                            <td>Load Capacity</td>
-                            <td>Dump Offerings?</td>
-                        </tr>
-                    </tbody>
-                </table> */}
-
-                <div className="flex">
-                    <img className="h-[150px] w-[190px]" src="/Subaru.png" />
-                    <div className="place-content-center">
-                        <p>Est Range: 200 mi</p>
-                        <p>Gross Weight: 1,450 lbs</p>
-                        <p>Drive Tain: AWD</p>
-                        <p>Load Capacity: 770 lbs</p>
-                        <p>Dump offerings? Yes</p>
-                    </div>
-                </div>
-                <div className="flex">
-                    <img className="h-[150px] w-[190px]" src="/Suzuki.png" />
-                    <div className="place-content-center">
-                        <p>Est Range: 200 mi</p>
-                        <p>Gross Weight: 1,450 lbs</p>
-                        <p>Drive Tain: AWD</p>
-                        <p>Load Capacity: 770 lbs</p>
-                        <p>Dump offerings? Yes</p>
-                    </div>
-                </div>
-                <div className="flex">
-                    <img className="h-[150px] w-[190px]" src="/Honda.png" />
-                    <div className="place-content-center">
-                        <p>Est Range: 200 mi</p>
-                        <p>Gross Weight: 1,450 lbs</p>
-                        <p>Drive Tain: AWD</p>
-                        <p>Load Capacity: 770 lbs</p>
-                        <p>Dump offerings? Yes</p>
-                    </div>
-                </div>
-                <div className="flex">
-                    <img className="h-[150px] w-[190px]" src="/Mitsubishi.png" />
-                    <div className="place-content-center">
-                        <p>Est Range: 200 mi</p>
-                        <p>Gross Weight: 1,450 lbs</p>
-                        <p>Drive Tain: AWD</p>
-                        <p>Load Capacity: 770 lbs</p>
-                        <p>Dump offerings? Yes</p>
-                    </div>
-                </div>
-                <div className="flex">
-                    <img className="h-[150px] w-[190px]" src="/Daihatsu.png" />
-                    <div className="place-content-center">
-                        <p>Est Range: 200 mi</p>
-                        <p>Gross Weight: 1,450 lbs</p>
-                        <p>Drive Tain: AWD</p>
-                        <p>Load Capacity: 770 lbs</p>
-                        <p>Dump offerings? Yes</p>
-                    </div>
+            <div className="pb-1">
+                <button className="flex px-3 gap-2 largerMobile:gap-4 items-center md:w-full md:justify-center" onClick={() => keiComparisonClick()}>
+                    <h2 className="font-medium text-2xl">Kei Truck Comparison</h2>
+                    <div className="bg-gray-300 h-0.5 w-16 largerMobile:w-28 md:w-96 rounded-full" />
+                    <div className={"w-4 h-4 border-black border-r-2 border-b-2 transform -mt-2 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                </button>
+                <div className={"flex-col border-border-gray border-2 border-t-0 mx-3 px-3 pb-3 overflow-auto " + (isKeiComparisonOpen ? '' : 'hidden')}>
+                    <table className="table-auto md:w-full md:justify-center">
+                        <thead>
+                            <tr className="flex items-center justify-center place-items-center">
+                                <th className="h-[150px] w-[190px]"><img className="h-[150px] w-[190px]" src="/Subaru.png" /></th>
+                                <th className="h-[150px] w-[190px]"><img className="h-[150px] w-[190px]" src="/Suzuki.png" /></th>
+                                <th className="h-[150px] w-[190px]"><img className="h-[150px] w-[190px]" src="/Honda.png" /></th>
+                                <th className="h-[150px] w-[190px]"><img className="h-[150px] w-[190px]" src="/Mitsubishi.png" /></th>
+                                <th className="h-[150px] w-[190px]"><img className="h-[150px] w-[190px]" src="/Daihatsu.png" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="flex text-center md:w-full md:justify-center">
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Est. Range</h3>
+                                        <p>200 mi</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray ">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Est. Range</h3>
+                                        <p>200 mi</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Est. Range</h3>
+                                        <p>200 mi</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Est. Range</h3>
+                                        <p>200 mi</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Est. Range</h3>
+                                        <p>200 mi</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr className="flex text-center md:w-full md:justify-center">
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Gross Weight</h3>
+                                        <p>1,450 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Gross Weight</h3>
+                                        <p>1,450 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Gross Weight</h3>
+                                        <p>1,450 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Gross Weight</h3>
+                                        <p>1,450 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Gross Weight</h3>
+                                        <p>1,450 lbs</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr className="flex text-center md:w-full md:justify-center">
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Drive Train</h3>
+                                        <p>AWD</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Drive Train</h3>
+                                        <p>AWD</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Drive Train</h3>
+                                        <p>AWD</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Drive Train</h3>
+                                        <p>AWD</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Drive Train</h3>
+                                        <p>AWD</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr className="flex text-center md:w-full md:justify-center">
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Load Capacity</h3>
+                                        <p>770 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Load Capacity</h3>
+                                        <p>770 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Load Capacity</h3>
+                                        <p>770 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Load Capacity</h3>
+                                        <p>770 lbs</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Load Capacity</h3>
+                                        <p>770 lbs</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr className="flex text-center md:w-full md:justify-center">
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Dump Offerings?</h3>
+                                        <p>Yes</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Dump Offerings?</h3>
+                                        <p>Yes</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Dump Offerings?</h3>
+                                        <p>Yes</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Dump Offerings?</h3>
+                                        <p>Yes</p>
+                                    </div>
+                                </td>
+                                <td className="w-[190px] border border-border-gray">
+                                    <div>
+                                        <h3 className="text-gray-text text-center text-sm">Dump Offerings?</h3>
+                                        <p>Yes</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             {/* Filtering Menu Mobile */}
-            <div className="flex flex-col px-3 gap-y-1">
+            <div className="flex flex-col px-3 gap-y-1 md:hidden">
                 <p className="text-xs font-semibold">{props.results} Results</p>
                 <div className="flex gap-x-2">
                     <label className="relative block">
@@ -213,7 +341,96 @@ export default function Inventory() {
                 </div>
             </div>
 
-            <div className="p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
+            {/* Filtering Menu Medium Screens and Above */}
+            <div className="hidden md:grid md:grid-cols-[320px_auto] md:px-3 gap-3">
+                {/* Filtering */}
+                <div className="flex flex-col border border-x-border-gray">
+                    <div className="flex w-full p-1 justify-between">
+                        <p className="">Filters</p>
+                        <button className="flex items-center">
+                            <p className="pr-1">Clear All</p>
+                            <TbTrash />
+                        </button>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1 justify-between">
+                        <p>Make</p>
+                        <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        <div className="flex flex-row">
+                            <div className="flex">
+                                <input type="checkbox" id="some_id" />
+                                <label htmlFor="some_id">This is the checkbox label</label>
+                            </div>
+                            {/* TODO: Figure out how to display the checkboxes on a new line from the Make Label.... */}
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Model</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Price</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Year</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Mileage</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Engine</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p className="w-full">Drive Train</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                    <div className="flex items-center border-y border-y-border-gray p-1">
+                        <p>Transmission</p>
+                        <div className="flex w-full justify-end">
+                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <label className="relative block">
+                        <span className="sr-only">Search</span>
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+                            <svg className="h-5 w-5 fill-gray-600" viewBox="0 0 20 20"><path
+                                fillRule="evenodd"
+                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                clipRule="evenodd"
+                            /></svg>
+                        </span>
+                        <input className="placeholder:italic placeholder:text-gray-text block bg-search-background w-full border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
+                    </label>
+                    <p className="text-xs font-semibold">{props.results} Results</p>
+                    {/* TODO: Fix where we are able to scale down and run into issues with card overlapping... Might need to add in a new viewport to cut the cols to 3... */}
+                    <div className="p-3 rounded-lg grid grid-cols-4 gap-4 place-items-center">
+                        {props.inventoryItems.map((inventoryItem) => (
+                            <a key={inventoryItem.link} href={inventoryItem.link}>
+                                <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
                 {props.inventoryItems.map((inventoryItem) => (
                     <a key={inventoryItem.link} href={inventoryItem.link}>
                         <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />

@@ -17,6 +17,7 @@ export default {
         'comment-card-review-date-color': '#838383',
         'border-gray': '#D3D3D3',
         'gray-text': '#A9A9A9',
+        'search-background': '#F4F8F9',
       },
       keyframes: {
         'open-menu': {
