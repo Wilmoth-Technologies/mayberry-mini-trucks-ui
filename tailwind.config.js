@@ -34,6 +34,11 @@ export default {
         'kei-footer': "url('/Kei-footer.png')",
         'landing-page-kei-lineup': "url('/LandingKeiLineUp2.png')",
         'inventory-kei-banner': "url('/InventoryBanner.jpg')",
+        'subaru-comparison': "url('/Subaru.png')",
+        'suzuki-comparison': "url('/Suzuki.png')",
+        'honda-comparison': "url('/Honda.png')",
+        'mitsubishi-comparison': "url('/Mitsubishi.png')",
+        'daihatsu-comparison': "url('/Daihatsu.png')",
       },
       dropShadow: {
         'lg': '0 10px 8px rgb(0, 0, 0, 0.2)',
@@ -43,6 +48,9 @@ export default {
         'navLineWrapStart': '1425px',
         'largerMobile': '391px',
       },
+      rotate: {
+        '135': '135deg',
+      }
     },
   },
   plugins: [],

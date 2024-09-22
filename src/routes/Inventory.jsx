@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import ReactPaginate from "react-paginate";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 
 export default function Inventory() {
@@ -55,18 +58,129 @@ export default function Inventory() {
         }],
     };
 
+    const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
+
+    const keiComparisonClick = () => {
+        setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
+    };
+
     return (
         <>
+            {/* Header Background */}
             <div className="p-3">
                 <div className="bg-inventory-kei-banner md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg"></div>
             </div>
 
-            <div className="flex px-3 gap-2 largerMobile:gap-4 items-center">
+            {/* Kei Truck Comparison DropDown */}
+            <button className="flex px-3 gap-2 largerMobile:gap-4 items-center" onClick={() => keiComparisonClick()}>
                 <h2 className="font-medium text-2xl">Kei Truck Comparison</h2>
                 <div className="bg-gray-500 h-0.5 w-16 largerMobile:w-28 rounded-full" />
-                <div className="w-4 h-4 border-black border-r-2 border-b-2 transform rotate-45 -mt-2" />
+                <div className={"w-4 h-4 border-black border-r-2 border-b-2 transform -mt-2 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
+            </button>
+            <div className={"flex-col gap-4 px-3 pb-2 border-gray-500 border-2 border-t-0 mx-3 " + (isKeiComparisonOpen ? '' : 'hidden')}>
+                {/* <table className="table-auto">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th><img className="h-[150px] w-[190px]" src="/Subaru.png" /></th>
+                            <th><img className="h-[150px] w-[190px]" src="/Suzuki.png" /></th>
+                            <th><img className="h-[150px] w-[190px]" src="/Honda.png" /></th>
+                            <th><img className="h-[150px] w-[190px]" src="/Mitsubishi.png" /></th>
+                            <th><img className="h-[150px] w-[190px]" src="/Daihatsu.png" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Est. Range</td>
+                            <td>Gross Weight</td>
+                            <td>Drive Train</td>
+                            <td>Load Capacity</td>
+                            <td>Dump Offerings?</td>
+                        </tr>
+                        <tr>
+                            <td>Est. Range</td>
+                            <td>Gross Weight</td>
+                            <td>Drive Train</td>
+                            <td>Load Capacity</td>
+                            <td>Dump Offerings?</td>
+                        </tr>
+                        <tr>
+                            <td>Est. Range</td>
+                            <td>Gross Weight</td>
+                            <td>Drive Train</td>
+                            <td>Load Capacity</td>
+                            <td>Dump Offerings?</td>
+                        </tr>
+                        <tr>
+                            <td>Est. Range</td>
+                            <td>Gross Weight</td>
+                            <td>Drive Train</td>
+                            <td>Load Capacity</td>
+                            <td>Dump Offerings?</td>
+                        </tr>
+                        <tr>
+                            <td>Est. Range</td>
+                            <td>Gross Weight</td>
+                            <td>Drive Train</td>
+                            <td>Load Capacity</td>
+                            <td>Dump Offerings?</td>
+                        </tr>
+                    </tbody>
+                </table> */}
+
+                <div className="flex">
+                    <img className="h-[150px] w-[190px]" src="/Subaru.png" />
+                    <div className="place-content-center">
+                        <p>Est Range: 200 mi</p>
+                        <p>Gross Weight: 1,450 lbs</p>
+                        <p>Drive Tain: AWD</p>
+                        <p>Load Capacity: 770 lbs</p>
+                        <p>Dump offerings? Yes</p>
+                    </div>
+                </div>
+                <div className="flex">
+                    <img className="h-[150px] w-[190px]" src="/Suzuki.png" />
+                    <div className="place-content-center">
+                        <p>Est Range: 200 mi</p>
+                        <p>Gross Weight: 1,450 lbs</p>
+                        <p>Drive Tain: AWD</p>
+                        <p>Load Capacity: 770 lbs</p>
+                        <p>Dump offerings? Yes</p>
+                    </div>
+                </div>
+                <div className="flex">
+                    <img className="h-[150px] w-[190px]" src="/Honda.png" />
+                    <div className="place-content-center">
+                        <p>Est Range: 200 mi</p>
+                        <p>Gross Weight: 1,450 lbs</p>
+                        <p>Drive Tain: AWD</p>
+                        <p>Load Capacity: 770 lbs</p>
+                        <p>Dump offerings? Yes</p>
+                    </div>
+                </div>
+                <div className="flex">
+                    <img className="h-[150px] w-[190px]" src="/Mitsubishi.png" />
+                    <div className="place-content-center">
+                        <p>Est Range: 200 mi</p>
+                        <p>Gross Weight: 1,450 lbs</p>
+                        <p>Drive Tain: AWD</p>
+                        <p>Load Capacity: 770 lbs</p>
+                        <p>Dump offerings? Yes</p>
+                    </div>
+                </div>
+                <div className="flex">
+                    <img className="h-[150px] w-[190px]" src="/Daihatsu.png" />
+                    <div className="place-content-center">
+                        <p>Est Range: 200 mi</p>
+                        <p>Gross Weight: 1,450 lbs</p>
+                        <p>Drive Tain: AWD</p>
+                        <p>Load Capacity: 770 lbs</p>
+                        <p>Dump offerings? Yes</p>
+                    </div>
+                </div>
             </div>
 
+            {/* Filtering Menu Mobile */}
             <div className="flex flex-col px-3 gap-y-1">
                 <p className="text-xs font-semibold">{props.results} Results</p>
                 <div className="flex gap-x-2">
@@ -106,6 +220,44 @@ export default function Inventory() {
                     </a>
                 ))}
             </div>
+
+            <ReactPaginate className="flex gap-6 items-center justify-center pt-4"
+                previousLabel={<span>
+                    <BsChevronLeft />
+                </span>}
+                nextLabel={<span>
+                    <BsChevronRight />
+                </span>}
+                breakLabel="..."
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                pageCount={38}
+                pageRangeDisplayed={2}
+                marginPagesDisplayed={1}
+                // onPageChange={this.handlePageClick}
+                containerClassName="pagination justify-content-center"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                activeClassName="border-black rounded-full border-2 p-0.5 h-8 w-8 text-center"
+                // eslint-disable-next-line no-unused-vars
+                hrefBuilder={(page, pageCount, selected) =>
+                    page >= 1 && page <= pageCount ? `/page/${page}` : '#'
+                }
+                hrefAllControls
+                // forcePage={currentPage}
+                onClick={(clickEvent) => {
+                    // console.log('onClick', clickEvent);
+                    // Return false to prevent standard page change,
+                    // return false; // --> Will do nothing.
+                    // return a number to choose the next page,
+                    // return 4; --> Will go to page 5 (index 4)
+                    // return nothing (undefined) to let standard behavior take place.
+                }}
+            />
 
             {/* Newsletter Sub & Button */}
             {/* TODO: Move to Main and then render based on what route we are currently on... */}
