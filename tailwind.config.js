@@ -47,6 +47,11 @@ export default {
       screens: {
         'navLineWrapEnd': '768px',
         'navLineWrapStart': '1425px',
+        'threeInventoryColBreakPoint': '950px',
+        'fourInventoryColBreakPoint': '1160px',
+        'fiveInventoryColBreakPoint': '1600px',
+        'sixInventoryColBreakPoint': '1790px',
+        'eightInventoryColBreakPoint': '1929px',
         'largerMobile': '391px',
       },
       rotate: {

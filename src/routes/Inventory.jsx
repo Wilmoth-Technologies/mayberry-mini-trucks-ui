@@ -4,6 +4,7 @@ import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 import { TbTrash } from "react-icons/tb";
+import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
 
 export default function Inventory() {
 
@@ -109,6 +110,14 @@ export default function Inventory() {
     };
 
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
+    const [isMakeFilterOpen, setMakeFilterOpen] = useState(true);
+    const [isModelFilterOpen, setModelFilterOpen] = useState(true);
+    const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
+    const [isYearFilterOpen, setYearFilterOpen] = useState(true);
+    const [isMileageFilterOpen, setMileageFilterOpen] = useState(true);
+    const [isEngineFilterOpen, setEngineFilterOpen] = useState(true);
+    const [isDriveTrainFilterOpen, setDriveTrainFilterOpen] = useState(true);
+    const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
 
     const keiComparisonClick = () => {
         setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
@@ -352,58 +361,83 @@ export default function Inventory() {
                             <TbTrash />
                         </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1 justify-between">
-                        <p>Make</p>
-                        <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        <div className="flex flex-row">
-                            <div className="flex">
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={MAKE_BUTTON} className="flex w-full justify-between" onClick={() => setMakeFilterOpen(!isMakeFilterOpen)}>
+                            Make
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMakeFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-3 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
+                            <div>
                                 <input type="checkbox" id="some_id" />
-                                <label htmlFor="some_id">This is the checkbox label</label>
+                                <label className="px-1" htmlFor="some_id">Honda</label>
                             </div>
-                            {/* TODO: Figure out how to display the checkboxes on a new line from the Make Label.... */}
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Suzki</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Daihatsu</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Mitsubishi</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Subaru</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Toyota</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="some_id" />
+                                <label className="px-1" htmlFor="some_id">Mazda</label>
+                            </div>
                         </div>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Model</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={MODEL_BUTTON} className="flex w-full justify-between" onClick={() => setModelFilterOpen(!isModelFilterOpen)}>
+                            Model
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isModelFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Price</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={PRICE_BUTTON} className="flex w-full justify-between" onClick={() => setPriceFilterOpen(!isPriceFilterOpen)}>
+                            Price
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isPriceFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Year</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={YEAR_BUTTON} className="flex w-full justify-between" onClick={() => setYearFilterOpen(!isYearFilterOpen)}>
+                            Year
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isYearFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Mileage</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={MILEAGE_BUTTON} className="flex w-full justify-between" onClick={() => setMileageFilterOpen(!isMileageFilterOpen)}>
+                            Mileage
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMileageFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Engine</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={ENGINE_BUTTON} className="flex w-full justify-between" onClick={() => setEngineFilterOpen(!isEngineFilterOpen)}>
+                            Engine
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isEngineFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p className="w-full">Drive Train</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={DRIVE_TRAIN_BUTTON} className="flex w-full justify-between" onClick={() => setDriveTrainFilterOpen(!isDriveTrainFilterOpen)}>
+                            Drive Train
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isDriveTrainFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
-                    <div className="flex items-center border-y border-y-border-gray p-1">
-                        <p>Transmission</p>
-                        <div className="flex w-full justify-end">
-                            <div className={"w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isKeiComparisonOpen ? '-rotate-135 mt-2' : 'rotate-45')} />
-                        </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={TRANSMISSION_BUTTON} className="flex w-full justify-between" onClick={() => setTransmissionFilterOpen(!isTransmissionFilterOpen)}>
+                            Transmission
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isTransmissionFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">
@@ -419,8 +453,7 @@ export default function Inventory() {
                         <input className="placeholder:italic placeholder:text-gray-text block bg-search-background w-full border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
                     </label>
                     <p className="text-xs font-semibold">{props.results} Results</p>
-                    {/* TODO: Fix where we are able to scale down and run into issues with card overlapping... Might need to add in a new viewport to cut the cols to 3... */}
-                    <div className="p-3 rounded-lg grid grid-cols-4 gap-4 place-items-center">
+                    <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
                         {props.inventoryItems.map((inventoryItem) => (
                             <a key={inventoryItem.link} href={inventoryItem.link}>
                                 <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
