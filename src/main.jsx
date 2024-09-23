@@ -7,6 +7,7 @@ import ErrorPage from './shared/components/ErrorPage.jsx';
 import NavBar from './shared/components/NavBar.jsx';
 import Footer from './shared/components/Footer.jsx';
 import Inventory from './routes/Inventory.jsx';
+import InventoryDetailed from './routes/InventoryDetailed.jsx';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,11 @@ const router = createBrowserRouter([
   {
     path: "/inventory",
     element: <Inventory />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/inventory/:vin",
+    element: <InventoryDetailed />,
     errorElement: <ErrorPage />,
   },
 ]);

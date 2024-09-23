@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { TbTrash } from "react-icons/tb";
 import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
-import { TbTrash } from "react-icons/tb";
 import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
 
 export default function Inventory() {
@@ -368,32 +368,32 @@ export default function Inventory() {
                         </button>
                         <div className={"grid grid-cols-3 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Honda</label>
+                                <input className="accent-black" type="checkbox" id="honda" />
+                                <label className="px-1" htmlFor="honda">Honda</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Suzki</label>
+                                <input className="accent-black" type="checkbox" id="suzki" />
+                                <label className="px-1" htmlFor="suzki">Suzki</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Daihatsu</label>
+                                <input className="accent-black" type="checkbox" id="daihatsu" />
+                                <label className="px-1" htmlFor="daihatsu">Daihatsu</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Mitsubishi</label>
+                                <input className="accent-black" type="checkbox" id="mitsubishi" />
+                                <label className="px-1" htmlFor="mitsubishi">Mitsubishi</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Subaru</label>
+                                <input className="accent-black" type="checkbox" id="subaru" />
+                                <label className="px-1" htmlFor="subaru">Subaru</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Toyota</label>
+                                <input className="accent-black" type="checkbox" id="toyota" />
+                                <label className="px-1" htmlFor="toyota">Toyota</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="some_id" />
-                                <label className="px-1" htmlFor="some_id">Mazda</label>
+                                <input className="accent-black" type="checkbox" id="mazda" />
+                                <label className="px-1" htmlFor="mazda">Mazda</label>
                             </div>
                         </div>
                     </div>
@@ -455,9 +455,9 @@ export default function Inventory() {
                     <p className="text-xs font-semibold">{props.results} Results</p>
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
                         {props.inventoryItems.map((inventoryItem) => (
-                            <a key={inventoryItem.link} href={inventoryItem.link}>
+                            <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
                                 <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
-                            </a>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -465,9 +465,9 @@ export default function Inventory() {
 
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
                 {props.inventoryItems.map((inventoryItem) => (
-                    <a key={inventoryItem.link} href={inventoryItem.link}>
+                    <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
                         <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
-                    </a>
+                    </Link>
                 ))}
             </div>
 

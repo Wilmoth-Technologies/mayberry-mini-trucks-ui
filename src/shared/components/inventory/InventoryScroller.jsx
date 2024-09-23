@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import InventoryCard from "./InventoryCard.jsx";
 
 export default function InventoryScroller() {
@@ -54,9 +55,9 @@ export default function InventoryScroller() {
     return (
         <div className="bg-grey-footer p-2 rounded-lg grid auto-cols grid-flow-col overflow-x-auto gap-2">
             {props.map((inventoryItem) => (
-                <a key={inventoryItem.link} href={inventoryItem.link}>
+                <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
                     <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
-                </a>
+                </Link>
             ))}
         </div>
     );
