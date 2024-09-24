@@ -11,25 +11,30 @@ import InventoryDetailed from './routes/InventoryDetailed.jsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Root />,
+    element: <NavBar />,
+    children: [
+      {
+        path: "/",
+        element: <Root />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/inventory",
+        element: <Inventory />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/inventory/:vin",
+        element: <InventoryDetailed />,
+        errorElement: <ErrorPage />,
+      },
+    ],
     errorElement: <ErrorPage />,
-  },
-  {
-    path: "/inventory",
-    element: <Inventory />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/inventory/:vin",
-    element: <InventoryDetailed />,
-    errorElement: <ErrorPage />,
-  },
+  }
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <NavBar />
     <RouterProvider router={router}/>
     <Footer />
   </StrictMode>,

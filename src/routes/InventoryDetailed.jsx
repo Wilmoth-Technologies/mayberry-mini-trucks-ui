@@ -1,7 +1,7 @@
 export default function InventoryDetailed() {
     return (
         <div>
-            TESITNG | NEED TO FIGURE OUT WHY NAV BAR IS NOT UPDATING STYLING THOUGH WE ARE ON A /inventory PAGE.... ASSUMING THIS HAS TO DO WITH LINK TO FROM REACT ROUTER AND THE NAVBAR BEING RENDERED PRIOR TO THE ROUTER BEING ESTABILISHED
+            Add In the Main Page!
         </div>
     );
 };
