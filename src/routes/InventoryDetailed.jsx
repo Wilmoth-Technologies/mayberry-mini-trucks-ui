@@ -5,6 +5,7 @@ import { Carousel } from "flowbite-react";
 import { numberFormatter } from '../shared/AppFunctions';
 import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
 
+//TODO: Make this responsive and in the design of the Desktop Wireframe...
 
 export default function InventoryDetailed() {
     const [charCount, setCharCount] = useState(0);

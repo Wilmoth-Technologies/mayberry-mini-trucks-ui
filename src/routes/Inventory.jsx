@@ -368,31 +368,31 @@ export default function Inventory() {
                         </button>
                         <div className={"grid grid-cols-3 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
                             <div>
-                                <input className="accent-black" type="checkbox" id="honda" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="honda" />
                                 <label className="px-1" htmlFor="honda">Honda</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="suzki" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="suzki" />
                                 <label className="px-1" htmlFor="suzki">Suzki</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="daihatsu" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="daihatsu" />
                                 <label className="px-1" htmlFor="daihatsu">Daihatsu</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="mitsubishi" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="mitsubishi" />
                                 <label className="px-1" htmlFor="mitsubishi">Mitsubishi</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="subaru" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="subaru" />
                                 <label className="px-1" htmlFor="subaru">Subaru</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="toyota" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="toyota" />
                                 <label className="px-1" htmlFor="toyota">Toyota</label>
                             </div>
                             <div>
-                                <input className="accent-black" type="checkbox" id="mazda" />
+                                <input className="accent-black rounded-sm" type="checkbox" id="mazda" />
                                 <label className="px-1" htmlFor="mazda">Mazda</label>
                             </div>
                         </div>
