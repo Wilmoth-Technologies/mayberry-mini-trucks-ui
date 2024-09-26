@@ -21,6 +21,7 @@ export default {
         'border-gray': '#D3D3D3',
         'gray-text': '#A9A9A9',
         'search-background': '#F4F8F9',
+        'modal-background': '#E6E5DF',
       },
       keyframes: {
         'open-menu': {
@@ -38,11 +39,7 @@ export default {
         'kei-footer': "url('/Kei-footer.png')",
         'landing-page-kei-lineup': "url('/LandingKeiLineUp2.png')",
         'inventory-kei-banner': "url('/InventoryBanner.jpg')",
-        'subaru-comparison': "url('/Subaru.png')",
-        'suzuki-comparison': "url('/Suzuki.png')",
-        'honda-comparison': "url('/Honda.png')",
-        'mitsubishi-comparison': "url('/Mitsubishi.png')",
-        'daihatsu-comparison': "url('/Daihatsu.png')",
+        'modal-kei-standoff': "url('/KeisStandOffModal.jpg')",
       },
       dropShadow: {
         'lg': '0 10px 8px rgb(0, 0, 0, 0.2)',

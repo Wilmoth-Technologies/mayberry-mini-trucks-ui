@@ -4,12 +4,14 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { Carousel } from "flowbite-react";
 import { numberFormatter } from '../shared/AppFunctions';
 import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
+import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
 
 //TODO: Make this responsive and in the design of the Desktop Wireframe...
 
 export default function InventoryDetailed() {
     const [charCount, setCharCount] = useState(0);
     const [isCharCountMaxed, setCharCountMaxed] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const MAX_CHAR_COUNT = 500;
     const props = {
         "title": "1994 Honda Attack",
@@ -126,11 +128,12 @@ export default function InventoryDetailed() {
             <div className="grid place-content-center p-3 md:col-span-2">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
-                    <Link className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1">
+                    <button className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1" onClick={() => setModalOpen(true)}>
                         STAY IN TOUCH
-                    </Link>
+                    </button>
                 </div>
             </div>
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)}/>}
         </div>
     );
 };

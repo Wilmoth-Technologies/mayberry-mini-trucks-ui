@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import GoogleReviews from "../shared/components/reviews/GoogleReviews.jsx";
 import InventoryScroller from "../shared/components/inventory/InventoryScroller.jsx";
+import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal.jsx";
 
 export default function Root() {
+    const [modalOpen, setModalOpen] = useState(false);
+
     return (
         <>
             <div className="bg-mobile-landing-page md:bg-desktop-landing-page md:h-screen h-[600px] bg-cover bg-no-repeat -mt-28 bg-top drop-shadow-lg" />
@@ -40,12 +44,12 @@ export default function Root() {
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
-                    <Link className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1">
+                    <button className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1" onClick={() => setModalOpen(true)}>
                         STAY IN TOUCH
-                    </Link>
+                    </button>
                 </div>
             </div>
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
         </>
-
     );
 }

@@ -5,6 +5,7 @@ import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
+import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
 
 export default function Inventory() {
 
@@ -118,6 +119,7 @@ export default function Inventory() {
     const [isEngineFilterOpen, setEngineFilterOpen] = useState(true);
     const [isDriveTrainFilterOpen, setDriveTrainFilterOpen] = useState(true);
     const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
+    const [modalOpen, setModalOpen] = useState(false);
 
     const keiComparisonClick = () => {
         setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
@@ -514,11 +516,12 @@ export default function Inventory() {
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
-                    <Link className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1">
+                    <button className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1" onClick={() => setModalOpen(true)}>
                         STAY IN TOUCH
-                    </Link>
+                    </button>
                 </div>
             </div>
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)}/>}
         </>
     );
 };
