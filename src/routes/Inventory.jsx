@@ -516,7 +516,7 @@ export default function Inventory() {
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
-                    <button className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8 pt-1" onClick={() => setModalOpen(true)}>
+                    <button className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-4 h-8" onClick={() => setModalOpen(true)}>
                         STAY IN TOUCH
                     </button>
                 </div>
