@@ -63,14 +63,16 @@ jobs:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
 
       # BEGIN - Docker auth and build
-      #
-      # If you already have a container image, you can omit these steps.
-      - name: 'Docker Auth'
-        uses: 'docker/login-action@v3' # docker/login-action@v3
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
-          registry: '${{ env.REGION }}-docker.pkg.dev'
+      # - name: 'Docker Auth'
+      #   uses: 'docker/login-action@v3' # docker/login-action@v3
+      #   with:
+      #     username: 'oauth2accesstoken'
+      #     password: '${{ steps.auth.outputs.auth_token }}'
+      #     registry: '${{ env.REGION }}-docker.pkg.dev'
+
+      - name: Docker Auth
+        run: |-
+          gcloud auth configure-docker "${{ env.REGION }}-docker.pkg.dev"
 
       - name: 'Build and Push Container'
         run: |
