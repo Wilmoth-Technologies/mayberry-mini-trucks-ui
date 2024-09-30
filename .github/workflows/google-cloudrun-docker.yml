@@ -63,22 +63,27 @@ jobs:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
 
       # BEGIN - Docker auth and build
-      # - name: 'Docker Auth'
-      #   uses: 'docker/login-action@v3' # docker/login-action@v3
-      #   with:
-      #     username: 'oauth2accesstoken'
-      #     password: '${{ steps.auth.outputs.auth_token }}'
-      #     registry: '${{ env.REGION }}-docker.pkg.dev'
-
-      - name: Docker Auth
-        run: |-
-          gcloud auth configure-docker "${{ env.REGION }}-docker.pkg.dev"
-
-      - name: 'Build and Push Container'
+      - name: 'Docker Auth'
+        uses: 'docker/login-action@v3' # docker/login-action@v3
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.auth_token }}'
+          registry: '${{ env.REGION }}-docker.pkg.dev'
         run: |
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}/${{ env.IMAGE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
+
+      # - name: Docker Auth
+      #   run: |-
+      #     gcloud auth configure-docker "${{ env.REGION }}-docker.pkg.dev"
+
+      # - name: 'Build and Push Container'
+      #   run: |
+      #     DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}/${{ env.IMAGE }}:${{ github.sha }}"
+      #     docker build --tag "${DOCKER_TAG}" .
+      #     docker push "${DOCKER_TAG}"
+
       - name: 'Deploy to Cloud Run'
 
         # END - Docker auth and build
