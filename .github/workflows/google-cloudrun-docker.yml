@@ -51,24 +51,46 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
+      - id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+      
+      # - name: Build image
+      #   run: docker build . --file DOCKERFILE_LOCATION --tag ${{ env.GAR_LOCATION }}
+      #   working-directory: WORKING_DIRECTORY
+
+      # - name: Push image
+      #   run: docker push ${{ env.GAR_LOCATION }}
+
       # Configure Workload Identity Federation and generate an access token.
       #
       # See https://github.com/google-github-actions/auth for more options,
       # including authenticating via a JSON credentials file.
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          create_credentials_file: true
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+      # - id: 'auth'
+      #   name: 'Authenticate to Google Cloud'
+      #   uses: 'google-github-actions/auth@v2'
+      #   with:
+      #     create_credentials_file: true
+      #     workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
 
       # BEGIN - Docker auth and build
-      - name: 'Docker Auth'
-        uses: 'docker/login-action@v3' # docker/login-action@v3
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
-          registry: '${{ env.REGION }}-docker.pkg.dev'
+      # - name: 'Docker Auth'
+      #   uses: 'docker/login-action@v3' # docker/login-action@v3
+      #   with:
+      #     username: 'oauth2accesstoken'
+      #     password: '${{ steps.auth.outputs.auth_token }}'
+      #     registry: '${{ env.REGION }}-docker.pkg.dev'
 
       # - name: Docker Auth
       #   run: |-
