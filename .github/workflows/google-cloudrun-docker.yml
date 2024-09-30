@@ -36,6 +36,7 @@ on:
 
 env:
   REGION: 'us-east4'
+  CLOUD_RUN_SERVICE: 'mayberry-mini-trucks-dev'
 
 jobs:
   deploy:
@@ -72,7 +73,7 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.CLOUD_RUN_SERVICE }}:${{ github.sha }}"
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
@@ -81,11 +82,11 @@ jobs:
 
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
-          service: '${{ vars.CLOUD_RUN_SERVICE }}'
+          service: '${{ env.CLOUD_RUN_SERVICE }}'
           region: '${{ env.REGION }}'
           # NOTE: If using a pre-built image, update the image name below:
 
-          image: '${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ vars.CLOUD_RUN_SERVICE }}:${{ github.sha }}'
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}:${{ github.sha }}'
       # If required, use the Cloud Run URL output in later steps
       - name: 'Show output'
         run: |2-
