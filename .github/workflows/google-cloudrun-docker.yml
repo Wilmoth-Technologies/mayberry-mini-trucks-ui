@@ -53,21 +53,20 @@ jobs:
       #
       # See https://github.com/google-github-actions/auth for more options,
       # including authenticating via a JSON credentials file.
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+
       # - id: 'auth'
       #   name: 'Authenticate to Google Cloud'
-      #   uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
+      #   uses: 'google-GitHub-actions/auth@v1'
       #   with:
       #     create_credentials_file: true
       #     workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
       #     service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-GitHub-actions/auth@v1'
-        with:
-          create_credentials_file: true
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
 
       # BEGIN - Docker auth and build
       #
@@ -76,7 +75,7 @@ jobs:
         uses: 'docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567' # docker/login-action@v3
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
+          password: '${{ steps.auth.outputs.auth_token }}'
           registry: '${{ env.REGION }}-docker.pkg.dev'
 
       - name: 'Build and Push Container'
