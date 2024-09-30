@@ -75,6 +75,7 @@ jobs:
         run: |
           DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ vars.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
           docker push "${DOCKER_TAG}"
       - name: 'Deploy to Cloud Run'
 
