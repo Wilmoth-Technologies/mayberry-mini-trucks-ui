@@ -57,6 +57,11 @@ jobs:
       id-token: 'write'
 
     steps:
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+          
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
         with:
