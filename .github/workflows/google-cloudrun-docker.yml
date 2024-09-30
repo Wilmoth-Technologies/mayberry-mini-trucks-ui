@@ -60,14 +60,6 @@ jobs:
           create_credentials_file: true
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
 
-      # - id: 'auth'
-      #   name: 'Authenticate to Google Cloud'
-      #   uses: 'google-GitHub-actions/auth@v1'
-      #   with:
-      #     create_credentials_file: true
-      #     workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-      #     service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-
       # BEGIN - Docker auth and build
       #
       # If you already have a container image, you can omit these steps.
@@ -79,7 +71,7 @@ jobs:
           registry: '${{ env.REGION }}-docker.pkg.dev'
 
       - name: 'Build and Push Container'
-        run: |-
+        run: |
           DOCKER_TAG="$${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.CLOUD_RUN_SERVICE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" .
           docker push "${DOCKER_TAG}"
