@@ -27,6 +27,14 @@ jobs:
           workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
       
+      - name: Docker Auth
+        id: docker-auth
+        uses: 'docker/login-action@v1'
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ vars.REGION }}-docker.pkg.dev'
+      
       - id: 'deploy-cloud-run'
         name: 'Deploy Cloud Run Hello World React App'
         uses: 'google-GitHub-actions/deploy-cloudrun@v1'
