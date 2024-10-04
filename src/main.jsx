@@ -8,6 +8,8 @@ import NavBar from './shared/components/NavBar.jsx';
 import Footer from './shared/components/Footer.jsx';
 import Inventory from './routes/Inventory.jsx';
 import InventoryDetailed from './routes/InventoryDetailed.jsx';
+import { Auth0Provider }  from '@auth0/auth0-react';
+import Loading from './shared/components/Loading.jsx';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +37,16 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
-    <Footer />
+    <Auth0Provider
+      domain="dev-kss71gvvwi5vchr2.us.auth0.com"
+      clientId="vxJbnpUaMKkjSDMZ9BKenoUKoy9SZZWn"
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+      }}
+    >
+      <Loading />
+      <RouterProvider router={router} />
+      <Footer />
+    </Auth0Provider>
   </StrictMode>,
 )

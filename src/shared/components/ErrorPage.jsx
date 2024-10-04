@@ -1,8 +1,8 @@
 import { useRouteError, Link } from "react-router-dom";
 
 export default function ErrorPage() {
-    const error = useRouteError();
-    console.error(error);
+    const routerError = useRouteError();
+    console.error(routerError);
 
     return (
         <div id="error-page" className="flex h-screen justify-center">
