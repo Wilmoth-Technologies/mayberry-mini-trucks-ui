@@ -3,10 +3,11 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useClickOutside } from "../hooks/UseClickOutside";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
+import { jwtDecode } from "jwt-decode";
 
 export default function NavBar() {
     const location = useLocation();
-    const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, error, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
 
@@ -22,20 +23,28 @@ export default function NavBar() {
     let logoHeaderTextColor = "text-black md:text-white";
     let inventoryBgColor = "bg-black md:bg-white";
     let inventoryTextColor = "text-white";
+    let contactUsTextColor = "text-white";
+    let testimonialsTextColor = "text-white";
+    let faqTextColor = "text-white";
     if (location.pathname.includes("/inventory/")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-action-yellow";
+        contactUsTextColor = "text-black";
+        testimonialsTextColor = "text-black";
+        faqTextColor = "text-black";
     } else if (location.pathname.includes("/inventory")) {
         inventoryBgColor = "bg-white";
         logoHeaderTextColor = "text-white";
         inventoryTextColor = "text-black";
+    } else if (location.pathname.includes("/unauthorized")) {
+        inventoryBgColor = "bg-black";
+        logoHeaderTextColor = "text-black";
+        inventoryTextColor = "text-black";
+        contactUsTextColor = "text-black";
+        testimonialsTextColor = "text-black";
+        faqTextColor = "text-black";
     }
-
-    console.log(isLoading);
-    console.log(isAuthenticated);
-    console.log(error);
-    console.log(user);
 
     const handleAuth = () => {
         if (isAuthenticated) {
@@ -52,13 +61,11 @@ export default function NavBar() {
                     audience: 'https://service.mayberryminitrucks.com/',
                 }
             });
-            console.log(accessToken);
             const decodedToken = jwtDecode(accessToken);
-            const permissions = decodedToken.permissions; // Get the permissions array
+            const permissions = decodedToken.permissions;
             setUserPermissions(permissions);
-            console.log("Permission: ", permissions);
         } catch (error) {
-            console.error('Error fetching permissions:', error);
+            console.error('Error fetching permissions in NavBar:', error);
         }
     };
 
@@ -83,16 +90,16 @@ export default function NavBar() {
                 <Link to='/inventory' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block ') + inventoryTextColor}>
                     Inventory
                 </Link>
-                <Link to='/contact' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block') + (window.location.href.includes("/inventory/") ? ' text-black' : ' text-white')}>
+                <Link to='/contact' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block ') + contactUsTextColor}>
                     Contact Us
                 </Link>
                 <Link to='/' className={"font-semibold text-3xl navLineWrapEnd:text-2xl navLineWrapStart:text-4xl 2xl:text-4xl my-auto " + (isBurgerOpen ? 'hidden md:block md:basis-full ' : 'basis-5/6 md:basis-2/6 ') + logoHeaderTextColor}>
                     Mayberry Mini Trucks
                 </Link>
-                <Link to='/testimonials' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block') + (window.location.href.includes("/inventory/") ? ' text-black' : ' text-white')}>
+                <Link to='/testimonials' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block ') + testimonialsTextColor}>
                     Testimonials
                 </Link>
-                <Link to='/faq' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block') + (window.location.href.includes("/inventory/") ? ' text-black' : ' text-white')}>
+                <Link to='/faq' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block ') + faqTextColor}>
                     FAQ
                 </Link>
                 <div className={'hidden basis-1/6 ' + (isBurgerOpen ? '' : 'md:block my-auto')}>
