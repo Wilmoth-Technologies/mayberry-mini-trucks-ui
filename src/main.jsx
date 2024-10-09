@@ -12,6 +12,7 @@ import { Auth0Provider } from '@auth0/auth0-react';
 import Loading from './shared/components/Loading.jsx';
 import RequireAuth from './shared/components/RequireAuth.jsx';
 import RedirectHandler from './shared/components/RedirectHandler.jsx';
+import Management from './routes/Management.jsx';
 
 // Define a callback to handle successful login and redirection
 const onRedirectCallback = (appState) => {
@@ -32,8 +33,13 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
+        path: "/redirect-handler",
+        element: <RedirectHandler />,  // This route will handle redirection to the correct route after login.
+        errorElement: <ErrorPage />,
+      },
+      {
         path: "/inventory",
-        element: (<RequireAuth><Inventory /></RequireAuth>),
+        element: <Inventory />,
         errorElement: <ErrorPage />,
       },
       {
@@ -42,9 +48,10 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "/redirect-handler",
-        element: <RedirectHandler />,  // This route will handle redirection to the correct route after login.
-      },
+        path: "/management",
+        element: (<RequireAuth><Management /></RequireAuth>),
+        errorElement: <ErrorPage />,
+      }
     ],
     errorElement: <ErrorPage />,
   }
@@ -61,6 +68,8 @@ createRoot(document.getElementById('root')).render(
         redirect_uri: window.location.origin + '/redirect-handler',
       }}
       onRedirectCallback={onRedirectCallback}
+      audience={'https://service.mayberryminitrucks.com/'}
+      scope={'read:user_permissions'}
     >
       <Loading />
       <RouterProvider router={router} />
