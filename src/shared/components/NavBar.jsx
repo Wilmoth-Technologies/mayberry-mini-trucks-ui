@@ -39,9 +39,15 @@ export default function NavBar() {
         if (isAuthenticated) {
             logout({ logoutParams: { returnTo: window.location.origin } });
         } else {
-            loginWithRedirect();
+            loginWithRedirect({
+                authorizationParams: {
+                    scope: 'manage:inventory',
+                },
+            });
         }
     };
+
+    //TODO: Attempting to restrict user access to a specific route based on the roles they have....
 
     // Auth Error to Trigger React Router Error Page
     if (error) {
