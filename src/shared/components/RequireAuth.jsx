@@ -7,10 +7,7 @@ const RequireAuth = ({ children }) => {
 
     if (!isAuthenticated) {
         loginWithRedirect({
-            appState: { returnTo: location.pathname },
-            authorizationParams: {
-                scope: 'manage:inventory',
-            },
+            appState: { returnTo: location.pathname }
         });
         return null;
     }

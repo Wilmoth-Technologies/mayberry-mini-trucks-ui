@@ -1,12 +1,14 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useAuth0 } from '@auth0/auth0-react';
 import { useClickOutside } from "../hooks/UseClickOutside";
 import { Outlet, Link, useLocation } from "react-router-dom";
+import { IoSettingsSharp } from "react-icons/io5";
 
 export default function NavBar() {
     const location = useLocation();
-    const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout } = useAuth0();
+    const { isLoading, isAuthenticated, error, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
+    const [userPermissions, setUserPermissions] = useState([]);
 
     const mobileBurgerClick = () => {
         setBurgerOpen(prevBurgerState => !prevBurgerState);
@@ -39,15 +41,32 @@ export default function NavBar() {
         if (isAuthenticated) {
             logout({ logoutParams: { returnTo: window.location.origin } });
         } else {
-            loginWithRedirect({
-                authorizationParams: {
-                    scope: 'manage:inventory',
-                },
-            });
+            loginWithRedirect();
         }
     };
 
-    //TODO: Attempting to restrict user access to a specific route based on the roles they have....
+    const getPermissions = async () => {
+        try {
+            const accessToken = await getAccessTokenSilently({
+                authorizationParams: {
+                    audience: 'https://service.mayberryminitrucks.com/',
+                }
+            });
+            console.log(accessToken);
+            const decodedToken = jwtDecode(accessToken);
+            const permissions = decodedToken.permissions; // Get the permissions array
+            setUserPermissions(permissions);
+            console.log("Permission: ", permissions);
+        } catch (error) {
+            console.error('Error fetching permissions:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            getPermissions();
+        }
+    }, [user]);
 
     // Auth Error to Trigger React Router Error Page
     if (error) {
@@ -76,7 +95,11 @@ export default function NavBar() {
                 <Link to='/faq' className={"hidden basis-1/6 text-xl lg:text-2xl font-medium my-auto " + (isBurgerOpen ? '' : 'md:block') + (window.location.href.includes("/inventory/") ? ' text-black' : ' text-white')}>
                     FAQ
                 </Link>
-                <div className={'hidden basis-1/6 ' + (isBurgerOpen ? '' : 'md:block')} />
+                <div className={'hidden basis-1/6 ' + (isBurgerOpen ? '' : 'md:block my-auto')}>
+                    <Link to='/management' className={"flex justify-center " + (userPermissions.includes('manage:inventory') ? '' : 'hidden')}>
+                        <IoSettingsSharp className="text-action-yellow text-3xl"/>
+                    </Link>
+                </div>
                 <div id="mobile-menu" className={"absolute top-0 bg-white bg-opacity-80 w-full md:max-w-96 text-5xl flex-col justify-content-center origin-top animate-open-menu " + (isBurgerOpen ? 'flex' : 'hidden')} >
                     <div className="flex flex-row">
                         <button className="basis-1/6 text-5xl self-start pt-2" onClick={() => mobileBurgerClick()}>
@@ -111,6 +134,9 @@ export default function NavBar() {
                         <button onClick={() => handleAuth()} className="w-full py-6">
                             {isAuthenticated ? 'Logout' : 'Log In'}
                         </button>
+                        <Link to='/management' className={"text-action-yellow py-6 " + (userPermissions.includes('manage:inventory') ? '' : 'hidden')}>
+                            Management Menu
+                        </Link>
                     </nav>
                 </div>
             </nav>

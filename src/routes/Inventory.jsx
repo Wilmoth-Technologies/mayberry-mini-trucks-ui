@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { TbTrash } from "react-icons/tb";
 import ReactPaginate from "react-paginate";
@@ -6,35 +6,8 @@ import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
-import { useAuth0 } from '@auth0/auth0-react';
-import { jwtDecode } from "jwt-decode";
 
 export default function Inventory() {
-    const { user, getAccessTokenSilently, getAccessTokenWithPopup} = useAuth0();
-
-    const getPermissions = async () => {
-        try {
-            const accessToken = await getAccessTokenSilently({
-                authorizationParams: {
-                    audience: 'https://service.mayberryminitrucks.com/',
-                    scope: 'manage:inventory',  // Scope matching the API permissions
-                }
-            });
-            console.log(accessToken);
-            const decodedToken = jwtDecode(accessToken);
-            const permissions = decodedToken.permissions; // Get the permissions array
-            console.log(permissions);
-        } catch (error) {
-            console.error('Error fetching permissions:', error);
-        }
-    };
-
-    useEffect(() => {
-        if (user) {
-            getPermissions();
-        }
-    }, [user]);
-
     let props = {
         "results": 599,
         "inventoryItems": [{
