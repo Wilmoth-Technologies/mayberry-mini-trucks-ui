@@ -3,15 +3,18 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Navigate } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
+import { useLoading } from "../providers/Loading";
 
 const ProtectedRoute = ({ children, requiredScopes }) => {
     const { getAccessTokenSilently, isAuthenticated, loginWithRedirect, isLoading } = useAuth0();
     const [userHasRequiredScopes, setUserHasRequiredScopes] = useState(null);
     const location = useLocation();
+    const { showLoading, hideLoading } = useLoading();
 
     useEffect(() => {
         const checkUserScopes = async () => {
             if (isLoading) {
+                showLoading();
                 return;
             }
 
@@ -39,13 +42,14 @@ const ProtectedRoute = ({ children, requiredScopes }) => {
 
         if (!isLoading) {
             checkUserScopes(); // Only run the check if Auth Validations are not loading
+            hideLoading();
         }
     }, [isAuthenticated, getAccessTokenSilently, requiredScopes, loginWithRedirect, isLoading, location.pathname]);
 
 
     // Handle loading state
     if (isLoading || userHasRequiredScopes === null) {
-        return <div>Loading...</div>; //TODO: Handle with overall loading component...
+        return null;
     }
 
     // If the user is not authenticated or doesn't have required scopes, redirect to unauthorized page

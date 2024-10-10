@@ -4,12 +4,14 @@ import { useClickOutside } from "../hooks/UseClickOutside";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
 import { jwtDecode } from "jwt-decode";
+import { useLoading } from "../providers/Loading";
 
 export default function NavBar() {
     const location = useLocation();
     const { isAuthenticated, error, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
+    const { showLoading, hideLoading } = useLoading();
 
     const mobileBurgerClick = () => {
         setBurgerOpen(prevBurgerState => !prevBurgerState);
@@ -64,13 +66,16 @@ export default function NavBar() {
             const decodedToken = jwtDecode(accessToken);
             const permissions = decodedToken.permissions;
             setUserPermissions(permissions);
+            hideLoading();
         } catch (error) {
+            hideLoading();
             console.error('Error fetching permissions in NavBar:', error);
         }
     };
 
     useEffect(() => {
         if (user) {
+            showLoading();
             getPermissions();
         }
     }, [user]);
@@ -82,7 +87,7 @@ export default function NavBar() {
 
     return (
         <>
-            <nav className='flex flex-row pt-4 md:text-center z-50 sticky' ref={wrapperRef}>
+            <nav className='flex flex-row pt-4 md:text-center z-30 sticky' ref={wrapperRef}>
                 <button className={'basis-1/6 text-center my-auto ' + (isBurgerOpen ? 'hidden' : 'md:block')} onClick={() => mobileBurgerClick()}>
                     <div className={'burger w-8 h-1 rounded-xl my-1.5 ml-4 md:ml-12 ' + inventoryBgColor} />
                     <div className={'burger w-8 h-1 rounded-xl my-1 ml-4 md:ml-12 ' + inventoryBgColor} />

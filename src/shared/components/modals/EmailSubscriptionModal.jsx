@@ -7,7 +7,7 @@ export default function EmailSubscriptionModal({ onClose }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-50 flex justify-center items-center" id="wrapper" onClick={handleClose}>
+        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-30 flex justify-center items-center" id="wrapper" onClick={handleClose}>
             <div className="grid grid-cols-2 bg-modal-background rounded-lg h-[600px] w-[1200px]">
                 <div className="bg-modal-kei-standoff object-cover rounded-s-md">
                 </div>

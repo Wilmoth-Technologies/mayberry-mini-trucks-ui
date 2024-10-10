@@ -9,10 +9,11 @@ import Footer from './shared/components/Footer.jsx';
 import Inventory from './routes/Inventory.jsx';
 import InventoryDetailed from './routes/InventoryDetailed.jsx';
 import { Auth0Provider } from '@auth0/auth0-react';
-import Loading from './shared/components/Loading.jsx';
 import ProtectedRoute from './shared/components/ProtectedRoute.jsx';
 import Management from './routes/Management.jsx';
 import Unauthorized from './shared/components/Unauthorized.jsx';
+import Loading from './shared/components/Loading.jsx';
+import { LoadingProvider } from './shared/providers/Loading.jsx';
 
 const router = createBrowserRouter([
   {
@@ -55,18 +56,20 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Auth0Provider
-      domain="dev-kss71gvvwi5vchr2.us.auth0.com"
-      clientId="vxJbnpUaMKkjSDMZ9BKenoUKoy9SZZWn"
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-      }}
-      audience={'https://service.mayberryminitrucks.com/'}
-      scope={'read:user_permissions'}
-    >
-      <Loading />
-      <RouterProvider router={router} />
-      <Footer />
-    </Auth0Provider>
+    <LoadingProvider>
+      <Auth0Provider
+        domain="dev-kss71gvvwi5vchr2.us.auth0.com"
+        clientId="vxJbnpUaMKkjSDMZ9BKenoUKoy9SZZWn"
+        authorizationParams={{
+          redirect_uri: window.location.origin,
+        }}
+        audience={'https://service.mayberryminitrucks.com/'}
+        scope={'read:user_permissions'}
+      >
+        <Loading />
+        <RouterProvider router={router} />
+        <Footer />
+      </Auth0Provider>
+    </LoadingProvider>
   </StrictMode>,
 )
