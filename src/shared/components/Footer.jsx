@@ -30,7 +30,7 @@ export default function Footer() {
                         Phone Number
                     </p>
                     <p className="w-7/12">
-                        (336) 777-9957
+                        (336) 970-3885
                     </p>
                 </div>
                 <div className="w-full flex">
@@ -56,7 +56,7 @@ export default function Footer() {
                     © 2024 Mayberry Mini Trucks
                 </p>
                 <p className="pb-1 md:pr-4">
-                    Website Built & Maintained - © Wilmoth Technologies
+                    Website Built & Maintained - © Wilmoth Technologies Services
                 </p>
             </div>
         </footer>
