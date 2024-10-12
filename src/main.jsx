@@ -15,6 +15,7 @@ import Unauthorized from './shared/components/Unauthorized.jsx';
 import Loading from './shared/components/Loading.jsx';
 import { LoadingProvider } from './shared/providers/Loading.jsx';
 import ScrollToTop from './shared/components/ScrollToTop.jsx';
+import ManagementAddSingleInventory from './routes/ManagementAddSingleInventory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredScopes={['manage:inventory']}>
             <Management />
+          </ProtectedRoute>),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/management/add",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementAddSingleInventory />
           </ProtectedRoute>),
         errorElement: <ErrorPage />,
       },

@@ -40,6 +40,7 @@ export default {
         'landing-page-kei-lineup': "url('/LandingKeiLineUp2.png')",
         'inventory-kei-banner': "url('/InventoryBanner.jpg')",
         'modal-kei-standoff': "url('/KeisStandOffModal.jpg')",
+        'kei-hauler': "url('/Kei-Hauler.png')",
       },
       dropShadow: {
         'lg': '0 10px 8px rgb(0, 0, 0, 0.2)',
