@@ -14,7 +14,7 @@ export default function Root() {
             <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">About Us</h1>
             <div className="flex flex-col-reverse justify-center sm:flex-row items-center p-6 gap-8">
                 <img className="h-[188px] bg-contain bg-no-repeat bg-center drop-shadow-lg" src="/LandingKeiLineUp2.png" />
-                <p className="text-lg text-center md:text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p className="text-lg text-center md:text-left">Mayberry Mini Trucks started as a small family-owned business in 2010. Through the years of growth, we are still just as passionate about providing quality, cost effective mini trucks for our customers. We take pride in providing our customers with top notch service as we bring them through the process of finding their mini truck with ease, so they can have the best experience possible.</p>
             </div>
             <GoogleReviews />
             {/* Find Your Truck */}
