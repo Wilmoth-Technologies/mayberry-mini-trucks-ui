@@ -5,6 +5,7 @@ import { Outlet, Link, useLocation } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
 import { jwtDecode } from "jwt-decode";
 import { useLoading } from "../providers/Loading";
+import ScrollToTop from "./ScrollToTop";
 
 export default function NavBar() {
     const location = useLocation();
@@ -82,11 +83,12 @@ export default function NavBar() {
 
     // Auth Error to Trigger React Router Error Page
     if (error) {
-        throw new Response("Not Authorized", { status: 401});
+        throw new Response("Not Authorized", { status: 401 });
     }
 
     return (
         <>
+            <ScrollToTop/>
             <nav className='flex flex-row pt-4 md:text-center z-30 sticky' ref={wrapperRef}>
                 <button className={'basis-1/6 text-center my-auto ' + (isBurgerOpen ? 'hidden' : 'md:block')} onClick={() => mobileBurgerClick()}>
                     <div className={'burger w-8 h-1 rounded-xl my-1.5 ml-4 md:ml-12 ' + inventoryBgColor} />
@@ -109,7 +111,7 @@ export default function NavBar() {
                 </Link>
                 <div className={'hidden basis-1/6 ' + (isBurgerOpen ? '' : 'md:block my-auto')}>
                     <Link to='/management' className={"flex justify-center " + (userPermissions.includes('manage:inventory') ? '' : 'hidden')}>
-                        <IoSettingsSharp className="text-action-yellow text-3xl"/>
+                        <IoSettingsSharp className="text-action-yellow text-3xl" />
                     </Link>
                 </div>
                 <div id="mobile-menu" className={"absolute top-0 bg-white bg-opacity-80 w-full md:max-w-96 text-5xl flex-col justify-content-center origin-top animate-open-menu " + (isBurgerOpen ? 'flex' : 'hidden')} >
