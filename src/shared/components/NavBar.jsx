@@ -40,7 +40,7 @@ export default function NavBar() {
         inventoryBgColor = "bg-white";
         logoHeaderTextColor = "text-white";
         inventoryTextColor = "text-black";
-    } else if (location.pathname.includes("/unauthorized")) {
+    } else if (location.pathname.includes("/unauthorized") || location.pathname.includes("/management/add")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
