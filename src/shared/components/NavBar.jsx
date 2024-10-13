@@ -9,7 +9,7 @@ import ScrollToTop from "./ScrollToTop";
 
 export default function NavBar() {
     const location = useLocation();
-    const { isAuthenticated, isLoading, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
     const { showLoading, hideLoading } = useLoading();
@@ -58,30 +58,28 @@ export default function NavBar() {
     };
 
     useEffect(() => {
-        const checkUserScopes = async () => {
-            try {
-                showLoading();
-                const accessToken = await getAccessTokenSilently({
-                    authorizationParams: {
-                        audience: 'https://service.mayberryminitrucks.com/',
-                    }
-                });
-                const decodedToken = jwtDecode(accessToken);
-                const permissions = decodedToken.permissions;
-                setUserPermissions(permissions);
-                hideLoading();
-            } catch (error) {
-                hideLoading();
-                console.error('Error fetching permissions in NavBar:', error);
-                throw new Response("Not Authorized", { status: 401 });
+        const fetchPermissions = async () => {
+            if (isAuthenticated) {
+                
+                try {
+                    showLoading();
+                    const accessToken = await getAccessTokenSilently({
+                        authorizationParams: {
+                            audience: 'https://service.mayberryminitrucks.com/',
+                        }
+                    });
+                    const decodedToken = jwtDecode(accessToken);
+                    const permissions = decodedToken.permissions;
+                    setUserPermissions(permissions);
+                    hideLoading();
+                } catch (error) {
+                    console.error('Error fetching permissions in NavBar:', error);
+                }
             }
         };
 
-        if (!isLoading & isAuthenticated) {
-            checkUserScopes(); // Only run the check if Auth Validations are not loading
-            hideLoading();
-        }
-    }, [isAuthenticated, getAccessTokenSilently, isLoading]);
+        fetchPermissions();
+    }, [isAuthenticated, getAccessTokenSilently]);
 
     return (
         <>
