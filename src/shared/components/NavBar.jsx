@@ -9,7 +9,7 @@ import ScrollToTop from "./ScrollToTop";
 
 export default function NavBar() {
     const location = useLocation();
-    const { isAuthenticated, error, user, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
+    const { isAuthenticated, isLoading, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
     const { showLoading, hideLoading } = useLoading();
@@ -57,38 +57,35 @@ export default function NavBar() {
         }
     };
 
-    const getPermissions = async () => {
-        try {
-            const accessToken = await getAccessTokenSilently({
-                authorizationParams: {
-                    audience: 'https://service.mayberryminitrucks.com/',
-                }
-            });
-            const decodedToken = jwtDecode(accessToken);
-            const permissions = decodedToken.permissions;
-            setUserPermissions(permissions);
-            hideLoading();
-        } catch (error) {
-            hideLoading();
-            console.error('Error fetching permissions in NavBar:', error);
-        }
-    };
-
     useEffect(() => {
-        if (user) {
-            showLoading();
-            getPermissions();
-        }
-    }, [user]);
+        const checkUserScopes = async () => {
+            try {
+                showLoading();
+                const accessToken = await getAccessTokenSilently({
+                    authorizationParams: {
+                        audience: 'https://service.mayberryminitrucks.com/',
+                    }
+                });
+                const decodedToken = jwtDecode(accessToken);
+                const permissions = decodedToken.permissions;
+                setUserPermissions(permissions);
+                hideLoading();
+            } catch (error) {
+                hideLoading();
+                console.error('Error fetching permissions in NavBar:', error);
+                throw new Response("Not Authorized", { status: 401 });
+            }
+        };
 
-    // Auth Error to Trigger React Router Error Page
-    if (error) {
-        throw new Response("Not Authorized", { status: 401 });
-    }
+        if (!isLoading & isAuthenticated) {
+            checkUserScopes(); // Only run the check if Auth Validations are not loading
+            hideLoading();
+        }
+    }, [isAuthenticated, getAccessTokenSilently, isLoading]);
 
     return (
         <>
-            <ScrollToTop/>
+            <ScrollToTop />
             <nav className='flex flex-row pt-4 md:text-center z-30 sticky' ref={wrapperRef}>
                 <button className={'basis-1/6 text-center my-auto ' + (isBurgerOpen ? 'hidden' : 'md:block')} onClick={() => mobileBurgerClick()}>
                     <div className={'burger w-8 h-1 rounded-xl my-1.5 ml-4 md:ml-12 ' + inventoryBgColor} />
