@@ -68,7 +68,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <LoadingProvider>
       <Auth0Provider
-        domain="dev-kss71gvvwi5vchr2.us.auth0.com"
+        domain="auth.mayberry-mini-trucks-ui.dev.kubernetes-wilmoth.com"
         clientId="vxJbnpUaMKkjSDMZ9BKenoUKoy9SZZWn"
         authorizationParams={{
           redirect_uri: window.location.origin,
