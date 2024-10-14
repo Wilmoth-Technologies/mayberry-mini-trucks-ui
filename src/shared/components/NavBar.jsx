@@ -60,7 +60,6 @@ export default function NavBar() {
     useEffect(() => {
         const fetchPermissions = async () => {
             if (isAuthenticated) {
-                
                 try {
                     showLoading();
                     const accessToken = await getAccessTokenSilently({
@@ -74,6 +73,7 @@ export default function NavBar() {
                     hideLoading();
                 } catch (error) {
                     console.error('Error fetching permissions in NavBar:', error);
+                    hideLoading();
                 }
             }
         };
