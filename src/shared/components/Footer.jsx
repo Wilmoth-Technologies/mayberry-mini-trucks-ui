@@ -56,7 +56,7 @@ export default function Footer() {
                     © 2024 Mayberry Mini Trucks
                 </p>
                 <p className="pb-1 md:pr-4">
-                    Website Built & Maintained - © Wilmoth Technologies Services
+                    Website Built & Maintained - © Wilmoth Technologies Services LLC
                 </p>
             </div>
         </footer>

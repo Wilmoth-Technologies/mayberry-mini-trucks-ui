@@ -15,7 +15,7 @@ export default function Management() {
                             </div>
                             <p>Inventory</p>
                         </Link>
-                        <Link to="" className="bg-black bg-opacity-55 backdrop-blur-sm rounded-md p-3">
+                        <Link to="/management/view" className="bg-black bg-opacity-55 backdrop-blur-sm rounded-md p-3">
                             <p>Modify</p>
                             <div className="flex justify-center py-2">
                                 <IoSettingsSharp className="text-5xl" />

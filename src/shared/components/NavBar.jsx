@@ -40,7 +40,10 @@ export default function NavBar() {
         inventoryBgColor = "bg-white";
         logoHeaderTextColor = "text-white";
         inventoryTextColor = "text-black";
-    } else if (location.pathname.includes("/unauthorized") || location.pathname.includes("/management/add")) {
+    } else if (location.pathname.includes("/unauthorized") ||
+    location.pathname.includes("/management/add") ||
+    location.pathname.includes("/management/view") ||
+    location.pathname.includes("/management/edit/")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
@@ -119,31 +122,31 @@ export default function NavBar() {
                         </Link>
                     </div>
                     <nav className="flex flex-col min-h-screen items-center text-center py-8 text-3xl hover:opacity-80" aria-label="mobile">
-                        <Link to='/inventory' className="w-full py-6">
+                        <Link to='/inventory' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Inventory
                         </Link>
-                        <Link to='/gallery' className="w-full py-6">
+                        <Link to='/gallery' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Gallery
                         </Link>
-                        <Link to='/testimonials' className="w-full py-6">
+                        <Link to='/testimonials' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Testimonials
                         </Link>
-                        <Link to='/nc-titling' className="w-full py-6">
+                        <Link to='/nc-titling' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             NC Titling
                         </Link>
-                        <Link to='/Linkuto-lenders' className="w-full py-6">
+                        <Link to='/Linkuto-lenders' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Auto Lenders
                         </Link>
-                        <Link to='/faq' className="w-full py-6">
+                        <Link to='/faq' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             FAQ
                         </Link>
-                        <Link to='/contact' className="w-full py-6">
+                        <Link to='/contact' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Contact Us
                         </Link>
                         <button onClick={() => handleAuth()} className="w-full py-6">
                             {isAuthenticated ? 'Logout' : 'Log In'}
                         </button>
-                        <Link to='/management' className={"text-action-yellow py-6 " + (userPermissions.includes('manage:inventory') ? '' : 'hidden')}>
+                        <Link to='/management' className={"text-action-yellow py-6 " + (userPermissions.includes('manage:inventory') ? '' : 'hidden')} onClick={() => mobileBurgerClick()}>
                             Management Menu
                         </Link>
                     </nav>

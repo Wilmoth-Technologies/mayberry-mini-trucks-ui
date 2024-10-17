@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FileInput, Label } from "flowbite-react";
 
-export default function ManagementAddSingleInventory() {
+export default function ManagementAddInventory() {
     const [selectedMakeModel, setSelectedMakeModel] = useState("");
+    const vin = "JHMSZ742XDC128218";
 
     return (
         <>
@@ -220,7 +221,7 @@ export default function ManagementAddSingleInventory() {
             </div>
             {/* Preview */}
             <div className="flex items-center justify-center pb-3">
-                <Link className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-8 py-1">
+                <Link to={"/management/add/" + vin} className="bg-black rounded-full text-white text-center items-center font-medium text-nowrap px-8 py-1">
                     Preview
                 </Link>
             </div>
