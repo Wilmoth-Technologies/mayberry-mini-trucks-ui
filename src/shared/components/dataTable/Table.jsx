@@ -1,6 +1,6 @@
 import { IoCloudDownloadOutline, IoAddCircleOutline, IoCaretDown, IoCaretUp } from "react-icons/io5";
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
-import { IoArrowBackOutline, IoTrashOutline } from "react-icons/io5";
+import { IoTrashOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { GlobalFilter } from "./GlobalFilter";
