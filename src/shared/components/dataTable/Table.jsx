@@ -7,7 +7,7 @@ import { GlobalFilter } from "./GlobalFilter";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-const Table = ({ columns, data }) => {
+export default function Table({ columns, data }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -162,5 +162,3 @@ const Table = ({ columns, data }) => {
         </>
     );
 };
-
-export default Table;
