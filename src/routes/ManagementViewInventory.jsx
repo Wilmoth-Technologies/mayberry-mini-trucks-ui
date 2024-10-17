@@ -1,8 +1,7 @@
-import Table from "../shared/components/DataTable/Table";
-import { IoArrowBackOutline, IoTrashOutline } from "react-icons/io5";
-import { MdOutlineEdit } from "react-icons/md";
-import { Link } from "react-router-dom";
 import { useMemo } from "react";
+import { IoArrowBackOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import Table from "../shared/components/datatable/Table";
 
 
 export default function ManagementViewInventory() {
