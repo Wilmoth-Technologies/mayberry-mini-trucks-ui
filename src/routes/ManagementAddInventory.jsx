@@ -78,6 +78,10 @@ export default function ManagementAddInventory() {
                     <p className="text-lg">Price</p>
                     <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Price*" type="text" name="price" />
                 </div>
+                <div className="flex flex-col">
+                    <p className="text-lg">Purchase Date</p>
+                    <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Purchase Date*" type="text" name="purchaseDate" />
+                </div>
                 <div className="col-span-2 flex flex-col">
                     <p className="text-lg">Description</p>
                     <textarea className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y h-72" placeholder="Description*" type="text" required name="description" />
