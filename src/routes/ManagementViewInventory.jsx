@@ -23,7 +23,7 @@ export default function ManagementViewInventory() {
                 setInventory(response.data.map(inventoryItem => {
                     return {...inventoryItem,
                         price: numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryItem.price),
-                        mileage: (milageFormatter().format(inventoryItem.mileage).toString() + ' Mi'),
+                        mileage: (milageFormatter().format(inventoryItem.mileage).toString() + ' mi'),
                     }
                 }));
                 setError({isError: false});
