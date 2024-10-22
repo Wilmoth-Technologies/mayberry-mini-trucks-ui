@@ -17,8 +17,7 @@ import { LoadingProvider } from './shared/providers/Loading.jsx';
 import ScrollToTop from './shared/components/ScrollToTop.jsx';
 import ManagementAddInventory from './routes/ManagementAddInventory.jsx';
 import ManagementViewInventory from './routes/ManagementViewInventory.jsx';
-import ManagementAddInventoryPreview from './routes/ManagementAddInventoryPreview.jsx';
-import ManagementEditInventoryPreview from './routes/ManagementEditInventoryPreview.jsx';
+import ManagementEditInventory from './routes/ManagementEditInventory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -64,7 +63,7 @@ const router = createBrowserRouter([
       {
         path: "/management/edit/:vin",
         element: (
-          <ManagementEditInventoryPreview />
+          <ManagementEditInventory />
         ),
         errorElement: <ErrorPage />,
       },

@@ -1,14 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
-import { numberFormatter, milageFormatter } from '../shared/AppFunctions';
-import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
-import SwipeableCarousel from "../shared/components/SwipeableCarousel";
-import axiosInstance from "../shared/AxiosConfig";
-import { useLoading } from "../shared/providers/Loading";
-import { ErrorAlert } from "../shared/components/ErrorAlert";
+import { numberFormatter, milageFormatter } from '../../AppFunctions';
+import { CURRENCY_FORMAT_STYLE } from '../../AppConstants';
+import SwipeableCarousel from "../SwipeableCarousel";
+import axiosInstance from "../../AxiosConfig";
+import { useLoading } from "../../providers/Loading";
+import { ErrorAlert } from "../ErrorAlert";
 import { useNavigate } from 'react-router-dom';
 
-export default function ManagementAddInventoryPreview({ formValues, selectedOptions, selectedFiles, setPreviewRendered }) {
+export default function ManagementPreviewInventory({ formValues, selectedOptions, selectedFiles, setPreviewRendered, isAddInventory = true, areImagesUpdated = false, existingInventoryData = {} }) {
     const navigate = useNavigate();
     const { showLoading, hideLoading } = useLoading();
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
@@ -21,41 +21,72 @@ export default function ManagementAddInventoryPreview({ formValues, selectedOpti
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
     };
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        showLoading();
-        setError({ isError: false });
-
         try {
+            showLoading();
             const optionsList = selectedOptions?.map(option => {
                 return { "option": option };
             })
             formValues.options = optionsList;
 
             const formData = new FormData();
-            formData.append('inventory', JSON.stringify(formValues));
+            if (!isAddInventory && !areImagesUpdated) {
+                formValues['imageLinks'] = existingInventoryData[0]?.imageLinks;
+                formData.append('inventory', JSON.stringify(formValues));
+            } else {
+                formData.append('inventory', JSON.stringify(formValues));
+            }
 
             // Append files to the form data (allowing multiple files)
             for (let i = 0; i < selectedFiles.length; i++) {
                 formData.append('image', selectedFiles[i].file);
             }
 
-            const response = await axiosInstance.post('/management/addInventory', formData, {
-                headers: {
-                  'Content-Type': 'multipart/form-data',
-                },
-              });
+            if (isAddInventory) {
+                const response = await axiosInstance.post('/management/addInventory', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
 
-            if (response.status === 201) { 
-                const formData = {
-                    vin: formValues.vin,
-                    message: "Successfully Added New Inventory Item: ",
-                };
-                navigate('/management', {state: {formData}});
+                if (response.status === 201) {
+                    const formData = {
+                        vin: formValues.vin,
+                        message: "Successfully Added New Inventory Item: ",
+                    };
+                    navigate('/management', { state: { formData } });
+                } else {
+                    setError({ isError: true, errorMessage: "Failed to Submit Inventory, Please Try Again." });
+                }
+            } else {
+                const response = await axiosInstance.put('/management/updateInventory', formData, {
+                    params: { areImagesUpdated: areImagesUpdated },
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                if (response.status === 204) {
+                    const formData = {
+                        vin: formValues.vin,
+                        message: "Successfully Updated Inventory Item: ",
+                    };
+                    navigate('/management', { state: { formData } });
+                } else {
+                    setError({ isError: true, errorMessage: "Failed to Submit Inventory, Please Try Again." });
+                }
             }
+            setError({ isError: false });
         } catch (error) {
-            setError({ isError: true, errorMessage: "Failed to Submit New Inventory, Please Try Again." });
-            console.error(error);
+            setError({ isError: true, errorMessage: "Failed to Submit Inventory, Please Try Again." });
+            console.error(error.response
+                ? error.response.data.message
+                : error.message)
         } finally {
             hideLoading();
         }
@@ -64,33 +95,33 @@ export default function ManagementAddInventoryPreview({ formValues, selectedOpti
     return (
         <div className="grid p-3 gap-3 md:grid-cols-2">
             {isError.isError ?
-                    <div className="md:col-span-2">
-                        <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError}/>
-                    </div> : null}
+                <div className="md:col-span-2">
+                    <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                </div> : null}
             <div className="hidden md:flex items-center md:col-span-2 justify-center gap-4">
                 <button onClick={() => setPreviewRendered(false)} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
                     <IoArrowBackOutline />
-                    Back to Add Inventory
+                    Back to {isAddInventory ? 'Add' : 'Edit'} Inventory
                 </button>
                 <h2 className="font-bold text-2xl text-action-yellow">
-                    Add Inventory - {formValues.vin} - Preview
+                    {isAddInventory ? 'Add' : 'Edit'} Inventory - {formValues.vin} - Preview
                 </h2>
                 <button onClick={handleSubmit} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
-                    Submit Inventory
+                    {isAddInventory ? 'Submit' : 'Update'} Inventory
                     <IoArrowForwardOutline />
                 </button>
             </div>
             <div className="grid grid-cols-2 md:hidden items-center justify-center">
                 <button onClick={() => setPreviewRendered(false)} className="flex items-center text-sm">
                     <IoArrowBackOutline />
-                    Back to Add Inventory
+                    Back to {isAddInventory ? 'Add' : 'Edit'} Inventory
                 </button>
                 <button className="flex items-center justify-end text-sm">
-                    Submit Inventory
+                    {isAddInventory ? 'Submit' : 'Update'} Inventory
                     <IoArrowForwardOutline />
                 </button>
                 <h2 className="col-span-2 font-bold text-lg text-action-yellow text-center">
-                    Add Inventory
+                    {isAddInventory ? 'Add' : 'Edit'} Inventory
                 </h2>
                 <h2 className="col-span-2 font-bold text-lg text-action-yellow text-center">
                     {formValues.vin}

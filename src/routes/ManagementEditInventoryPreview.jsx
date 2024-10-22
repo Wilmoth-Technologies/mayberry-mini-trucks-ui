@@ -39,7 +39,7 @@ export default function ManagementEditInventoryPreview() {
                 setError({ isError: false });
             } catch (error) {
                 setError({ isError: true, errorMessage: "Failed to Load Inventory Item: " + vin + ", Please Try Again." });
-                console.log(error.response
+                console.error(error.response
                     ? error.response.data.message
                     : error.message)
             } finally {
