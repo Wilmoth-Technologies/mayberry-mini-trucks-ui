@@ -3,8 +3,15 @@ import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 import { numberFormatter, milageFormatter } from '../shared/AppFunctions';
 import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
 import SwipeableCarousel from "../shared/components/SwipeableCarousel";
+import axiosInstance from "../shared/AxiosConfig";
+import { useLoading } from "../shared/providers/Loading";
+import { ErrorAlert } from "../shared/components/ErrorAlert";
+import { useNavigate } from 'react-router-dom';
 
 export default function ManagementAddInventoryPreview({ formValues, selectedOptions, selectedFiles, setPreviewRendered }) {
+    const navigate = useNavigate();
+    const { showLoading, hideLoading } = useLoading();
+    const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [charCount, setCharCount] = useState(0);
     const [isCharCountMaxed, setCharCountMaxed] = useState(false);
     const MAX_CHAR_COUNT = 500;
@@ -14,8 +21,52 @@ export default function ManagementAddInventoryPreview({ formValues, selectedOpti
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
     };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        showLoading();
+        setError({ isError: false });
+
+        try {
+            const optionsList = selectedOptions?.map(option => {
+                return { "option": option };
+            })
+            formValues.options = optionsList;
+
+            const formData = new FormData();
+            formData.append('inventory', JSON.stringify(formValues));
+
+            // Append files to the form data (allowing multiple files)
+            for (let i = 0; i < selectedFiles.length; i++) {
+                formData.append('image', selectedFiles[i].file);
+            }
+
+            const response = await axiosInstance.post('/management/addInventory', formData, {
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              });
+
+            if (response.status === 201) { 
+                const formData = {
+                    vin: formValues.vin,
+                    message: "Successfully Added New Inventory Item: ",
+                };
+                navigate('/management', {state: {formData}});
+            }
+        } catch (error) {
+            setError({ isError: true, errorMessage: "Failed to Submit New Inventory, Please Try Again." });
+            console.error(error);
+        } finally {
+            hideLoading();
+        }
+    };
+
     return (
         <div className="grid p-3 gap-3 md:grid-cols-2">
+            {isError.isError ?
+                    <div className="md:col-span-2">
+                        <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError}/>
+                    </div> : null}
             <div className="hidden md:flex items-center md:col-span-2 justify-center gap-4">
                 <button onClick={() => setPreviewRendered(false)} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
                     <IoArrowBackOutline />
@@ -24,7 +75,7 @@ export default function ManagementAddInventoryPreview({ formValues, selectedOpti
                 <h2 className="font-bold text-2xl text-action-yellow">
                     Add Inventory - {formValues.vin} - Preview
                 </h2>
-                <button className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
+                <button onClick={handleSubmit} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
                     Submit Inventory
                     <IoArrowForwardOutline />
                 </button>
@@ -111,7 +162,7 @@ export default function ManagementAddInventoryPreview({ formValues, selectedOpti
                 </div>
                 {
                     selectedOptions?.map(option => (
-                        <div className="border border-border-gray rounded-md px-2 py-1">
+                        <div key={option} className="border border-border-gray rounded-md px-2 py-1">
                             <p className="text-lg">{option}</p>
                             <p className="text-gray-text font-light text-sm">Option</p>
                         </div>

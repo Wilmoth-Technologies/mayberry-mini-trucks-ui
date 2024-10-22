@@ -1,8 +1,21 @@
+import { useEffect, useState } from "react";
 import { RiFileAddLine } from "react-icons/ri";
 import { IoSettingsSharp } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { SuccessAlert } from "../shared/components/SuccessAlert";
 
 export default function Management() {
+    const location = useLocation();
+    const [isSuccess, setSuccess] = useState({ isAlertOpen: false, message: "" });
+
+    const { formData } = location.state || { formData: {} };
+
+    useEffect(() => {
+        if (formData?.vin) {
+            setSuccess({ isAlertOpen: true, message: (formData.message + formData.vin) });
+        }
+    }, []);
+
     return (
         <>
             <div className="">
@@ -24,6 +37,10 @@ export default function Management() {
                         </Link>
                     </div>
                 </div>
+                {isSuccess.isAlertOpen ?
+                    <div>
+                        <SuccessAlert message={isSuccess.message} dismissFunction={setSuccess} />
+                    </div> : null}
             </div>
         </>
     );

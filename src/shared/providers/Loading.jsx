@@ -15,7 +15,7 @@ export const LoadingProvider = ({ children }) => {
   const hideLoading = () => setIsLoading(false);
 
   return (
-    <LoadingContext.Provider value={{ isLoading, showLoading, hideLoading}}>
+    <LoadingContext.Provider value={{ isLoading, showLoading, hideLoading }}>
       {children}
     </LoadingContext.Provider>
   );
