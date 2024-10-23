@@ -49,6 +49,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
 
             if (isAddInventory) {
                 const response = await axiosInstance.post('/management/addInventory', formData, {
+                    timeout: 60000,
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -65,6 +66,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                 }
             } else {
                 const response = await axiosInstance.put('/management/updateInventory', formData, {
+                    timeout: 60000,
                     params: { areImagesUpdated: areImagesUpdated },
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -99,26 +101,30 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                     <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
                 </div> : null}
             <div className="hidden md:flex items-center md:col-span-2 justify-center gap-4">
-                <button onClick={() => setPreviewRendered(false)} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
+                <button onClick={() => setPreviewRendered(false)} className="flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
                     <IoArrowBackOutline />
                     Back to {isAddInventory ? 'Add' : 'Edit'} Inventory
                 </button>
                 <h2 className="font-bold text-2xl text-action-yellow">
                     {isAddInventory ? 'Add' : 'Edit'} Inventory - {formValues.vin} - Preview
                 </h2>
-                <button onClick={handleSubmit} className="flex items-center gap-1 lg:bg-black rounded-full lg:text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
+                <button onClick={handleSubmit} className="flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 fourInventoryColBreakPoint:text-sm">
                     {isAddInventory ? 'Submit' : 'Update'} Inventory
                     <IoArrowForwardOutline />
                 </button>
             </div>
             <div className="grid grid-cols-2 md:hidden items-center justify-center">
                 <button onClick={() => setPreviewRendered(false)} className="flex items-center text-sm">
-                    <IoArrowBackOutline />
-                    Back to {isAddInventory ? 'Add' : 'Edit'} Inventory
+                    <div className="flex bg-black rounded-full text-white items-center px-4 h-8">
+                        <IoArrowBackOutline />
+                        Back to {isAddInventory ? 'Add' : 'Edit'}
+                    </div>
                 </button>
-                <button className="flex items-center justify-end text-sm">
-                    {isAddInventory ? 'Submit' : 'Update'} Inventory
-                    <IoArrowForwardOutline />
+                <button onClick={handleSubmit} className="flex items-center justify-end text-sm">
+                    <div className="flex bg-black rounded-full text-white items-center px-4 h-8">
+                        {isAddInventory ? 'Submit' : 'Update'} Inventory
+                        <IoArrowForwardOutline />
+                    </div>
                 </button>
                 <h2 className="col-span-2 font-bold text-lg text-action-yellow text-center">
                     {isAddInventory ? 'Add' : 'Edit'} Inventory

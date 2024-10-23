@@ -17,22 +17,25 @@ export default function ManagementViewInventory() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log("Show Loading in View Inv");
                 showLoading();
                 const response = await axiosInstance.get('/management/getAllInventory');
-                
+
                 setInventory(response.data.map(inventoryItem => {
-                    return {...inventoryItem,
+                    return {
+                        ...inventoryItem,
                         price: numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryItem.price),
                         mileage: (milageFormatter().format(inventoryItem.mileage).toString() + ' mi'),
                     }
                 }));
-                setError({isError: false});
+                setError({ isError: false });
             } catch (error) {
                 setError({ isError: true, errorMessage: "Failed to Load Inventory, Please Try Again." });
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
             } finally {
+                console.log("Hide Loading in View Inv");
                 hideLoading();
             }
         };
@@ -105,28 +108,29 @@ export default function ManagementViewInventory() {
         []
     );
 
-    if (!isLoading) {
-        return (
-            <>
-                {/* Header */}
-                <div className="p-3">
-                    <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
-                        <IoArrowBackOutline />
-                        <p>Back to Admin Options</p>
-                    </Link>
-                    <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
-                        View Inventory
-                    </h1>
-                </div>
-                {isError.isError ?
-                    <div className="px-8 pb-2">
-                        <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
-                    </div> : null
-                }
+    return (
+        <>
+            {/* Header */}
+            <div className="p-3">
+                <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
+                    <IoArrowBackOutline />
+                    <p>Back to Admin Options</p>
+                </Link>
+                <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
+                    View Inventory
+                </h1>
+            </div>
+            {isError.isError ?
+                <div className="px-8 pb-2">
+                    <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                </div> : null
+            }
+            {!isLoading ?
                 <div className="container mx-auto px-2 overflow-x-scroll">
                     <Table columns={columns} data={inventory} deleteFunction={handleDeleteClick} />
-                </div>
-            </>
-        );
-    }
+                </div> : null
+            }
+        </>
+    );
+
 }

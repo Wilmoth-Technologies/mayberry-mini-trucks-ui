@@ -1,9 +1,11 @@
 // axiosConfig.js
 import axios from 'axios';
 
+//Local Backend URL: http://localhost:9000
+
 const axiosInstance = axios.create({
   baseURL: 'https://mayberry-mini-trucks-api.dev.kubernetes-wilmoth.com',
-  timeout: 10000, //10 Second Request Timeout
+  timeout: 30000, //30 Second Request Timeout
   headers: {
     'Content-Type': 'application/json',
   },
