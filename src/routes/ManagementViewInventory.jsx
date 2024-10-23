@@ -16,6 +16,8 @@ export default function ManagementViewInventory() {
 
     useEffect(() => {
         showLoading();
+        console.log(showLoading);
+        console.log(showLoading());
 
         const fetchData = async () => {
             try {
