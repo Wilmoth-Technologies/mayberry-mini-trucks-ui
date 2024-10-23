@@ -38,77 +38,69 @@ const router = createBrowserRouter([
         element: <InventoryDetailed />,
         errorElement: <ErrorPage />,
       },
-            //Un-Comment in Local
-      {
-        path: "/management",
-        element: (
-          <Management />
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "/management/add",
-        element: (
-          <ManagementAddInventory />
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "/management/view",
-        element: (
-          <ManagementViewInventory />
-        ),
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "/management/edit/:vin",
-        element: (
-          <ManagementEditInventory />
-        ),
-        errorElement: <ErrorPage />,
-      },
-
-      //Start Comment in Local
+      //Un-Comment in Local
       // {
       //   path: "/management",
       //   element: (
-      //     <ProtectedRoute requiredScopes={['manage:inventory']}>
-      //       <Management />
-      //     </ProtectedRoute>),
+      //     <Management />
+      //   ),
       //   errorElement: <ErrorPage />,
       // },
       // {
       //   path: "/management/add",
       //   element: (
-      //     <ProtectedRoute requiredScopes={['manage:inventory']}>
-      //       <ManagementAddInventory />
-      //     </ProtectedRoute>),
+      //     <ManagementAddInventory />
+      //   ),
       //   errorElement: <ErrorPage />,
       // },
       // {
       //   path: "/management/view",
       //   element: (
-      //     <ProtectedRoute requiredScopes={['manage:inventory']}>
-      //       <ManagementViewInventory />
-      //     </ProtectedRoute>),
-      //   errorElement: <ErrorPage />,
-      // },
-      // {
-      //   path: "/management/add/:vin",
-      //   element: (
-      //     <ProtectedRoute requiredScopes={['manage:inventory']}>
-      //       <ManagementAddInventoryPreview />
-      //     </ProtectedRoute>),
+      //     <ManagementViewInventory />
+      //   ),
       //   errorElement: <ErrorPage />,
       // },
       // {
       //   path: "/management/edit/:vin",
       //   element: (
-      //     <ProtectedRoute requiredScopes={['manage:inventory']}>
-      //       <ManagementEditInventoryPreview />
-      //     </ProtectedRoute>),
+      //     <ManagementEditInventory />
+      //   ),
       //   errorElement: <ErrorPage />,
       // },
+
+      //Start Comment in Local
+      {
+        path: "/management",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <Management />
+          </ProtectedRoute>),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/management/add",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementAddInventory />
+          </ProtectedRoute>),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/management/view",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementViewInventory />
+          </ProtectedRoute>),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/management/edit/:vin",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementEditInventory />
+          </ProtectedRoute>),
+        errorElement: <ErrorPage />,
+      },
       //End Comment in Local
       {
         path: "/unauthorized",
@@ -123,7 +115,7 @@ const router = createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  // <StrictMode>
+  <StrictMode>
     <LoadingProvider>
       <Auth0Provider
         domain="auth.mayberry-mini-trucks-ui.dev.kubernetes-wilmoth.com"
@@ -141,5 +133,5 @@ createRoot(document.getElementById('root')).render(
         <Footer />
       </Auth0Provider>
     </LoadingProvider>
-  // </StrictMode>,
+  </StrictMode>,
 )
