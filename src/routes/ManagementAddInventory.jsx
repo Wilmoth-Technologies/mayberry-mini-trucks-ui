@@ -19,9 +19,9 @@ export default function ManagementAddInventory() {
     const [isPreviewRendered, setPreviewRendered] = useState(false);
 
     useEffect(() => {
+        showLoading();
         const fetchData = async () => {
             try {
-                showLoading();
                 const response = await axiosInstance.get('/management/getAllVin');
                 setExistingVins(response.data);
                 setError({ isError: false });

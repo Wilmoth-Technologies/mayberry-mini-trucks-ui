@@ -15,12 +15,12 @@ export default function ManagementViewInventory() {
     const [isDeleteApiTriggered, setDeleteApiTrigger] = useState("");
 
     useEffect(() => {
+        showLoading();
+
         const fetchData = async () => {
             try {
                 console.log("Show Loading in View Inv");
-                showLoading();
                 const response = await axiosInstance.get('/management/getAllInventory');
-
                 setInventory(response.data.map(inventoryItem => {
                     return {
                         ...inventoryItem,
