@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FileInput, Label, Button } from "flowbite-react";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
@@ -8,9 +8,11 @@ import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
 
 //TODO: Need to add in functionality that allows for Description Templating....
-export default function ManagementAddInventory() {
+export default function ManagementEditInventory() {
+    const { vin } = useParams();
     const { showLoading, hideLoading, isLoading } = useLoading();
-    const [existingVins, setExistingVins] = useState([]);
+    const [existingInventoryData, setExistingInventoryData] = useState([]);
+    const [areImagesUpdated, setAreImagesUpdated] = useState(false);
     const [selectedMakeModel, setSelectedMakeModel] = useState({ make: "", model: "" });
     const [isOtherMakeModelSelected, setOtherMakeModelSelected] = useState(false);
     const [otherMakeValue, setOtherMakeValue] = useState("");
@@ -22,11 +24,65 @@ export default function ManagementAddInventory() {
         const fetchData = async () => {
             try {
                 showLoading();
-                const response = await axiosInstance.get('/management/getAllVin');
-                setExistingVins(response.data);
+                const response = await axiosInstance.get('/management/getInventoryItem', { params: { vin: vin } });
+                setExistingInventoryData(response.data);
+                const inventoryResponse = response.data[0];
+
+                //Setting Make & Model Data
+                const makeList = ["Subaru", "Suzuki", "Honda", "Mitsubishi", "Daihatsu"];
+                const modelList = ["Sambar", "Carry", "Acty", "Minicab", "Hijet"];
+                if (makeList.includes(inventoryResponse.make) && modelList.includes(inventoryResponse.model)) {
+                    setSelectedMakeModel({ make: inventoryResponse.make, model: inventoryResponse.model });
+                } else { //Other Make & Model is Selected
+                    setOtherMakeModelSelected(true);
+                    setOtherMakeValue(inventoryResponse.make);
+                    setOtherModelValue(inventoryResponse.model);
+                }
+
+                //Setting Input Field Data
+                setFormValues({
+                    make: inventoryResponse.make,
+                    model: inventoryResponse.model,
+                    year: inventoryResponse.year,
+                    exteriorColor: inventoryResponse.exteriorColor,
+                    interiorColor: inventoryResponse.interiorColor,
+                    vin: inventoryResponse.vin,
+                    shipmentNumber: inventoryResponse.shipmentNumber,
+                    stockNumber: inventoryResponse.stockNumber,
+                    mileage: inventoryResponse.mileage,
+                    transmission: inventoryResponse.transmission,
+                    engine: inventoryResponse.engine,
+                    price: inventoryResponse.price,
+                    description: inventoryResponse.description,
+                    purchaseDate: inventoryResponse.purchaseDate,
+                });
+
+                //Setting CheckBox Data
+                inventoryResponse?.options?.map(option => {
+                    setSelectedOptions((prevCheckboxes) => ({
+                        ...prevCheckboxes,
+                        [option.option]: true
+                    }));
+                });
+
+                //TODO: Take care of Error Handling here....
+                const { data } = await axiosInstance.get('/management/getInventoryPhotos', { params: { vin: vin } });
+                const imageObjects = data.map((img, index) => {
+                    // Convert binary data back into a Blob for preview
+                    const byteCharacters = img.binaryData.map(b => String.fromCharCode(parseInt(b, 10))).join('');
+                    const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: img.contentType });
+                    const file = new File([blob], `image-${index}`, { type: img.contentType });
+                    const preview = URL.createObjectURL(blob);
+
+                    return {file, preview};
+                });
+                setSelectedFiles((prevFiles) => [...prevFiles, ...imageObjects]);
+
                 setError({ isError: false });
             } catch (error) {
-                setError({ isError: true, errorMessage: "Failed to Load Existing Vin Numbers, Please Try Again." });
+                setError({ isError: true, errorMessage: "Failed to Load Existing Inventory Data, Please Try Again." });
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -108,10 +164,6 @@ export default function ManagementAddInventory() {
                 break;
             case 'interiorColor':
                 if (!value) error = 'Interior color is required';
-                break;
-            case 'vin':
-                if (!value) error = 'VIN is required';
-                else if (existingVins.includes(value)) error = "VIN already exists in the system. Please enter a new VIN"
                 break;
             case 'shipmentNumber':
                 if (!value) error = 'Shipment number is required';
@@ -251,6 +303,7 @@ export default function ManagementAddInventory() {
 
     // Handle file selection and generate previews
     const handleFileChange = (e) => {
+        setAreImagesUpdated(true);
         const files = Array.from(e.target.files); // Convert FileList to array
         const filesWithPreviews = files.map((file) => {
             const preview = URL.createObjectURL(file); // Create preview URL for each file
@@ -261,6 +314,7 @@ export default function ManagementAddInventory() {
 
     // Remove a selected file
     const handleRemove = (index) => {
+        setAreImagesUpdated(true);
         setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index)); // Remove file at the given index
     };
 
@@ -271,12 +325,12 @@ export default function ManagementAddInventory() {
                     <form onSubmit={handleSubmit}>
                         {/* Header */}
                         <div className="p-3">
-                            <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
+                            <Link to={'/management/view'} className="hidden md:flex items-center md:col-span-2 -mb-9">
                                 <IoArrowBackOutline />
-                                <p>Back to Admin Options</p>
+                                <p>Back to View Inventory</p>
                             </Link>
                             <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
-                                Add Inventory
+                                Edit Inventory
                             </h1>
                         </div>
                         {isError.isError ?
@@ -324,6 +378,8 @@ export default function ManagementAddInventory() {
                                         <div className="flex flex-col" key={index}>
                                             <div className="flex gap-2">
                                                 <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
+                                                {field === "vin" ? <p className="text-gray-400">Note: Field is Disabled in Edit Mode</p> : null}
+
                                                 {validationErrors[field] && <p style={{ color: 'red' }}>{validationErrors[field]}</p>}
                                             </div>
                                             <input
@@ -331,6 +387,7 @@ export default function ManagementAddInventory() {
                                                 placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + '*'}
                                                 type="text"
                                                 name={field}
+                                                disabled={field === "vin"}
                                                 value={formValues[field]}
                                                 onChange={handleInputChange}
                                             />
@@ -439,7 +496,7 @@ export default function ManagementAddInventory() {
                             </button>
                         </div>
                     </form> :
-                    <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} />
+                    <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} isAddInventory={false} areImagesUpdated={areImagesUpdated} existingInventoryData={existingInventoryData}/>
                 }
             </>
         );

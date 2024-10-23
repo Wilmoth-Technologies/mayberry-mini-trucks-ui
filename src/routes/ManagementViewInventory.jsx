@@ -1,39 +1,60 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Table from "../shared/components/datatable/Table";
-
+import axiosInstance from "../shared/AxiosConfig";
+import { useLoading } from "../shared/providers/Loading";
+import { ErrorAlert } from "../shared/components/ErrorAlert";
+import { CURRENCY_FORMAT_STYLE } from "../shared/AppConstants";
+import { numberFormatter, milageFormatter } from "../shared/AppFunctions";
 
 export default function ManagementViewInventory() {
+    const { showLoading, hideLoading, isLoading } = useLoading();
+    const [inventory, setInventory] = useState([]);
+    const [isError, setError] = useState({ isError: false, errorMessage: "" });
+    const [isDeleteApiTriggered, setDeleteApiTrigger] = useState("");
 
-    const data = useMemo(
-        () => [
-            { vin: "JHMSZ742XDC128218", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821a", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821d", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821f", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821g", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821w", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821b", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821v", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821x", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821z", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821i", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821o", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821l", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742XDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ742Xkj12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ74213DC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ74asXDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ2kaDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ741XDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ242XDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZiyuqwe2821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "JHMSZ879uo12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-            { vin: "Jbdy1ih42XDC12821m", shipmentNumber: "ABC-123", stockNumber: "AARR-1234", purchaseDate: "08/26/2024", make: "Suzuki", model: "Carry", year: "1991", price: "$6,800", mileage: "31,598 Mi", actions: "action" },
-        ],
-        []
-    );
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                showLoading();
+                const response = await axiosInstance.get('/management/getAllInventory');
+                
+                setInventory(response.data.map(inventoryItem => {
+                    return {...inventoryItem,
+                        price: numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryItem.price),
+                        mileage: (milageFormatter().format(inventoryItem.mileage).toString() + ' mi'),
+                    }
+                }));
+                setError({isError: false});
+            } catch (error) {
+                setError({ isError: true, errorMessage: "Failed to Load Inventory, Please Try Again." });
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                hideLoading();
+            }
+        };
+
+        fetchData();
+    }, [isDeleteApiTriggered]);
+
+    const handleDeleteClick = async (vin) => {
+        try {
+            showLoading();
+            await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin } });
+            setError({ isError: false })
+        } catch (error) {
+            setError({ isError: true, errorMessage: "Failed to Delete Inventory, Please Try Again." })
+            console.error(error.response
+                ? error.response.data.message
+                : error.message)
+        } finally {
+            setDeleteApiTrigger(vin);
+            hideLoading();
+        }
+    }
 
     const columns = useMemo(
         () => [
@@ -84,21 +105,28 @@ export default function ManagementViewInventory() {
         []
     );
 
-    return (
-        <>
-            {/* Header */}
-            <div className="p-3">
-                <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
-                    <IoArrowBackOutline />
-                    <p>Back to Admin Options</p>
-                </Link>
-                <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
-                    View Inventory
-                </h1>
-            </div>
-            <div className="container mx-auto px-2 overflow-x-scroll">
-                <Table columns={columns} data={data} />
-            </div>
-        </>
-    );
+    if (!isLoading) {
+        return (
+            <>
+                {/* Header */}
+                <div className="p-3">
+                    <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
+                        <IoArrowBackOutline />
+                        <p>Back to Admin Options</p>
+                    </Link>
+                    <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
+                        View Inventory
+                    </h1>
+                </div>
+                {isError.isError ?
+                    <div className="px-8 pb-2">
+                        <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                    </div> : null
+                }
+                <div className="container mx-auto px-2 overflow-x-scroll">
+                    <Table columns={columns} data={inventory} deleteFunction={handleDeleteClick} />
+                </div>
+            </>
+        );
+    }
 }

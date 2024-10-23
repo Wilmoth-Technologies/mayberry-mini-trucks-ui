@@ -7,7 +7,7 @@ import { GlobalFilter } from "./GlobalFilter";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-export default function Table({ columns, data }) {
+export default function Table({ columns, data, deleteFunction }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -97,7 +97,7 @@ export default function Table({ columns, data }) {
                                                     <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
                                                         <MdOutlineEdit />
                                                     </Link>
-                                                    <button className="px-2 text-2xl">
+                                                    <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
                                                         <IoTrashOutline />
                                                     </button>
                                                 </div>

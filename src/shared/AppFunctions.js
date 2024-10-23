@@ -5,3 +5,9 @@ export const numberFormatter = (formatStyle, maxDecimalPlaces = 0) => {
         maximumFractionDigits: maxDecimalPlaces,
     });
 };
+
+export const milageFormatter = (maxDecimalPlaces = 0) => {
+    return new Intl.NumberFormat('en-US', {
+        maximumFractionDigits: maxDecimalPlaces
+    });
+}

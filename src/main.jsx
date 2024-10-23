@@ -17,8 +17,7 @@ import { LoadingProvider } from './shared/providers/Loading.jsx';
 import ScrollToTop from './shared/components/ScrollToTop.jsx';
 import ManagementAddInventory from './routes/ManagementAddInventory.jsx';
 import ManagementViewInventory from './routes/ManagementViewInventory.jsx';
-import ManagementAddInventoryPreview from './routes/ManagementAddInventoryPreview.jsx';
-import ManagementEditInventoryPreview from './routes/ManagementEditInventoryPreview.jsx';
+import ManagementEditInventory from './routes/ManagementEditInventory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -39,7 +38,7 @@ const router = createBrowserRouter([
         element: <InventoryDetailed />,
         errorElement: <ErrorPage />,
       },
-            //Un-Comment in Local
+      //Un-Comment in Local
       // {
       //   path: "/management",
       //   element: (
@@ -62,16 +61,9 @@ const router = createBrowserRouter([
       //   errorElement: <ErrorPage />,
       // },
       // {
-      //   path: "/management/add/:vin",
-      //   element: (
-      //     <ManagementAddInventoryPreview />
-      //   ),
-      //   errorElement: <ErrorPage />,
-      // },
-      // {
       //   path: "/management/edit/:vin",
       //   element: (
-      //     <ManagementEditInventoryPreview />
+      //     <ManagementEditInventory />
       //   ),
       //   errorElement: <ErrorPage />,
       // },
@@ -102,18 +94,10 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
       },
       {
-        path: "/management/add/:vin",
-        element: (
-          <ProtectedRoute requiredScopes={['manage:inventory']}>
-            <ManagementAddInventoryPreview />
-          </ProtectedRoute>),
-        errorElement: <ErrorPage />,
-      },
-      {
         path: "/management/edit/:vin",
         element: (
           <ProtectedRoute requiredScopes={['manage:inventory']}>
-            <ManagementEditInventoryPreview />
+            <ManagementEditInventory />
           </ProtectedRoute>),
         errorElement: <ErrorPage />,
       },
