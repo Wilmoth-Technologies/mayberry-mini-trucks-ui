@@ -17,7 +17,7 @@ export default function InventoryDetailed() {
         "mileage": 56000,
         "titleInHand": true,
         "status": "Pending Sale",
-        "embededVideoLink": 'https://www.youtube.com/embed/LNexeDFW7j0?si=7uCFxfHtmtzkrszr'
+        "embeddedVideoLink": 'https://www.youtube.com/embed/LNexeDFW7j0?si=7uCFxfHtmtzkrszr'
     };
 
     const updateCharCounter = (event) => {
@@ -127,10 +127,10 @@ export default function InventoryDetailed() {
             <p className="md:col-span-2">Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. The NCDMV special titles department requires 8 to 10 weeks to process a title. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible.
                 While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.</p>
 
-            {'embededVideoLink' in props ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
+            {'embeddedVideoLink' in props ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
                 <iframe
                     className="absolute top-0 left-0 w-full h-full"
-                    src={props.embededVideoLink}
+                    src={props.embeddedVideoLink}
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

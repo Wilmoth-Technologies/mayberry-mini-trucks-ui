@@ -230,10 +230,10 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
             <p className="text-xl font-semibold md:col-span-2">Description</p>
             <p className="md:col-span-2">{formValues.description}</p>
 
-            {'embededVideoLink' in formValues && !isStringEmpty(formValues.embededVideoLink) ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
+            {'embeddedVideoLink' in formValues && !isStringEmpty(formValues.embeddedVideoLink) ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
                 <iframe
                     className="absolute top-0 left-0 w-full h-full"
-                    src={formValues.embededVideoLink}
+                    src={formValues.embeddedVideoLink}
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

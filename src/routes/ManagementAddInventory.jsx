@@ -56,7 +56,7 @@ export default function ManagementAddInventory() {
         purchaseDate: '',
         titleInHand: false,
         status: 'In Stock',
-        embededVideoLink: '',
+        embeddedVideoLink: '',
     });
 
     const [selectedOptions, setSelectedOptions] = useState({
@@ -146,7 +146,7 @@ export default function ManagementAddInventory() {
                     error = 'Purchase date must be in mm/dd/yyyy format';
                 }
                 break;
-            case 'embededVideoLink':
+            case 'embeddedVideoLink':
                 if (!value) error;
                 else if (!value.includes('embed')) error = 'Video Links Must be \'Embed\' Links';
                 break;
@@ -351,7 +351,7 @@ export default function ManagementAddInventory() {
                                             </div>
                                             <input
                                                 className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embededVideoLink' ? '' : '*')}
+                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embeddedVideoLink' ? '' : '*')}
                                                 type="text"
                                                 name={field}
                                                 value={formValues[field]}
