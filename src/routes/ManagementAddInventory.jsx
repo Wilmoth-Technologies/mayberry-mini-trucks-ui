@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { FileInput, Label, Button } from "flowbite-react";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
-import { useLoading } from "../shared/providers/Loading";
 import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
+import { isStringEmpty, milageFormatter } from "../shared/AppFunctions";
+import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 
 //TODO: Need to add in functionality that allows for Description Templating....
 export default function ManagementAddInventory() {
-    const { showLoading, hideLoading, isLoading } = useLoading();
     const [existingVins, setExistingVins] = useState([]);
     const [selectedMakeModel, setSelectedMakeModel] = useState({ make: "", model: "" });
     const [isOtherMakeModelSelected, setOtherMakeModelSelected] = useState(false);
@@ -17,11 +17,13 @@ export default function ManagementAddInventory() {
     const [otherModelValue, setOtherModelValue] = useState("");
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isPreviewRendered, setPreviewRendered] = useState(false);
+    const [isLoading, setLoading] = useState(false);
+    const [isDescriptionModified, setDescriptionModified] = useState(false);
 
     useEffect(() => {
-        showLoading();
         const fetchData = async () => {
             try {
+                setLoading(true);
                 const response = await axiosInstance.get('/management/getAllVin');
                 setExistingVins(response.data);
                 setError({ isError: false });
@@ -31,7 +33,7 @@ export default function ManagementAddInventory() {
                     ? error.response.data.message
                     : error.message)
             } finally {
-                hideLoading();
+                setLoading(false);
             }
         };
 
@@ -88,6 +90,7 @@ export default function ManagementAddInventory() {
 
     // State to store the selected files and previews
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [primaryImageIndex, setPrimaryImageIndex] = useState(0); // Track the primary image by its index
 
     // State to hold validation errors
     const [validationErrors, setValidationErrors] = useState({});
@@ -165,20 +168,54 @@ export default function ManagementAddInventory() {
             setOtherModelValue(value);
         }
 
-        // Update form values
-        setFormValues({ ...formValues, [name]: value });
+        if (!isDescriptionModified) {
+            // Create the updated form values object before setting it
+            const updatedFormValues = { ...formValues, [name]: value };
+
+            // Dynamically generate the description based on form values
+            const newDescription = updateDescription(updatedFormValues);
+
+            // Update form values with the new description
+            setFormValues({ ...updatedFormValues, description: newDescription });
+        } else {
+            setFormValues({ ...formValues, [name]: value });
+        }
 
         // Validate the field and set the error if any
         const error = validateField(name, value);
         setValidationErrors({ ...validationErrors, [name]: error });
+
+        if (isStringEmpty(error)) {
+            setError({ isError: false });
+        }
     };
+
+    // Function to dynamically generate the description
+    const updateDescription = (values) => {
+        const { make, model, mileage } = values;
+        // Insert values into the description template
+        return `This ${make} ${model} is a Street Legal Vehicle. The vehicle has ${isStringEmpty(mileage) ? '{mileage}' : milageFormatter().format(mileage).toString()} miles, is in great condition and works well! It has been completely serviced with full synthetic fluids, oil filter, and an air filter. We have strict guidelines for purchasing in Japan, so the vehicles that we sell are tight and ready for many years of reliable performance. Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. The NCDMV special titles department requires 8 to 10 weeks to process a title. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible. While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.`;
+    };
+
+
 
     const handleMakeAndModelChange = (make, model) => {
         setOtherMakeModelSelected(false);
         setOtherMakeValue('');
         setOtherModelValue('');
 
-        setFormValues({ ...formValues, make: make, model: model });
+        if (!isDescriptionModified) {
+            // Create the updated form values object before setting it
+            const updatedFormValues = { ...formValues, make: make, model: model };
+
+            // Dynamically generate the description based on form values
+            const newDescription = updateDescription(updatedFormValues);
+
+            // Update form values with the new description
+            setFormValues({ ...updatedFormValues, description: newDescription });
+        } else {
+            setFormValues({ ...formValues, make: make, model: model });
+        }
         setSelectedMakeModel({ make: make, model: model })
 
         const modelError = validateField('model', model);
@@ -272,213 +309,242 @@ export default function ManagementAddInventory() {
 
     // Remove a selected file
     const handleRemove = (index) => {
-        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index)); // Remove file at the given index
+        const updatedImages = selectedFiles.filter((_, i) => i !== index); // Remove image from list
+        setSelectedFiles(updatedImages);
+        if (index === primaryImageIndex) setPrimaryImageIndex(null); // Reset primary if the removed image was primary
+        else if (index < primaryImageIndex) setPrimaryImageIndex(primaryImageIndex - 1); // Adjust primary if needed
     };
 
-    if (!isLoading) {
-        return (
-            <>
-                {!isPreviewRendered ?
-                    <form onSubmit={handleSubmit}>
-                        {/* Header */}
-                        <div className="p-3">
-                            <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
-                                <IoArrowBackOutline />
-                                <p>Back to Admin Options</p>
-                            </Link>
-                            <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
-                                Add Inventory
-                            </h1>
+    const handleSetPrimary = (index) => {
+        const updatedFiles = [...selectedFiles]; // Copy the current images array
+
+        // Remove the selected image from its current position
+        const [primaryImage] = updatedFiles.splice(index, 1);
+
+        // Insert the selected image at the first position
+        updatedFiles.unshift(primaryImage);
+
+        // Update the state with the new image order
+        setSelectedFiles(updatedFiles);
+
+        // Update primaryImageIndex to 0, since the primary is now first
+        setPrimaryImageIndex(0);
+    };
+
+
+    return (
+        <>
+            {isLoading ? <LoadingNonProvider /> : null}
+            {!isPreviewRendered ?
+                <form onSubmit={handleSubmit}>
+                    {/* Header */}
+                    <div className="p-3">
+                        <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
+                            <IoArrowBackOutline />
+                            <p>Back to Admin Options</p>
+                        </Link>
+                        <h1 className="text-center text-2xl border-b-2 font-semibold pt-2 mx-6">
+                            Add Inventory
+                        </h1>
+                    </div>
+                    {isError.isError ?
+                        <div className="px-3">
+                            <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                        </div> : null
+                    }
+                    {/* Make & Model */}
+                    <div className="grid grid-cols-2 gap-4 md:gap-2 lg:gap-4 p-4 items-center text-center md:grid-cols-6">
+                        <div className="flex col-span-2 md:col-span-6 gap-2 items-center">
+                            <h2 className="font-medium text-xl">Make & Model</h2>
+                            {(validationErrors['make'] || validationErrors['model']) && <p style={{ color: 'red' }}>{validationErrors['make'] || validationErrors['model']}</p>}
                         </div>
-                        {isError.isError ?
-                            <div className="px-3">
-                                <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
-                            </div> : null
+                        <img id="subaru" className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Subaru" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Subaru.png" onClick={() => handleMakeAndModelChange("Subaru", "Sambar")} />
+                        <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Suzuki" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Suzuki.png" onClick={() => handleMakeAndModelChange("Suzuki", "Carry")} />
+                        <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Honda" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Honda.png" onClick={() => handleMakeAndModelChange("Honda", "Acty")} />
+                        <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Mitsubishi" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Mitsubishi.png" onClick={() => handleMakeAndModelChange("Mitsubishi", "Minicab")} />
+                        <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Daihatsu" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Daihatsu.png" onClick={() => handleMakeAndModelChange("Daihatsu", "Hijet")} />
+                        <div className={"flex flex-col items-center gap-y-2 " + (isOtherMakeModelSelected ? 'border-action-yellow border-2 rounded-md' : '')} onClick={() => handleOtherMakeAndModelChange()}>
+                            <h2 className="text-lg font-medium">Other:</h2>
+                            <label className="grid grid-cols-1 gap-2 px-2 pb-2">
+                                <input
+                                    className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="Make"
+                                    type="text"
+                                    name="make"
+                                    value={otherMakeValue}
+                                    onChange={handleInputChange} />
+                                <input
+                                    className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="Model"
+                                    type="text"
+                                    name="model"
+                                    value={otherModelValue}
+                                    onChange={handleInputChange} />
+                            </label>
+                        </div>
+                    </div>
+                    {/* Details */}
+                    <div className="grid grid-cols-2 gap-2 items-center p-4">
+                        <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
+                        <div className="col-span-2 flex flex-col justify-center">
+                            <label>
+                                <input
+                                    className="accent-black rounded-sm mr-1"
+                                    type="checkbox"
+                                    name="titleInHand"
+                                    checked={formValues['titleInHand']}
+                                    onChange={handleCheckboxChange}
+                                />
+                                Title in Hand
+                            </label>
+                        </div>
+                        {
+                            Object.keys(formValues).map((field, index) => (
+                                field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :
+                                    <div className="flex flex-col" key={index}>
+                                        <div className="flex gap-2">
+                                            <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
+                                            {validationErrors[field] && <p style={{ color: 'red' }}>{validationErrors[field]}</p>}
+                                        </div>
+                                        <input
+                                            className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                            placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embeddedVideoLink' ? '' : '*')}
+                                            type="text"
+                                            name={field}
+                                            value={formValues[field]}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                            ))
                         }
-                        {/* Make & Model */}
-                        <div className="grid grid-cols-2 gap-4 md:gap-2 lg:gap-4 p-4 items-center text-center md:grid-cols-6">
-                            <div className="flex col-span-2 md:col-span-6 gap-2 items-center">
-                                <h2 className="font-medium text-xl">Make & Model</h2>
-                                {(validationErrors['make'] || validationErrors['model']) && <p style={{ color: 'red' }}>{validationErrors['make'] || validationErrors['model']}</p>}
-                            </div>
-                            <img id="subaru" className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Subaru" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Subaru.png" onClick={() => handleMakeAndModelChange("Subaru", "Sambar")} />
-                            <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Suzuki" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Suzuki.png" onClick={() => handleMakeAndModelChange("Suzuki", "Carry")} />
-                            <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Honda" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Honda.png" onClick={() => handleMakeAndModelChange("Honda", "Acty")} />
-                            <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Mitsubishi" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Mitsubishi.png" onClick={() => handleMakeAndModelChange("Mitsubishi", "Minicab")} />
-                            <img className={"h-[130px] w-[160px] " + (selectedMakeModel.make == "Daihatsu" ? 'border-action-yellow border-2 rounded-md' : '')} src="/Daihatsu.png" onClick={() => handleMakeAndModelChange("Daihatsu", "Hijet")} />
-                            <div className={"flex flex-col items-center gap-y-2 " + (isOtherMakeModelSelected ? 'border-action-yellow border-2 rounded-md' : '')} onClick={() => handleOtherMakeAndModelChange()}>
-                                <h2 className="text-lg font-medium">Other:</h2>
-                                <label className="grid grid-cols-1 gap-2 px-2 pb-2">
-                                    <input
-                                        className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                        placeholder="Make"
-                                        type="text"
-                                        name="make"
-                                        value={otherMakeValue}
-                                        onChange={handleInputChange} />
-                                    <input
-                                        className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                        placeholder="Model"
-                                        type="text"
-                                        name="model"
-                                        value={otherModelValue}
-                                        onChange={handleInputChange} />
-                                </label>
-                            </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="status">Status</label>
+                            <select
+                                className="bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                name="status"
+                                id="status"
+                                value={formValues.status}
+                                onChange={handleInputChange}
+                            >
+                                <option value="In Stock">In Stock</option>
+                                <option value="Pending Sale">Pending Sale</option>
+                                <option value="Sold">Sold</option>
+                            </select>
                         </div>
-                        {/* Details */}
-                        <div className="grid grid-cols-2 gap-2 items-center p-4">
-                            <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
-                            <div className="col-span-2 flex flex-col justify-center">
+                        <div className="col-span-2 flex flex-col">
+                            <div className="flex gap-2 items-center">
+                                <p className="text-lg">Description</p>
+                                {(validationErrors['description']) && <p style={{ color: 'red' }}>{validationErrors['description']}</p>}
+                            </div>
+                            <textarea
+                                className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y h-72"
+                                placeholder="Description*"
+                                type="text"
+                                required
+                                name="description"
+                                value={formValues['description']}
+                                onClick={() => setDescriptionModified(true)}
+                                onChange={handleInputChange} />
+                        </div>
+                    </div>
+                    {/* Options */}
+                    <div className="grid grid-cols-2 gap-2 items-center p-4 text-center md:grid-cols-6">
+                        <h2 className="col-span-2 font-medium text-xl md:col-span-6 md:text-left">Options</h2>
+                        {/* Render checkboxes dynamically */}
+                        {Object.keys(selectedOptions).map((checkbox, index) => (
+                            <div key={index} className="flex items-center text-center">
                                 <label>
                                     <input
                                         className="accent-black rounded-sm mr-1"
                                         type="checkbox"
-                                        name="titleInHand"
-                                        checked={formValues['titleInHand']}
+                                        name={checkbox}
+                                        checked={selectedOptions[checkbox]}
                                         onChange={handleCheckboxChange}
                                     />
-                                    Title in Hand
+                                    {checkbox.replace('checkbox', 'Option ')}
                                 </label>
                             </div>
-                            {
-                                Object.keys(formValues).map((field, index) => (
-                                    field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :
-                                        <div className="flex flex-col" key={index}>
-                                            <div className="flex gap-2">
-                                                <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
-                                                {validationErrors[field] && <p style={{ color: 'red' }}>{validationErrors[field]}</p>}
-                                            </div>
-                                            <input
-                                                className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embeddedVideoLink' ? '' : '*')}
-                                                type="text"
-                                                name={field}
-                                                value={formValues[field]}
-                                                onChange={handleInputChange}
-                                            />
-                                        </div>
-                                ))
-                            }
-                            <div className="flex flex-col">
-                                <label htmlFor="status">Status</label>
-                                <select
-                                    className="bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                    name="status"
-                                    id="status"
-                                    value={formValues.status}
-                                    onChange={handleInputChange}
-                                >
-                                    <option value="In Stock">In Stock</option>
-                                    <option value="Pending Sale">Pending Sale</option>
-                                    <option value="Sold">Sold</option>
-                                </select>
-                            </div>
-                            <div className="col-span-2 flex flex-col">
-                                <div className="flex gap-2 items-center">
-                                    <p className="text-lg">Description</p>
-                                    {(validationErrors['description']) && <p style={{ color: 'red' }}>{validationErrors['description']}</p>}
-                                </div>
-                                <textarea
-                                    className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y h-72"
-                                    placeholder="Description*"
-                                    type="text"
-                                    required
-                                    name="description"
-                                    value={formValues['description']}
-                                    onChange={handleInputChange} />
-                            </div>
-                        </div>
-                        {/* Options */}
-                        <div className="grid grid-cols-2 gap-2 items-center p-4 text-center md:grid-cols-6">
-                            <h2 className="col-span-2 font-medium text-xl md:col-span-6 md:text-left">Options</h2>
-                            {/* Render checkboxes dynamically */}
-                            {Object.keys(selectedOptions).map((checkbox, index) => (
-                                <div key={index} className="flex items-center text-center">
-                                    <label>
-                                        <input
-                                            className="accent-black rounded-sm mr-1"
-                                            type="checkbox"
-                                            name={checkbox}
-                                            checked={selectedOptions[checkbox]}
-                                            onChange={handleCheckboxChange}
+                        ))}
+                    </div>
+                    {/* Photos */}
+                    <div className="grid grid-cols-1 gap-2 items-center p-4 text-center">
+                        <h2 className="font-medium text-xl md:text-left">Photos</h2>
+                        <div className="flex w-full items-center justify-center">
+                            <Label
+                                htmlFor="dropzone-file"
+                                className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                            >
+                                <div className="flex flex-col items-center justify-center pb-6 pt-5">
+                                    <svg
+                                        className="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 16"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                                         />
-                                        {checkbox.replace('checkbox', 'Option ')}
-                                    </label>
+                                    </svg>
+                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span className="font-semibold">Click to upload</span>
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or JPEG</p>
                                 </div>
-                            ))}
+                                <FileInput
+                                    id="dropzone-file"
+                                    className="hidden"
+                                    multiple
+                                    accept="image/*"
+                                    onChange={handleFileChange} />
+                            </Label>
                         </div>
-                        {/* Photos */}
-                        <div className="grid grid-cols-1 gap-2 items-center p-4 text-center">
-                            <h2 className="font-medium text-xl md:text-left">Photos</h2>
-                            <div className="flex w-full items-center justify-center">
-                                <Label
-                                    htmlFor="dropzone-file"
-                                    className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                                >
-                                    <div className="flex flex-col items-center justify-center pb-6 pt-5">
-                                        <svg
-                                            className="mb-4 h-8 w-8 text-gray-500 dark:text-gray-400"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 20 16"
+                        {/* Display image previews */}
+                        {selectedFiles.length > 0 && (
+                            <div className="mt-4 grid grid-cols-3 gap-4">
+                                {selectedFiles.map((fileObj, index) => (
+                                    <div key={index} className="relative">
+                                        <img
+                                            src={fileObj.preview}
+                                            alt={`preview-${index}`}
+                                            className="h-full w-full object-cover rounded-lg"
+                                        />
+                                        {/* Primary Button */}
+                                        <button
+                                            id="primary"
+                                            type="button"
+                                            onClick={() => handleSetPrimary(index)}
+                                            className={"absolute top-0 left-0 m-1 px-2 py-1 rounded-md text-white " + (index === primaryImageIndex ? 'bg-action-yellow' : 'bg-gray-400')}
                                         >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                            />
-                                        </svg>
-                                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                            <span className="font-semibold">Click to upload</span>
-                                        </p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or JPEG</p>
+                                            {index === primaryImageIndex ? 'Primary ★' : 'Set as Primary'}
+                                        </button>
+                                        {/* Remove button overlay */}
+                                        <button
+                                            id="remove"
+                                            type="button"
+                                            onClick={() => handleRemove(index)}
+                                            className="absolute top-0 right-0 m-1 px-2 py-1 rounded-md bg-red-700 text-white"
+                                        >
+                                            Remove
+                                        </button>
                                     </div>
-                                    <FileInput
-                                        id="dropzone-file"
-                                        className="hidden"
-                                        multiple
-                                        accept="image/*"
-                                        onChange={handleFileChange} />
-                                </Label>
+                                ))}
                             </div>
-                            {/* Display image previews */}
-                            {selectedFiles.length > 0 && (
-                                <div className="mt-4 grid grid-cols-3 gap-4">
-                                    {selectedFiles.map((fileObj, index) => (
-                                        <div key={index} className="relative">
-                                            <img
-                                                src={fileObj.preview}
-                                                alt={`preview-${index}`}
-                                                className="h-full w-full object-cover rounded-lg"
-                                            />
-                                            {/* Remove button overlay */}
-                                            <Button
-                                                onClick={() => handleRemove(index)}
-                                                size="xs"
-                                                color="failure"
-                                                className="absolute top-0 right-0 m-1"
-                                            >
-                                                Remove
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        {/* Preview */}
-                        <div className="flex items-center justify-center pb-3">
-                            <button type="submit" disabled={isError.isError} className="bg-black disabled:bg-gray-400 disabled:line-through rounded-full text-white text-center items-center font-medium text-nowrap px-8 py-1">
-                                Preview
-                            </button>
-                        </div>
-                    </form> :
-                    <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} />
-                }
-            </>
-        );
-    }
+                        )}
+                    </div>
+                    {/* Preview */}
+                    <div className="flex items-center justify-center pb-3">
+                        <button type="submit" disabled={isError.isError} className="bg-black disabled:bg-gray-400 disabled:line-through rounded-full text-white text-center items-center font-medium text-nowrap px-8 py-1">
+                            Preview
+                        </button>
+                    </div>
+                </form> :
+                <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} />
+            }
+        </>
+    );
 }
