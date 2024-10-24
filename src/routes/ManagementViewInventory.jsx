@@ -3,31 +3,27 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Table from "../shared/components/datatable/Table";
 import axiosInstance from "../shared/AxiosConfig";
-import { useLoading } from "../shared/providers/Loading";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import { CURRENCY_FORMAT_STYLE } from "../shared/AppConstants";
 import { numberFormatter, milageFormatter } from "../shared/AppFunctions";
+import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 
 export default function ManagementViewInventory() {
-    const { showLoading, hideLoading, isLoading } = useLoading();
     const [fullInventory, setFullInventory] = useState([]);
     const [notSoldInventory, setNotSoldInventory] = useState([]);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isDeleteApiTriggered, setDeleteApiTrigger] = useState("");
     const [includeSoldInventory, setIncludeSoldInventory] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
     const handleSoldCheckBoxChange = (event) => {
         setIncludeSoldInventory(event.target.checked);
     };
 
     useEffect(() => {
-        showLoading();
-        console.log(showLoading);
-        console.log(showLoading());
-
         const fetchData = async () => {
             try {
-                console.log("Show Loading in View Inv");
+                setLoading(true);
                 const response = await axiosInstance.get('/management/getAllInventory');
                 setFullInventory(response.data.map(inventoryItem => {
                     return {
@@ -50,8 +46,7 @@ export default function ManagementViewInventory() {
                     ? error.response.data.message
                     : error.message)
             } finally {
-                console.log("Hide Loading in View Inv");
-                hideLoading();
+                setLoading(false);
             }
         };
 
@@ -60,7 +55,7 @@ export default function ManagementViewInventory() {
 
     const handleDeleteClick = async (vin) => {
         try {
-            showLoading();
+            setLoading(true);
             await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin } });
             setError({ isError: false })
         } catch (error) {
@@ -70,7 +65,7 @@ export default function ManagementViewInventory() {
                 : error.message)
         } finally {
             setDeleteApiTrigger(vin);
-            hideLoading();
+            setLoading(false);
         }
     }
 
@@ -129,6 +124,7 @@ export default function ManagementViewInventory() {
 
     return (
         <>
+            {isLoading ? <LoadingNonProvider /> : null}
             {/* Header */}
             <div className="p-3">
                 <Link to={'/management'} className="hidden md:flex items-center md:col-span-2 -mb-9">
