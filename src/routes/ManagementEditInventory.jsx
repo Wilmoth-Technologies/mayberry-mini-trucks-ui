@@ -6,6 +6,7 @@ import { ErrorAlert } from "../shared/components/ErrorAlert";
 import { useLoading } from "../shared/providers/Loading";
 import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
+import { isStringEmpty } from "../shared/AppFunctions";
 
 //TODO: Need to add in functionality that allows for Description Templating....
 export default function ManagementEditInventory() {
@@ -81,6 +82,7 @@ export default function ManagementEditInventory() {
 
                     return { file, preview };
                 });
+
                 setSelectedFiles((prevFiles) => [...prevFiles, ...imageObjects]);
 
                 setError({ isError: false });
@@ -147,6 +149,7 @@ export default function ManagementEditInventory() {
 
     // State to store the selected files and previews
     const [selectedFiles, setSelectedFiles] = useState([]);
+    const [primaryImageIndex, setPrimaryImageIndex] = useState(0); // Track the primary image by its index
 
     // State to hold validation errors
     const [validationErrors, setValidationErrors] = useState({});
@@ -226,6 +229,10 @@ export default function ManagementEditInventory() {
         // Validate the field and set the error if any
         const error = validateField(name, value);
         setValidationErrors({ ...validationErrors, [name]: error });
+
+        if(isStringEmpty(error)) {
+            setError({ isError: false });
+        }
     };
 
     const handleMakeAndModelChange = (make, model) => {
@@ -329,7 +336,28 @@ export default function ManagementEditInventory() {
     // Remove a selected file
     const handleRemove = (index) => {
         setAreImagesUpdated(true);
-        setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index)); // Remove file at the given index
+
+        const updatedImages = selectedFiles.filter((_, i) => i !== index); // Remove image from list
+        setSelectedFiles(updatedImages);
+        if (index === primaryImageIndex) setPrimaryImageIndex(0); // Reset primary if the removed image was primary
+        else if (index < primaryImageIndex) setPrimaryImageIndex(primaryImageIndex - 1); // Adjust primary if needed
+    };
+
+    const handleSetPrimary = (index) => {
+        setAreImagesUpdated(true);
+        const updatedFiles = [...selectedFiles]; // Copy the current images array
+
+        //Remove the selected image from its current position
+        const [primaryImage] = updatedFiles.splice(index, 1);
+
+        //Insert the selected image at the first position
+        updatedFiles.unshift(primaryImage);
+
+        //Update the state with the new image order
+        setSelectedFiles(updatedFiles);
+
+        //Update primaryImageIndex to 0, since the primary is now first
+        setPrimaryImageIndex(0);
     };
 
     if (!isLoading) {
@@ -515,15 +543,22 @@ export default function ManagementEditInventory() {
                                                 alt={`preview-${index}`}
                                                 className="h-full w-full object-cover rounded-lg"
                                             />
+                                            {/* Primary Button */}
+                                            <button
+                                                type="button"
+                                                onClick={() => handleSetPrimary(index)}
+                                                className={"absolute top-0 left-0 m-1 px-2 py-1 rounded-md text-white " + (index === primaryImageIndex ? 'bg-action-yellow' : 'bg-gray-400')}
+                                            >
+                                                {index === primaryImageIndex ? 'Primary ★' : 'Set as Primary'}
+                                            </button>
                                             {/* Remove button overlay */}
-                                            <Button
+                                            <button
+                                                type="button"
                                                 onClick={() => handleRemove(index)}
-                                                size="xs"
-                                                color="failure"
-                                                className="absolute top-0 right-0 m-1"
+                                                className="absolute top-0 right-0 m-1 px-2 py-1 rounded-md bg-red-700 text-white"
                                             >
                                                 Remove
-                                            </Button>
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
