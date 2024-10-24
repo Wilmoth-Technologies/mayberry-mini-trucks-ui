@@ -47,7 +47,7 @@ export default function ManagementEditInventory() {
                     exteriorColor: inventoryResponse.exteriorColor,
                     interiorColor: inventoryResponse.interiorColor,
                     vin: inventoryResponse.vin,
-                    shipmentNumber: inventoryResponse.shipmentNumber,
+                    modelCode: inventoryResponse.modelCode,
                     stockNumber: inventoryResponse.stockNumber,
                     mileage: inventoryResponse.mileage,
                     transmission: inventoryResponse.transmission,
@@ -55,6 +55,9 @@ export default function ManagementEditInventory() {
                     price: inventoryResponse.price,
                     description: inventoryResponse.description,
                     purchaseDate: inventoryResponse.purchaseDate,
+                    titleInHand: inventoryResponse.titleInHand,
+                    status: inventoryResponse.status,
+                    embeddedVideoLink: 'embeddedVideoLink' in inventoryResponse ? inventoryResponse.embeddedVideoLink : '',
                 });
 
                 //Setting CheckBox Data
@@ -76,7 +79,7 @@ export default function ManagementEditInventory() {
                     const file = new File([blob], `image-${index}`, { type: img.contentType });
                     const preview = URL.createObjectURL(blob);
 
-                    return {file, preview};
+                    return { file, preview };
                 });
                 setSelectedFiles((prevFiles) => [...prevFiles, ...imageObjects]);
 
@@ -102,7 +105,7 @@ export default function ManagementEditInventory() {
         exteriorColor: '',
         interiorColor: '',
         vin: '',
-        shipmentNumber: '',
+        modelCode: '',
         stockNumber: '',
         mileage: '',
         transmission: '',
@@ -110,6 +113,9 @@ export default function ManagementEditInventory() {
         price: '',
         description: '',
         purchaseDate: '',
+        titleInHand: false,
+        status: 'In Stock',
+        embeddedVideoLink: '',
     });
 
     const [selectedOptions, setSelectedOptions] = useState({
@@ -165,8 +171,8 @@ export default function ManagementEditInventory() {
             case 'interiorColor':
                 if (!value) error = 'Interior color is required';
                 break;
-            case 'shipmentNumber':
-                if (!value) error = 'Shipment number is required';
+            case 'modelCode':
+                if (!value) error = 'Model code is required';
                 break;
             case 'stockNumber':
                 if (!value) error = 'Stock number is required';
@@ -194,6 +200,10 @@ export default function ManagementEditInventory() {
                 } else if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(value)) {
                     error = 'Purchase date must be in mm/dd/yyyy format';
                 }
+                break;
+            case 'embeddedVideoLink':
+                if (!value) error;
+                else if (!value.includes('embed')) error = 'Video Links Must be \'Embed\' Links';
                 break;
             default:
                 break;
@@ -290,10 +300,14 @@ export default function ManagementEditInventory() {
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
         // Update the state for the particular checkbox
-        setSelectedOptions((prevCheckboxes) => ({
-            ...prevCheckboxes,
-            [name]: checked
-        }));
+        if (name === 'titleInHand') {
+            setFormValues({ ...formValues, [name]: checked });
+        } else {
+            setSelectedOptions((prevCheckboxes) => ({
+                ...prevCheckboxes,
+                [name]: checked
+            }));
+        }
     };
 
     // Get all selected checkboxes (those that are true)
@@ -372,9 +386,21 @@ export default function ManagementEditInventory() {
                         {/* Details */}
                         <div className="grid grid-cols-2 gap-2 items-center p-4">
                             <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
+                            <div className="col-span-2 flex flex-col justify-center">
+                                <label>
+                                    <input
+                                        className="accent-black rounded-sm mr-1"
+                                        type="checkbox"
+                                        name="titleInHand"
+                                        checked={formValues['titleInHand']}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    Title in Hand
+                                </label>
+                            </div>
                             {
                                 Object.keys(formValues).map((field, index) => (
-                                    field === 'make' || field === 'model' || field === 'description' ? null :
+                                    field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :
                                         <div className="flex flex-col" key={index}>
                                             <div className="flex gap-2">
                                                 <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
@@ -384,7 +410,7 @@ export default function ManagementEditInventory() {
                                             </div>
                                             <input
                                                 className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + '*'}
+                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embeddedVideoLink' ? '' : '*')}
                                                 type="text"
                                                 name={field}
                                                 disabled={field === "vin"}
@@ -394,6 +420,20 @@ export default function ManagementEditInventory() {
                                         </div>
                                 ))
                             }
+                            <div className="flex flex-col">
+                                <label htmlFor="status">Status</label>
+                                <select
+                                    className="bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    name="status"
+                                    id="status"
+                                    value={formValues.status}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Pending Sale">Pending Sale</option>
+                                    <option value="Sold">Sold</option>
+                                </select>
+                            </div>
                             <div className="col-span-2 flex flex-col">
                                 <div className="flex gap-2 items-center">
                                     <p className="text-lg">Description</p>
@@ -496,7 +536,7 @@ export default function ManagementEditInventory() {
                             </button>
                         </div>
                     </form> :
-                    <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} isAddInventory={false} areImagesUpdated={areImagesUpdated} existingInventoryData={existingInventoryData}/>
+                    <ManagementPreviewInventory formValues={formValues} selectedOptions={selectedCheckboxes} selectedFiles={selectedFiles} setPreviewRendered={setPreviewRendered} isAddInventory={false} areImagesUpdated={areImagesUpdated} existingInventoryData={existingInventoryData} />
                 }
             </>
         );
