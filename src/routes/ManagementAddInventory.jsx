@@ -5,7 +5,7 @@ import { FileInput, Label, Button } from "flowbite-react";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
-import { isStringEmpty } from "../shared/AppFunctions";
+import { isStringEmpty, milageFormatter } from "../shared/AppFunctions";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 
 //TODO: Need to add in functionality that allows for Description Templating....
@@ -18,6 +18,7 @@ export default function ManagementAddInventory() {
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isPreviewRendered, setPreviewRendered] = useState(false);
     const [isLoading, setLoading] = useState(false);
+    const [isDescriptionModified, setDescriptionModified] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -167,8 +168,18 @@ export default function ManagementAddInventory() {
             setOtherModelValue(value);
         }
 
-        // Update form values
-        setFormValues({ ...formValues, [name]: value });
+        if (!isDescriptionModified) {
+            // Create the updated form values object before setting it
+            const updatedFormValues = { ...formValues, [name]: value };
+
+            // Dynamically generate the description based on form values
+            const newDescription = updateDescription(updatedFormValues);
+
+            // Update form values with the new description
+            setFormValues({ ...updatedFormValues, description: newDescription });
+        } else {
+            setFormValues({ ...formValues, [name]: value });
+        }
 
         // Validate the field and set the error if any
         const error = validateField(name, value);
@@ -179,12 +190,32 @@ export default function ManagementAddInventory() {
         }
     };
 
+    // Function to dynamically generate the description
+    const updateDescription = (values) => {
+        const { make, model, mileage } = values;
+        // Insert values into the description template
+        return `This ${make} ${model} is a Street Legal Vehicle. The vehicle has ${isStringEmpty(mileage) ? '{mileage}' : milageFormatter().format(mileage).toString()} miles, is in great condition and works well! It has been completely serviced with full synthetic fluids, oil filter, and an air filter. We have strict guidelines for purchasing in Japan, so the vehicles that we sell are tight and ready for many years of reliable performance. Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. The NCDMV special titles department requires 8 to 10 weeks to process a title. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible. While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.`;
+    };
+
+
+
     const handleMakeAndModelChange = (make, model) => {
         setOtherMakeModelSelected(false);
         setOtherMakeValue('');
         setOtherModelValue('');
 
-        setFormValues({ ...formValues, make: make, model: model });
+        if (!isDescriptionModified) {
+            // Create the updated form values object before setting it
+            const updatedFormValues = { ...formValues, make: make, model: model };
+
+            // Dynamically generate the description based on form values
+            const newDescription = updateDescription(updatedFormValues);
+
+            // Update form values with the new description
+            setFormValues({ ...updatedFormValues, description: newDescription });
+        } else {
+            setFormValues({ ...formValues, make: make, model: model });
+        }
         setSelectedMakeModel({ make: make, model: model })
 
         const modelError = validateField('model', model);
@@ -412,6 +443,7 @@ export default function ManagementAddInventory() {
                                 required
                                 name="description"
                                 value={formValues['description']}
+                                onClick={() => setDescriptionModified(true)}
                                 onChange={handleInputChange} />
                         </div>
                     </div>
@@ -515,5 +547,4 @@ export default function ManagementAddInventory() {
             }
         </>
     );
-}
 }
