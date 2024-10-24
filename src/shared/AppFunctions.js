@@ -11,3 +11,7 @@ export const milageFormatter = (maxDecimalPlaces = 0) => {
         maximumFractionDigits: maxDecimalPlaces
     });
 }
+
+export const isStringEmpty = (str) => {
+    return str.trim().length === 0;
+};

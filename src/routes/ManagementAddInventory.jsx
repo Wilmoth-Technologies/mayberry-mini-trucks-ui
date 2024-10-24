@@ -46,7 +46,7 @@ export default function ManagementAddInventory() {
         exteriorColor: '',
         interiorColor: '',
         vin: '',
-        shipmentNumber: '',
+        modelCode: '',
         stockNumber: '',
         mileage: '',
         transmission: '',
@@ -54,6 +54,9 @@ export default function ManagementAddInventory() {
         price: '',
         description: '',
         purchaseDate: '',
+        titleInHand: false,
+        status: 'In Stock',
+        embededVideoLink: '',
     });
 
     const [selectedOptions, setSelectedOptions] = useState({
@@ -113,8 +116,8 @@ export default function ManagementAddInventory() {
                 if (!value) error = 'VIN is required';
                 else if (existingVins.includes(value)) error = "VIN already exists in the system. Please enter a new VIN"
                 break;
-            case 'shipmentNumber':
-                if (!value) error = 'Shipment number is required';
+            case 'modelCode':
+                if (!value) error = 'Model code is required';
                 break;
             case 'stockNumber':
                 if (!value) error = 'Stock number is required';
@@ -142,6 +145,10 @@ export default function ManagementAddInventory() {
                 } else if (!/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/.test(value)) {
                     error = 'Purchase date must be in mm/dd/yyyy format';
                 }
+                break;
+            case 'embededVideoLink':
+                if (!value) error;
+                else if (!value.includes('embed')) error = 'Video Links Must be \'Embed\' Links';
                 break;
             default:
                 break;
@@ -238,10 +245,14 @@ export default function ManagementAddInventory() {
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
         // Update the state for the particular checkbox
-        setSelectedOptions((prevCheckboxes) => ({
-            ...prevCheckboxes,
-            [name]: checked
-        }));
+        if (name === 'titleInHand') {
+            setFormValues({ ...formValues, [name]: checked });
+        } else {
+            setSelectedOptions((prevCheckboxes) => ({
+                ...prevCheckboxes,
+                [name]: checked
+            }));
+        }
     };
 
     // Get all selected checkboxes (those that are true)
@@ -318,9 +329,21 @@ export default function ManagementAddInventory() {
                         {/* Details */}
                         <div className="grid grid-cols-2 gap-2 items-center p-4">
                             <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
+                            <div className="col-span-2 flex flex-col justify-center">
+                                <label>
+                                    <input
+                                        className="accent-black rounded-sm mr-1"
+                                        type="checkbox"
+                                        name="titleInHand"
+                                        checked={formValues['titleInHand']}
+                                        onChange={handleCheckboxChange}
+                                    />
+                                    Title in Hand
+                                </label>
+                            </div>
                             {
                                 Object.keys(formValues).map((field, index) => (
-                                    field === 'make' || field === 'model' || field === 'description' ? null :
+                                    field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :
                                         <div className="flex flex-col" key={index}>
                                             <div className="flex gap-2">
                                                 <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
@@ -328,7 +351,7 @@ export default function ManagementAddInventory() {
                                             </div>
                                             <input
                                                 className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + '*'}
+                                                placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embededVideoLink' ? '' : '*')}
                                                 type="text"
                                                 name={field}
                                                 value={formValues[field]}
@@ -337,6 +360,20 @@ export default function ManagementAddInventory() {
                                         </div>
                                 ))
                             }
+                            <div className="flex flex-col">
+                                <label htmlFor="status">Status</label>
+                                <select
+                                    className="bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    name="status"
+                                    id="status"
+                                    value={formValues.status}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="In Stock">In Stock</option>
+                                    <option value="Pending Sale">Pending Sale</option>
+                                    <option value="Sold">Sold</option>
+                                </select>
+                            </div>
                             <div className="col-span-2 flex flex-col">
                                 <div className="flex gap-2 items-center">
                                     <p className="text-lg">Description</p>

@@ -7,7 +7,7 @@ import { GlobalFilter } from "./GlobalFilter";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-export default function Table({ columns, data, deleteFunction }) {
+export default function Table({ columns, data, deleteFunction, handleSoldCheckBoxChange, includeSoldInventory }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -51,12 +51,41 @@ export default function Table({ columns, data, deleteFunction }) {
                     </button>
                     {/* Search input */}
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+                    <div className="hidden col-span-2 md:flex flex-col justify-center">
+                        <label>
+                            <input
+                                className="accent-black rounded-sm mr-1"
+                                type="checkbox"
+                                name="includeSoldInventory"
+                                checked={includeSoldInventory}
+                                onChange={handleSoldCheckBoxChange}
+                            />
+                            Include Sold Inventory
+                        </label>
+                    </div>
                 </div>
-
                 <Link to="/management/add" className="hidden md:flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
                     <IoAddCircleOutline />
                     Add
                 </Link>
+            </div>
+            <div className="flex gap-2 items-center pb-2">
+                <Link to="/management/add" className="flex md:hidden items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
+                    <IoAddCircleOutline />
+                    Add
+                </Link>
+                <div className="flex col-span-2 md:hidden flex-col justify-center">
+                    <label>
+                        <input
+                            className="accent-black rounded-sm mr-1"
+                            type="checkbox"
+                            name="includeSoldInventory"
+                            checked={includeSoldInventory}
+                            onChange={handleSoldCheckBoxChange}
+                        />
+                        Include Sold Inventory
+                    </label>
+                </div>
             </div>
 
 

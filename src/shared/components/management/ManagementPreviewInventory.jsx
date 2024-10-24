@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
-import { numberFormatter, milageFormatter } from '../../AppFunctions';
+import { numberFormatter, milageFormatter, isStringEmpty } from '../../AppFunctions';
 import { CURRENCY_FORMAT_STYLE } from '../../AppConstants';
 import SwipeableCarousel from "../SwipeableCarousel";
 import axiosInstance from "../../AxiosConfig";
@@ -136,16 +136,19 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                     Preview
                 </h2>
             </div>
+            {formValues.status === "Pending Sale" ? <h1 className="md:col-span-2 bg-red-400 text-center font-bold">Pending Sale</h1> : null}
             <div className="flex justify-between md:hidden">
                 <h2 className="text-xl font-semibold">{formValues.year} {formValues.make} {formValues.model}</h2>
                 <h2 className="text-xl font-semibold text-action-yellow">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
             </div>
+            {formValues.titleInHand ? <h2 className="md:hidden text-action-yellow text-lg font-semibold text-center">Title in Hand</h2> : null}
             <div className="h-72 sm:h-64 md:h-[400px]">
                 <SwipeableCarousel images={selectedFiles?.map(file => { return file.preview })} />
             </div>
             <div className="hidden md:grid md:grid-cols-2 md:gap-x-8">
                 <h2 className="text-3xl font-semibold col-span-2 text-center">{formValues.year} {formValues.make} {formValues.model}</h2>
-                <h2 className="text-2xl font-semibold text-action-yellow col-span-2 text-center pb-8">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
+                <h2 className={"text-2xl font-semibold text-action-yellow col-span-2 text-center " + (formValues.titleInHand ? '' : 'pb-8')}>{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
+                {formValues.titleInHand ? <h2 className="text-action-yellow text-lg font-semibold col-span-2 text-center">Title in Hand</h2> : null}
                 <h2 className="text-xl font-medium col-span-2 text-center">Contact for a Viewing or Test Drive</h2>
                 <div className="grid grid-cols-2 gap-2 text-center col-span-2">
                     <label className="grid grid-cols-2 col-span-2 gap-2">
@@ -163,7 +166,9 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                     </div>
                 </div>
             </div>
-            <h2 className="text-xl font-semibold md:col-span-2">Key Specs</h2>
+            <div className="flex justify-between md:col-span-2">
+                <h2 className="text-xl font-semibold">Key Specs</h2>
+            </div>
             <div className="grid grid-cols-2 gap-2 navLineWrapEnd:grid-cols-4 navLineWrapEnd:col-span-2">
                 <div className="border border-border-gray rounded-md px-2 py-1">
                     <p className="text-lg">{formValues.make}</p>
@@ -224,6 +229,16 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
             </div>
             <p className="text-xl font-semibold md:col-span-2">Description</p>
             <p className="md:col-span-2">{formValues.description}</p>
+
+            {'embededVideoLink' in formValues && !isStringEmpty(formValues.embededVideoLink) ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
+                <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={formValues.embededVideoLink}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
+            </div> : null}
         </div>
     );
 };

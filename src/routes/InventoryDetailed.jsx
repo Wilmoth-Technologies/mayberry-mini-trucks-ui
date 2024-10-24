@@ -15,6 +15,9 @@ export default function InventoryDetailed() {
         "title": "1994 Honda Attack",
         "price": 6800,
         "mileage": 56000,
+        "titleInHand": true,
+        "status": "Pending Sale",
+        "embededVideoLink": 'https://www.youtube.com/embed/LNexeDFW7j0?si=7uCFxfHtmtzkrszr'
     };
 
     const updateCharCounter = (event) => {
@@ -28,10 +31,12 @@ export default function InventoryDetailed() {
                 <IoArrowBackOutline />
                 <p>Back to Inventory</p>
             </Link>
+            {props.status === "Pending Sale" ? <h1 className="md:col-span-2 bg-red-400 text-center font-bold">Pending Sale</h1> : null}
             <div className="flex justify-between md:hidden">
                 <h2 className="text-xl font-semibold">{props.title}</h2>
                 <h2 className="text-xl font-semibold text-action-yellow">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(props.price)}</h2>
             </div>
+            {props.titleInHand ? <h2 className="md:hidden text-action-yellow text-lg font-semibold text-center">Title in Hand</h2> : null}
             <div className="h-72 sm:h-64 md:h-[400px]">
                 <Carousel pauseOnHover leftControl rightControl>
                     <img className="object-scale-down" src="/HondaForCarousel.jpg" alt="..." />
@@ -43,7 +48,8 @@ export default function InventoryDetailed() {
             </div>
             <div className="hidden md:grid md:grid-cols-2 md:gap-x-8">
                 <h2 className="text-3xl font-semibold col-span-2 text-center">{props.title}</h2>
-                <h2 className="text-2xl font-semibold text-action-yellow col-span-2 text-center pb-8">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(props.price)}</h2>
+                <h2 className={"text-2xl font-semibold text-action-yellow col-span-2 text-center " + (props.titleInHand ? '' : 'pb-8')}>{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(props.price)}</h2>
+                {props.titleInHand ? <h2 className="text-action-yellow text-lg font-semibold col-span-2 text-center">Title in Hand</h2> : null}
                 <h2 className="text-xl font-medium col-span-2 text-center">Contact for a Viewing or Test Drive</h2>
                 <div className="grid grid-cols-2 gap-2 text-center col-span-2">
                     <label className="grid grid-cols-2 col-span-2 gap-2">
@@ -121,6 +127,16 @@ export default function InventoryDetailed() {
             <p className="md:col-span-2">Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. The NCDMV special titles department requires 8 to 10 weeks to process a title. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible.
                 While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.</p>
 
+            {'embededVideoLink' in props ? <div className="relative mx-auto w-full max-w-md md:max-w-lg lg:max-w-xl aspect-video md:col-span-2">
+                <iframe
+                    className="absolute top-0 left-0 w-full h-full"
+                    src={props.embededVideoLink}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                ></iframe>
+            </div> : null}
+
             {/* Newsletter Sub & Button */}
             {/* TODO: Move to Main and then render based on what route we are currently on... */}
             <div className="grid place-content-center p-3 md:col-span-2">
@@ -131,7 +147,7 @@ export default function InventoryDetailed() {
                     </button>
                 </div>
             </div>
-            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)}/>}
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
         </div>
     );
 };

@@ -10,9 +10,15 @@ import { numberFormatter, milageFormatter } from "../shared/AppFunctions";
 
 export default function ManagementViewInventory() {
     const { showLoading, hideLoading, isLoading } = useLoading();
-    const [inventory, setInventory] = useState([]);
+    const [fullInventory, setFullInventory] = useState([]);
+    const [notSoldInventory, setNotSoldInventory] = useState([]);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isDeleteApiTriggered, setDeleteApiTrigger] = useState("");
+    const [includeSoldInventory, setIncludeSoldInventory] = useState(false);
+
+    const handleSoldCheckBoxChange = (event) => {
+        setIncludeSoldInventory(event.target.checked);
+    };
 
     useEffect(() => {
         showLoading();
@@ -23,7 +29,14 @@ export default function ManagementViewInventory() {
             try {
                 console.log("Show Loading in View Inv");
                 const response = await axiosInstance.get('/management/getAllInventory');
-                setInventory(response.data.map(inventoryItem => {
+                setFullInventory(response.data.map(inventoryItem => {
+                    return {
+                        ...inventoryItem,
+                        price: numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryItem.price),
+                        mileage: (milageFormatter().format(inventoryItem.mileage).toString() + ' mi'),
+                    }
+                }));
+                setNotSoldInventory(response.data.filter((inventory) => inventory.status != 'Sold').map(inventoryItem => {
                     return {
                         ...inventoryItem,
                         price: numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryItem.price),
@@ -68,16 +81,8 @@ export default function ManagementViewInventory() {
                 accessor: "vin",
             },
             {
-                Header: "Shipment Number",
-                accessor: "shipmentNumber",
-            },
-            {
-                Header: "Stock number",
+                Header: "Stock Number",
                 accessor: "stockNumber",
-            },
-            {
-                Header: "Purchase Date",
-                accessor: "purchaseDate",
             },
             {
                 Header: "Make",
@@ -86,6 +91,10 @@ export default function ManagementViewInventory() {
             {
                 Header: "Model",
                 accessor: "model",
+            },
+            {
+                Header: "Model Code",
+                accessor: "modelCode",
             },
             {
                 Header: "Year",
@@ -98,6 +107,14 @@ export default function ManagementViewInventory() {
             {
                 Header: "Mileage",
                 accessor: "mileage",
+            },
+            {
+                Header: "Purchase Date",
+                accessor: "purchaseDate",
+            },
+            {
+                Header: "Status",
+                accessor: "status",
             },
             {
                 accessor: "actions",
@@ -129,7 +146,7 @@ export default function ManagementViewInventory() {
             }
             {!isLoading ?
                 <div className="container mx-auto px-2 overflow-x-scroll">
-                    <Table columns={columns} data={inventory} deleteFunction={handleDeleteClick} />
+                    <Table columns={columns} data={includeSoldInventory ? fullInventory : notSoldInventory} deleteFunction={handleDeleteClick} handleSoldCheckBoxChange={handleSoldCheckBoxChange} includeSoldInventory={includeSoldInventory} />
                 </div> : null
             }
         </>

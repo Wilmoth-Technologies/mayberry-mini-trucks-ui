@@ -15,96 +15,112 @@ export default function Inventory() {
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114392",
+            "status": "Pending Sale",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114393",
+            "status": "Pending Sale",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114394",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114395",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114396",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114397",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114398",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65848Z4114399",
+            "status": "inStock",
         },
         {
             "title": "1994 Honda Attack",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65148Z4114392",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL6584824114393",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65348Z4114394",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65845Z4114395",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65648Z4114396",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65847Z4114397",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65888Z4114398",
+            "status": "inStock",
         },
         {
             "title": "1990 Suzuki Carry",
             "price": 6800,
             "mileage": 56000,
             "link": "/4Y1SL65849Z4114399",
+            "status": "inStock",
         }
         ],
     };
@@ -457,7 +473,7 @@ export default function Inventory() {
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
                         {props.inventoryItems.map((inventoryItem) => (
                             <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
-                                <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
+                                <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} status={inventoryItem.status} />
                             </Link>
                         ))}
                     </div>
@@ -467,7 +483,7 @@ export default function Inventory() {
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
                 {props.inventoryItems.map((inventoryItem) => (
                     <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
-                        <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} />
+                        <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} status={inventoryItem.status} />
                     </Link>
                 ))}
             </div>
