@@ -179,6 +179,10 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                     <p className="text-gray-text font-light text-sm">Model</p>
                 </div>
                 <div className="border border-border-gray rounded-md px-2 py-1">
+                    <p className="text-lg">{formValues.modelCode}</p>
+                    <p className="text-gray-text font-light text-sm">Model Code</p>
+                </div>
+                <div className="border border-border-gray rounded-md px-2 py-1">
                     <p className="text-lg">{formValues.year}</p>
                     <p className="text-gray-text font-light text-sm">Year</p>
                 </div>

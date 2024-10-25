@@ -1,14 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import GoogleReviews from "../shared/components/reviews/GoogleReviews.jsx";
 import InventoryScroller from "../shared/components/inventory/InventoryScroller.jsx";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal.jsx";
+import axiosInstance from "../shared/AxiosConfig.js";
+import { ErrorAlert } from "../shared/components/ErrorAlert.jsx";
+import LoadingNonProvider from "../shared/components/LoadingNonProvider.jsx";
 
 export default function Root() {
     const [modalOpen, setModalOpen] = useState(false);
 
+    const [inventory, setInventory] = useState([]);
+    const [isLoading, setLoading] = useState(false);
+    const [isError, setError] = useState({ isError: false, errorMessage: "" });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await axiosInstance.get('/inventory/getTopTenInventoryMetaData');
+                setInventory(response.data);
+
+                setError({ isError: false });
+            } catch (error) {
+                setError({ isError: true, errorMessage: "Failed to Load Inventory Data, Please Try Again." });
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <>
+            {isLoading ? <LoadingNonProvider /> : null}
             <div className="bg-mobile-landing-page md:bg-desktop-landing-page md:h-screen h-[600px] bg-cover bg-no-repeat -mt-28 bg-top drop-shadow-lg" />
             {/* About Us */}
             <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">About Us</h1>
@@ -30,8 +59,13 @@ export default function Root() {
                     <Link className="mx-16 bg-action-yellow text-black font-medium rounded-full p-2 text-center mb-6" to="/tempLink">VIEW DETAILS HERE</Link>
                 </div>
                 <div className="flex-row text-center space-y-2 md:mx-6 md:-mt-10">
+                    {isError.isError ?
+                        <div className="pt-7">
+                            <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                        </div> : null
+                    }
                     <h2 className="text-lg md:text-xl font-medium">See Our Inventory</h2>
-                    <InventoryScroller className="basis-full" />
+                    <InventoryScroller className="basis-full" inventory={inventory} />
                 </div>
                 <div className="flex-row text-center space-y-2 md:mx-6 mt-4">
                     <Link to="/inventory" className="bg-action-yellow rounded-full text-black font-medium p-2">
