@@ -8,125 +8,9 @@ import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, D
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
 import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
+import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 
 export default function Inventory() {
-    let props = {
-        "results": 599,
-        "inventoryItems": [{
-            "title": "1994 Honda Attack",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114392",
-            "status": "Pending Sale",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114393",
-            "status": "Pending Sale",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114394",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114395",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114396",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114397",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114398",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65848Z4114399",
-            "status": "inStock",
-        },
-        {
-            "title": "1994 Honda Attack",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65148Z4114392",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL6584824114393",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65348Z4114394",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65845Z4114395",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65648Z4114396",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65847Z4114397",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65888Z4114398",
-            "status": "inStock",
-        },
-        {
-            "title": "1990 Suzuki Carry",
-            "price": 6800,
-            "mileage": 56000,
-            "link": "/4Y1SL65849Z4114399",
-            "status": "inStock",
-        }
-        ],
-    };
-
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
     const [isMakeFilterOpen, setMakeFilterOpen] = useState(true);
     const [isModelFilterOpen, setModelFilterOpen] = useState(true);
@@ -138,14 +22,13 @@ export default function Inventory() {
     const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [inventory, setInventory] = useState([]);
+    const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
 
-    //TODO: Add Error Handling in the Component itself
-    //TODO: Add Loading....
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // setLoading(true);
+                setLoading(true);
                 const response = await axiosInstance.get('/inventory/getInventoryMetaData');
                 setInventory(response.data);
 
@@ -156,7 +39,7 @@ export default function Inventory() {
                     ? error.response.data.message
                     : error.message)
             } finally {
-                // setLoading(false);
+                setLoading(false);
             }
         };
 
@@ -178,6 +61,12 @@ export default function Inventory() {
             </div>
 
             {/* Kei Truck Comparison DropDown */}
+            {isLoading ? <LoadingNonProvider /> : null}
+            {isError.isError ?
+                <div className="px-3">
+                    <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
+                </div> : null
+            }
             <div className="pb-1">
                 <button className="flex px-3 gap-2 largerMobile:gap-4 items-center md:w-full md:justify-center" onClick={() => keiComparisonClick()}>
                     <h2 className="font-medium text-2xl">Kei Truck Comparison</h2>
