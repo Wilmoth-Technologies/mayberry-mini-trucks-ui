@@ -25,6 +25,7 @@ export default function InventoryDetailed() {
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
     };
 
+    //TODO: Add full integration, backend APIs already setup....
     return (
         <div className="grid p-3 gap-3 md:grid-cols-2">
             <Link to={'/inventory'} className="flex items-center md:col-span-2">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TbTrash } from "react-icons/tb";
 import ReactPaginate from "react-paginate";
@@ -6,6 +6,8 @@ import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
 import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
+import axiosInstance from "../shared/AxiosConfig";
+import { ErrorAlert } from "../shared/components/ErrorAlert";
 
 export default function Inventory() {
     let props = {
@@ -135,6 +137,31 @@ export default function Inventory() {
     const [isDriveTrainFilterOpen, setDriveTrainFilterOpen] = useState(true);
     const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
+    const [inventory, setInventory] = useState([]);
+    const [isError, setError] = useState({ isError: false, errorMessage: "" });
+
+    //TODO: Add Error Handling in the Component itself
+    //TODO: Add Loading....
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // setLoading(true);
+                const response = await axiosInstance.get('/inventory/getInventoryMetaData');
+                setInventory(response.data);
+
+                setError({ isError: false });
+            } catch (error) {
+                setError({ isError: true, errorMessage: "Failed to Load Inventory Data, Please Try Again." });
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const keiComparisonClick = () => {
         setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
@@ -336,7 +363,7 @@ export default function Inventory() {
 
             {/* Filtering Menu Mobile */}
             <div className="flex flex-col px-3 gap-y-1 md:hidden">
-                <p className="text-xs font-semibold">{props.results} Results</p>
+                <p className="text-xs font-semibold">{inventory.length} Results</p>
                 <div className="flex gap-x-2">
                     <label className="relative block">
                         <span className="sr-only">Search</span>
@@ -469,11 +496,11 @@ export default function Inventory() {
                         </span>
                         <input className="placeholder:italic placeholder:text-gray-text block bg-search-background w-full border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
                     </label>
-                    <p className="text-xs font-semibold">{props.results} Results</p>
+                    <p className="text-xs font-semibold">{inventory.length} Results</p>
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
-                        {props.inventoryItems.map((inventoryItem) => (
-                            <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
-                                <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} status={inventoryItem.status} />
+                        {inventory.map((item) => (
+                            <Link key={item.vin} to={"/inventory/" + item.vin}>
+                                <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                             </Link>
                         ))}
                     </div>
@@ -481,9 +508,9 @@ export default function Inventory() {
             </div>
 
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-                {props.inventoryItems.map((inventoryItem) => (
-                    <Link key={inventoryItem.link} to={"/inventory" + inventoryItem.link}>
-                        <InventoryCard title={inventoryItem.title} price={inventoryItem.price} mileage={inventoryItem.mileage} status={inventoryItem.status} />
+                {inventory.map((item) => (
+                    <Link key={item.vin} to={"/inventory/" + item.vin}>
+                        <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                     </Link>
                 ))}
             </div>
