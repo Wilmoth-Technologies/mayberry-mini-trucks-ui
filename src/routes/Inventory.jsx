@@ -9,6 +9,7 @@ import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptio
 import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
+import { isStringEmpty } from "../shared/AppFunctions";
 
 export default function Inventory() {
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
@@ -22,8 +23,34 @@ export default function Inventory() {
     const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [inventory, setInventory] = useState([]);
+    const [inventoryWithMetaData, setInventoryWithMetaData] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
+    const [currentPage, setCurrentPage] = useState(0);
+    const [search, setSearch] = useState("");
+    const itemsPerPage = 24;
+
+    // Handle page click
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    // Filter items based on the search term
+    const filteredDataVins = inventoryWithMetaData.filter(item => Object.values(item).some(value => typeof value == "string" ? value.toLowerCase().includes(search.toLowerCase()) : false)).map(item => item.vin);
+    const filteredInventory = inventory.filter(item => filteredDataVins.includes(item.vin))
+
+    // Calculate pagination based on filtered data
+    const offset = currentPage * itemsPerPage;
+    let currentItems = [];
+    let pageCount = 0;
+    if (isStringEmpty(search)) {
+        currentItems = inventory.slice(offset, offset + itemsPerPage);
+        pageCount = Math.ceil(inventory.length / itemsPerPage);
+    } else {
+        currentItems = filteredInventory.slice(offset, offset + itemsPerPage);
+        pageCount = Math.ceil(filteredInventory.length / itemsPerPage);
+    }
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,6 +58,18 @@ export default function Inventory() {
                 setLoading(true);
                 const response = await axiosInstance.get('/inventory/getInventoryMetaData');
                 setInventory(response.data);
+                const listOfObjectFlattenedMetaData = response?.data.map(item => {
+                    // Use reduce to create new properties based on options
+                    const optionsObject = item.options.reduce((acc, option, index) => {
+                      acc[`option${index}`] = option.option; // Create option0, option1, etc.
+                      return acc;
+                    }, {});
+                  
+                    delete item.options;
+                    // Return a new item object that merges original item and optionsObject
+                    return { ...item, ...optionsObject };
+                  });
+                setInventoryWithMetaData(listOfObjectFlattenedMetaData);
 
                 setError({ isError: false });
             } catch (error) {
@@ -50,8 +89,11 @@ export default function Inventory() {
         setKeiComparisonOpen(prevKeiComparisonState => !prevKeiComparisonState);
     };
 
-    //TODO: Implement Filtering Logic after API Setup...
-    // const [showFilterModal, setShowFilterModal] = useState(false);
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        setSearch(e.target.value);
+        setCurrentPage(0); // Reset to first page on new search
+    };
 
     return (
         <>
@@ -252,7 +294,7 @@ export default function Inventory() {
 
             {/* Filtering Menu Mobile */}
             <div className="flex flex-col px-3 gap-y-1 md:hidden">
-                <p className="text-xs font-semibold">{inventory.length} Results</p>
+                <p className="text-xs font-semibold">{filteredInventory.length} Results</p>
                 <div className="flex gap-x-2">
                     <label className="relative block">
                         <span className="sr-only">Search</span>
@@ -263,7 +305,13 @@ export default function Inventory() {
                                 clipRule="evenodd"
                             /></svg>
                         </span>
-                        <input className="placeholder:italic placeholder:text-gray-text block bg-white w-auto largerMobile:w-72 border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
+                        <input
+                            onChange={handleSearchChange}
+                            value={search}
+                            className="placeholder:italic placeholder:text-gray-text block bg-white w-auto largerMobile:w-72 border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                            placeholder="Search Make, Model, or Keyword"
+                            type="text"
+                            name="search" />
                     </label>
                     <button className="flex items-center text-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-filter" viewBox="0 0 16 16">
@@ -383,11 +431,17 @@ export default function Inventory() {
                                 clipRule="evenodd"
                             /></svg>
                         </span>
-                        <input className="placeholder:italic placeholder:text-gray-text block bg-search-background w-full border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Search Make, Model, or Keyword" type="text" name="search" />
+                        <input
+                            onChange={handleSearchChange}
+                            value={search}
+                            className="placeholder:italic placeholder:text-gray-text block bg-search-background w-full border border-border-gray rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                            placeholder="Search Make, Model, or Keyword"
+                            type="text"
+                            name="search" />
                     </label>
-                    <p className="text-xs font-semibold">{inventory.length} Results</p>
+                    <p className="text-xs font-semibold">{filteredInventory.length} Results</p>
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
-                        {inventory.map((item) => (
+                        {currentItems.map((item) => (
                             <Link key={item.vin} to={"/inventory/" + item.vin}>
                                 <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                             </Link>
@@ -397,7 +451,7 @@ export default function Inventory() {
             </div>
 
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-                {inventory.map((item) => (
+                {currentItems.map((item) => (
                     <Link key={item.vin} to={"/inventory/" + item.vin}>
                         <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                     </Link>
@@ -414,10 +468,9 @@ export default function Inventory() {
                 breakLabel="..."
                 breakClassName="page-item"
                 breakLinkClassName="page-link"
-                pageCount={38}
+                pageCount={pageCount}
                 pageRangeDisplayed={2}
                 marginPagesDisplayed={1}
-                // onPageChange={this.handlePageClick}
                 containerClassName="pagination justify-content-center"
                 pageClassName="page-item"
                 pageLinkClassName="page-link"
@@ -431,15 +484,7 @@ export default function Inventory() {
                     page >= 1 && page <= pageCount ? `/page/${page}` : '#'
                 }
                 hrefAllControls
-                // forcePage={currentPage}
-                onClick={(clickEvent) => {
-                    // console.log('onClick', clickEvent);
-                    // Return false to prevent standard page change,
-                    // return false; // --> Will do nothing.
-                    // return a number to choose the next page,
-                    // return 4; --> Will go to page 5 (index 4)
-                    // return nothing (undefined) to let standard behavior take place.
-                }}
+                onPageChange={handlePageClick}
             />
 
             {/* Newsletter Sub & Button */}
