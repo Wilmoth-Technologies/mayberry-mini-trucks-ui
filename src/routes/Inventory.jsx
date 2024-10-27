@@ -29,6 +29,14 @@ export default function Inventory() {
     const [currentPage, setCurrentPage] = useState(0);
     const [search, setSearch] = useState("");
     const itemsPerPage = 24;
+    const MAX_CHAR_COUNT = 500;
+    const [charCount, setCharCount] = useState(0);
+    const [isCharCountMaxed, setCharCountMaxed] = useState(false);
+
+    const updateCharCounter = (event) => {
+        setCharCount(event.target.value.length);
+        setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
+    };
 
     // Handle page click
     const handlePageClick = ({ selected }) => {
@@ -61,14 +69,14 @@ export default function Inventory() {
                 const listOfObjectFlattenedMetaData = response?.data.map(item => {
                     // Use reduce to create new properties based on options
                     const optionsObject = item.options.reduce((acc, option, index) => {
-                      acc[`option${index}`] = option.option; // Create option0, option1, etc.
-                      return acc;
+                        acc[`option${index}`] = option.option; // Create option0, option1, etc.
+                        return acc;
                     }, {});
-                  
+
                     delete item.options;
                     // Return a new item object that merges original item and optionsObject
                     return { ...item, ...optionsObject };
-                  });
+                });
                 setInventoryWithMetaData(listOfObjectFlattenedMetaData);
 
                 setError({ isError: false });
@@ -441,21 +449,59 @@ export default function Inventory() {
                     </label>
                     <p className="text-xs font-semibold">{filteredInventory.length} Results</p>
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
-                        {currentItems.map((item) => (
+                        {currentItems.length ? currentItems.map((item) => (
                             <Link key={item.vin} to={"/inventory/" + item.vin}>
                                 <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                             </Link>
-                        ))}
+                        )) :
+                            <div className="col-span-2 threeInventoryColBreakPoint:col-span-3 fourInventoryColBreakPoint:col-span-4 fiveInventoryColBreakPoint:col-span-5 sixInventoryColBreakPoint:col-span-6 eightInventoryColBreakPoint:col-span-8">
+                                <h2 className="text-xl font-medium col-span-2 text-center text-gray-text">Sorry, no results found for your search...</h2>
+                                <h2 className="text-xl font-medium col-span-2 text-center">Contact Us for Special Requests</h2>
+                                <div className="grid grid-cols-2 gap-2 text-center col-span-2">
+                                    <label className="grid grid-cols-2 col-span-2 gap-2">
+                                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="First Name*" type="text" required name="firstName" />
+                                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Last Name*" type="text" required name="lastName" />
+                                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Email*" type="email" required name="email" />
+                                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Phone*" type="tel" required name="phone" />
+                                        <textarea className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y" maxLength={MAX_CHAR_COUNT} placeholder="Contact Request Details*" type="text" required name="contactRequestDetails" onChange={(event) => updateCharCounter(event)} />
+                                    </label>
+                                    <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
+                                    <div className="col-span-2 justify-center">
+                                        <button className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                                            Contact Seller
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>}
                     </div>
                 </div>
             </div>
 
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-                {currentItems.map((item) => (
+                {currentItems.length ? currentItems.map((item) => (
                     <Link key={item.vin} to={"/inventory/" + item.vin}>
                         <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                     </Link>
-                ))}
+                )) :
+                    <div className="col-span-2 threeInventoryColBreakPoint:col-span-3 fourInventoryColBreakPoint:col-span-4 fiveInventoryColBreakPoint:col-span-5 sixInventoryColBreakPoint:col-span-6 eightInventoryColBreakPoint:col-span-8">
+                        <h2 className="text-xl font-medium col-span-2 text-center text-gray-text">Sorry, no results found for your search...</h2>
+                        <h2 className="text-xl font-medium col-span-2 text-center">Contact Us for Special Requests</h2>
+                        <div className="grid grid-cols-2 gap-2 text-center col-span-2">
+                            <label className="grid grid-cols-2 col-span-2 gap-2">
+                                <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="First Name*" type="text" required name="firstName" />
+                                <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Last Name*" type="text" required name="lastName" />
+                                <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Email*" type="email" required name="email" />
+                                <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Phone*" type="tel" required name="phone" />
+                                <textarea className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y" maxLength={MAX_CHAR_COUNT} placeholder="Contact Request Details*" type="text" required name="contactRequestDetails" onChange={(event) => updateCharCounter(event)} />
+                            </label>
+                            <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
+                            <div className="col-span-2 justify-center">
+                                <button className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                                    Contact Seller
+                                </button>
+                            </div>
+                        </div>
+                    </div>}
             </div>
 
             <ReactPaginate className="flex gap-6 items-center justify-center pt-4"
