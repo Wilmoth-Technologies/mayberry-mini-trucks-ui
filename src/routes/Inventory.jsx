@@ -67,14 +67,14 @@ export default function Inventory() {
                 const response = await axiosInstance.get('/inventory/getInventoryMetaData');
                 setInventory(response.data);
                 const listOfObjectFlattenedMetaData = response?.data.map(item => {
-                    // Use reduce to create new properties based on options
+                    //Flatten the options list of object and create elements at the top
+                    //level object based on each option + index to allow for searching
                     const optionsObject = item.options.reduce((acc, option, index) => {
-                        acc[`option${index}`] = option.option; // Create option0, option1, etc.
+                        acc[`option${index}`] = option.option;
                         return acc;
                     }, {});
 
                     delete item.options;
-                    // Return a new item object that merges original item and optionsObject
                     return { ...item, ...optionsObject };
                 });
                 setInventoryWithMetaData(listOfObjectFlattenedMetaData);

@@ -9,10 +9,11 @@ import LoadingNonProvider from "../shared/components/LoadingNonProvider.jsx";
 
 export default function Root() {
     const [modalOpen, setModalOpen] = useState(false);
-
+    const [reviewData, setReviewData] = useState([]);
     const [inventory, setInventory] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
+    const [isReviewError, setReviewError] = useState({ isError: false, errorMessage: "" });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,9 +22,17 @@ export default function Root() {
                 const response = await axiosInstance.get('/inventory/getTopTenInventoryMetaData');
                 setInventory(response.data);
 
+                const reviewResponse = await axiosInstance.get('/review/getBusinessDetails')
+                setReviewData(reviewResponse.data);
+
                 setError({ isError: false });
             } catch (error) {
-                setError({ isError: true, errorMessage: "Failed to Load Inventory Data, Please Try Again." });
+                if (error.config.url === '/inventory/getTopTenInventoryMetaData') {
+                    setError({ isError: true, errorMessage: "Failed to Load Inventory Data, Please Try Again." });
+                } else {
+                    setReviewError({ isError: true, errorMessage: "Failed to Load Review Data, Please Try Again." });
+                }
+
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -45,7 +54,7 @@ export default function Root() {
                 <img className="h-[188px] bg-contain bg-no-repeat bg-center drop-shadow-lg" src="/LandingKeiLineUp2.png" />
                 <p className="text-lg text-center md:text-left">Mayberry Mini Trucks started as a small family-owned business in 2010. Through the years of growth, we are still just as passionate about providing quality, cost effective mini trucks for our customers. We take pride in providing our customers with top notch service as we bring them through the process of finding their mini truck with ease, so they can have the best experience possible.</p>
             </div>
-            <GoogleReviews />
+            {isLoading ? null : <GoogleReviews reviewData={reviewData} isError={isReviewError} setReviewError={setReviewError} />}
             {/* Find Your Truck */}
             <div className="bg-grey-primary text-white pb-4">
                 <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">Find Your Truck Today!</h1>
