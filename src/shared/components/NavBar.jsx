@@ -41,9 +41,11 @@ export default function NavBar() {
         logoHeaderTextColor = "text-white";
         inventoryTextColor = "text-black";
     } else if (location.pathname.includes("/unauthorized") ||
-    location.pathname.includes("/management/add") ||
-    location.pathname.includes("/management/view") ||
-    location.pathname.includes("/management/edit/")) {
+        location.pathname.includes("/management/add") ||
+        location.pathname.includes("/management/view") ||
+        location.pathname.includes("/management/edit/") ||
+        location.pathname.includes("/management/schedule/banners") ||
+        location.pathname.includes("/management/email/list")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
