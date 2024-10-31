@@ -135,21 +135,37 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                             <tr {...row.getRowProps()} className="hover:bg-gray-50">
                                 {row.cells.map(cell => {
                                     if (cell.value === "action" && includeActions) {
-                                        return (
-                                            <td {...cell.getCellProps()}
-                                                className="px-4 border-b-2 border-gray-200 text-sm">
-                                                <div className="flex">
-                                                    <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
-                                                        <MdOutlineEdit />
-                                                    </Link>
-                                                    <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
-                                                        <IoTrashOutline />
-                                                    </button>
-                                                </div>
+                                        if (tableName === "Inventory") {
+                                            return (
+                                                <td {...cell.getCellProps()}
+                                                    className="px-4 border-b-2 border-gray-200 text-sm">
+                                                    <div className="flex">
+                                                        <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
+                                                            <MdOutlineEdit />
+                                                        </Link>
+                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
+                                                            <IoTrashOutline />
+                                                        </button>
+                                                    </div>
 
-                                                {cell.render("Cell")}
-                                            </td>
-                                        )
+                                                    {cell.render("Cell")}
+                                                </td>
+                                            )
+                                        } else {
+                                            return (
+                                                <td {...cell.getCellProps()}
+                                                    className="px-4 border-b-2 border-gray-200 text-sm">
+                                                    <div className="flex">
+                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.id)}>
+                                                            <IoTrashOutline />
+                                                        </button>
+                                                    </div>
+
+                                                    {cell.render("Cell")}
+                                                </td>
+                                            )
+                                        }
+
                                     } else {
                                         return (
                                             <td
