@@ -8,6 +8,7 @@ import axiosInstance from "../shared/AxiosConfig";
 import SwipeableCarousel from "../shared/components/SwipeableCarousel";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
+import { SuccessAlert } from "../shared/components/SuccessAlert";
 
 export default function InventoryDetailed() {
     const { vin } = useParams();
@@ -19,6 +20,7 @@ export default function InventoryDetailed() {
     const [modalOpen, setModalOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const MAX_CHAR_COUNT = 500;
+    const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
 
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
@@ -178,7 +180,11 @@ export default function InventoryDetailed() {
                 </div> : null}
 
                 {/* Newsletter Sub & Button */}
-                {/* TODO: Move to Main and then render based on what route we are currently on... */}
+                {isSuccess.isSuccess ?
+                    <div className="pt-3 col-span-2">
+                        <SuccessAlert message={isSuccess.successMessage} dismissFunction={setSuccess} />
+                    </div> : null
+                }
                 <div className="grid place-content-center p-3 md:col-span-2">
                     <div className="flex text-center gap-3 items-center">
                         <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
@@ -187,7 +193,7 @@ export default function InventoryDetailed() {
                         </button>
                     </div>
                 </div>
-                {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
+                {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
             </div>
         </>
     );

@@ -10,6 +10,7 @@ import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 import { isStringEmpty } from "../shared/AppFunctions";
+import { SuccessAlert } from "../shared/components/SuccessAlert";
 
 export default function Inventory() {
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
@@ -32,6 +33,7 @@ export default function Inventory() {
     const MAX_CHAR_COUNT = 500;
     const [charCount, setCharCount] = useState(0);
     const [isCharCountMaxed, setCharCountMaxed] = useState(false);
+    const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
 
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
@@ -534,7 +536,11 @@ export default function Inventory() {
             />
 
             {/* Newsletter Sub & Button */}
-            {/* TODO: Move to Main and then render based on what route we are currently on... */}
+            {isSuccess.isSuccess ?
+                <div className="pt-3 px-3">
+                    <SuccessAlert message={isSuccess.successMessage} dismissFunction={setSuccess} />
+                </div> : null
+            }
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
@@ -543,7 +549,7 @@ export default function Inventory() {
                     </button>
                 </div>
             </div>
-            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
         </>
     );
 };

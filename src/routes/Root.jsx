@@ -8,6 +8,7 @@ import { ErrorAlert } from "../shared/components/ErrorAlert.jsx";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider.jsx";
 import { getCurrentDate } from "../shared/AppFunctions.js";
 import { GeneralAlert } from "../shared/components/GeneralAlert.jsx";
+import { SuccessAlert } from "../shared/components/SuccessAlert.jsx";
 
 export default function Root() {
     const [modalOpen, setModalOpen] = useState(false);
@@ -18,6 +19,7 @@ export default function Root() {
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isReviewError, setReviewError] = useState({ isError: false, errorMessage: "" });
     const [isGeneralAlert, setGeneralAlert] = useState({ isAlertOpen: false, message: "" });
+    const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,7 +99,11 @@ export default function Root() {
                 </div>
             </div>
             {/* Newsletter Sub & Button */}
-            {/* TODO: Move to Main and then render based on what route we are currently on... */}
+            {isSuccess.isSuccess ?
+                <div className="pt-3 px-3">
+                    <SuccessAlert message={isSuccess.successMessage} dismissFunction={setSuccess} />
+                </div> : null
+            }
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
@@ -106,7 +112,7 @@ export default function Root() {
                     </button>
                 </div>
             </div>
-            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
         </>
     );
 }
