@@ -18,6 +18,9 @@ import ScrollToTop from './shared/components/ScrollToTop.jsx';
 import ManagementAddInventory from './routes/ManagementAddInventory.jsx';
 import ManagementViewInventory from './routes/ManagementViewInventory.jsx';
 import ManagementEditInventory from './routes/ManagementEditInventory.jsx';
+import ManagementScheduleBanners from './routes/ManagementScheduleBanners.jsx';
+import ManagementEmailList from './routes/ManagementEmailList.jsx';
+import Unsubscribe from './routes/Unsubscribe.jsx';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,11 @@ const router = createBrowserRouter([
       {
         path: "/inventory/:vin",
         element: <InventoryDetailed />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "unsubscribed",
+        element: <Unsubscribe />,
         errorElement: <ErrorPage />,
       },
       //Un-Comment in Local
@@ -64,6 +72,20 @@ const router = createBrowserRouter([
       //   path: "/management/edit/:vin",
       //   element: (
       //     <ManagementEditInventory />
+      //   ),
+      //   errorElement: <ErrorPage />,
+      // },
+      // {
+      //   path: "/management/schedule/banners",
+      //   element: (
+      //     <ManagementScheduleBanners />
+      //   ),
+      //   errorElement: <ErrorPage />,
+      // },
+      // {
+      //   path: "/management/email/list",
+      //   element: (
+      //     <ManagementEmailList />
       //   ),
       //   errorElement: <ErrorPage />,
       // },
@@ -101,6 +123,24 @@ const router = createBrowserRouter([
           </ProtectedRoute>),
         errorElement: <ErrorPage />,
       },
+      {
+        path: "/management/schedule/banners",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementScheduleBanners />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "/management/email/list",
+        element: (
+          <ProtectedRoute requiredScopes={['manage:inventory']}>
+            <ManagementEmailList />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPage />,
+      },
       //End Comment in Local
       {
         path: "/unauthorized",
@@ -115,7 +155,7 @@ const router = createBrowserRouter([
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <LoadingProvider>
       <Auth0Provider
         domain="auth.mayberry-mini-trucks-ui.dev.kubernetes-wilmoth.com"
@@ -133,5 +173,5 @@ createRoot(document.getElementById('root')).render(
         <Footer />
       </Auth0Provider>
     </LoadingProvider>
-  </StrictMode>,
+  // {/* </StrictMode>, */}
 )

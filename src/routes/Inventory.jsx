@@ -10,6 +10,7 @@ import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 import { isStringEmpty } from "../shared/AppFunctions";
+import { SuccessAlert } from "../shared/components/SuccessAlert";
 
 export default function Inventory() {
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
@@ -29,6 +30,26 @@ export default function Inventory() {
     const [currentPage, setCurrentPage] = useState(0);
     const [search, setSearch] = useState("");
     const itemsPerPage = 24;
+    const MAX_CHAR_COUNT = 500;
+    const [charCount, setCharCount] = useState(0);
+    const [isCharCountMaxed, setCharCountMaxed] = useState(false);
+    const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        description: '',
+    });
+    const [formErrors, setFormErrors] = useState({});
+    const [isContactUsError, setContactUsError] = useState({ isError: false, errorMessage: "" });
+    const [isContactUsSuccess, setContactUsSuccess] = useState({ isSuccess: false, successMessage: "" });
+
+    const updateCharCounter = (event) => {
+        setCharCount(event.target.value.length);
+        setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
+        handleChange(event);
+    };
 
     // Handle page click
     const handlePageClick = ({ selected }) => {
@@ -59,16 +80,16 @@ export default function Inventory() {
                 const response = await axiosInstance.get('/inventory/getInventoryMetaData');
                 setInventory(response.data);
                 const listOfObjectFlattenedMetaData = response?.data.map(item => {
-                    // Use reduce to create new properties based on options
+                    //Flatten the options list of object and create elements at the top
+                    //level object based on each option + index to allow for searching
                     const optionsObject = item.options.reduce((acc, option, index) => {
-                      acc[`option${index}`] = option.option; // Create option0, option1, etc.
-                      return acc;
+                        acc[`option${index}`] = option.option;
+                        return acc;
                     }, {});
-                  
+
                     delete item.options;
-                    // Return a new item object that merges original item and optionsObject
                     return { ...item, ...optionsObject };
-                  });
+                });
                 setInventoryWithMetaData(listOfObjectFlattenedMetaData);
 
                 setError({ isError: false });
@@ -93,6 +114,69 @@ export default function Inventory() {
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
         setCurrentPage(0); // Reset to first page on new search
+    };
+
+     // Handles form input changes
+     const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    // Validates the form fields
+    const validateForm = () => {
+        const newErrors = {};
+
+        // First name and last name should not be empty
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First Name is required';
+        }
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last Name is required';
+        }
+
+        // Email is required and must be in a valid format
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is invalid';
+        }
+
+        // Phone is optional but must be in a valid format if provided
+        if (!formData.phoneNumber.trim()) {
+            newErrors.phoneNumber = 'Phone Number is required';
+        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+            newErrors.phoneNumber = 'Phone number must be 10 digits';
+        }
+
+        setFormErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Returns true if no errors
+    };
+
+    // Handles form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (validateForm()) {
+            try {
+                setLoading(true);
+                const response = await axiosInstance.post('/inventory/contactus', { ...formData, isFailedFilter: true });
+                setFormData({ firstName: '', lastName: '', email: '', phoneNumber: '', description: '' });
+                setCharCount(0);
+                setCharCountMaxed(false);
+                setContactUsError({ isError: false })
+                setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
+            } catch (error) {
+                setContactUsError({ isError: false, })
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                setLoading(false);
+            }
+        }
     };
 
     return (
@@ -441,21 +525,169 @@ export default function Inventory() {
                     </label>
                     <p className="text-xs font-semibold">{filteredInventory.length} Results</p>
                     <div className="p-3 rounded-lg grid grid-cols-2 threeInventoryColBreakPoint:grid-cols-3 fourInventoryColBreakPoint:grid-cols-4 fiveInventoryColBreakPoint:grid-cols-5 sixInventoryColBreakPoint:grid-cols-6 eightInventoryColBreakPoint:grid-cols-8 gap-4 place-items-center">
-                        {currentItems.map((item) => (
+                        {currentItems.length ? currentItems.map((item) => (
                             <Link key={item.vin} to={"/inventory/" + item.vin}>
                                 <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                             </Link>
-                        ))}
+                        )) :
+                            <div className="col-span-2 threeInventoryColBreakPoint:col-span-3 fourInventoryColBreakPoint:col-span-4 fiveInventoryColBreakPoint:col-span-5 sixInventoryColBreakPoint:col-span-6 eightInventoryColBreakPoint:col-span-8">
+                                <h2 className="text-xl font-medium col-span-2 text-center text-gray-text">Sorry, no results found for your search...</h2>
+                                <h2 className="text-xl font-medium col-span-2 text-center">Contact Us for Special Requests</h2>
+                                <form className="grid grid-cols-2 gap-2 text-center col-span-2" onSubmit={handleSubmit}>
+                                    <div className="text-left">
+                                        <label>First name:</label>
+                                        <input
+                                            className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                            placeholder="First Name*"
+                                            type="text"
+                                            name="firstName"
+                                            value={formData.firstName}
+                                            onChange={handleChange} />
+                                        {formErrors.firstName && <p style={{ color: 'red' }}>{formErrors.firstName}</p>}
+                                    </div>
+                                    <div className="text-left">
+                                        <label>Last name:</label>
+                                        <input
+                                            className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                            placeholder="Last Name*"
+                                            type="text"
+                                            name="lastName"
+                                            value={formData.lastName}
+                                            onChange={handleChange} />
+                                        {formErrors.lastName && <p style={{ color: 'red' }}>{formErrors.lastName}</p>}
+                                    </div>
+                                    <div className="text-left">
+                                        <label>Email:</label>
+                                        <input
+                                            className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                            placeholder="Email*"
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange} />
+                                        {formErrors.email && <p style={{ color: 'red' }}>{formErrors.email}</p>}
+                                    </div>
+                                    <div className="text-left">
+                                        <label>Phone Number:</label>
+                                        <input
+                                            className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                            placeholder="Phone*"
+                                            type="text"
+                                            name="phoneNumber"
+                                            value={formData.phoneNumber}
+                                            onChange={handleChange} />
+                                        {formErrors.phoneNumber && <p style={{ color: 'red' }}>{formErrors.phoneNumber}</p>}
+                                    </div>
+                                    <textarea
+                                        className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
+                                        maxLength={MAX_CHAR_COUNT}
+                                        placeholder="Contact Request Details*"
+                                        type="text"
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={(event) => updateCharCounter(event)} />
+                                    <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
+                                    <div className="col-span-2 justify-center">
+                                        <button type="submit" className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                                            Contact Seller
+                                        </button>
+                                    </div>
+                                    {isContactUsSuccess.isSuccess ?
+                                        <div className="col-span-2">
+                                            <SuccessAlert message={isContactUsSuccess.successMessage} dismissFunction={setContactUsSuccess} />
+                                        </div> : null
+                                    }
+                                    {isContactUsError.isError ?
+                                        <div className="col-span-2">
+                                            <ErrorAlert errorMessage={isContactUsError.errorMessage} dismissFunction={setContactUsError} />
+                                        </div> : null
+                                    }
+                                </form>
+                            </div>}
                     </div>
                 </div>
             </div>
 
             <div className="md:hidden p-3 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-4 place-items-center">
-                {currentItems.map((item) => (
+                {currentItems.length ? currentItems.map((item) => (
                     <Link key={item.vin} to={"/inventory/" + item.vin}>
                         <InventoryCard year={item.year} make={item.make} model={item.model} price={item.price} mileage={item.mileage} status={item.status} imgLink={item.imageLinks} />
                     </Link>
-                ))}
+                )) :
+                    <div className="col-span-2 threeInventoryColBreakPoint:col-span-3 fourInventoryColBreakPoint:col-span-4 fiveInventoryColBreakPoint:col-span-5 sixInventoryColBreakPoint:col-span-6 eightInventoryColBreakPoint:col-span-8">
+                        <h2 className="text-xl font-medium col-span-2 text-center text-gray-text">Sorry, no results found for your search...</h2>
+                        <h2 className="text-xl font-medium col-span-2 text-center">Contact Us for Special Requests</h2>
+                        <form className="grid grid-cols-2 gap-2 text-center col-span-2" onSubmit={handleSubmit}>
+                            <div className="text-left">
+                                <label>First name:</label>
+                                <input
+                                    className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="First Name*"
+                                    type="text"
+                                    name="firstName"
+                                    value={formData.firstName}
+                                    onChange={handleChange} />
+                                {formErrors.firstName && <p style={{ color: 'red' }}>{formErrors.firstName}</p>}
+                            </div>
+                            <div className="text-left">
+                                <label>Last name:</label>
+                                <input
+                                    className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="Last Name*"
+                                    type="text"
+                                    name="lastName"
+                                    value={formData.lastName}
+                                    onChange={handleChange} />
+                                {formErrors.lastName && <p style={{ color: 'red' }}>{formErrors.lastName}</p>}
+                            </div>
+                            <div className="text-left">
+                                <label>Email:</label>
+                                <input
+                                    className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="Email*"
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange} />
+                                {formErrors.email && <p style={{ color: 'red' }}>{formErrors.email}</p>}
+                            </div>
+                            <div className="text-left">
+                                <label>Phone Number:</label>
+                                <input
+                                    className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                    placeholder="Phone*"
+                                    type="text"
+                                    name="phoneNumber"
+                                    value={formData.phoneNumber}
+                                    onChange={handleChange} />
+                                {formErrors.phoneNumber && <p style={{ color: 'red' }}>{formErrors.phoneNumber}</p>}
+                            </div>
+                            <textarea
+                                className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
+                                maxLength={MAX_CHAR_COUNT}
+                                placeholder="Contact Request Details*"
+                                type="text"
+                                name="description"
+                                value={formData.description}
+                                onChange={(event) => updateCharCounter(event)} />
+                            <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
+                            <div className="col-span-2 justify-center">
+                                <button type="submit" className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                                    Contact Seller
+                                </button>
+                            </div>
+                            {isContactUsSuccess.isSuccess ?
+                                <div className="col-span-2">
+                                    <SuccessAlert message={isContactUsSuccess.successMessage} dismissFunction={setContactUsSuccess} />
+                                </div> : null
+                            }
+                            {isContactUsError.isError ?
+                                <div className="col-span-2">
+                                    <ErrorAlert errorMessage={isContactUsError.errorMessage} dismissFunction={setContactUsError} />
+                                </div> : null
+                            }
+                        </form>
+                    </div>}
             </div>
 
             <ReactPaginate className="flex gap-6 items-center justify-center pt-4"
@@ -488,7 +720,11 @@ export default function Inventory() {
             />
 
             {/* Newsletter Sub & Button */}
-            {/* TODO: Move to Main and then render based on what route we are currently on... */}
+            {isSuccess.isSuccess ?
+                <div className="pt-3 px-3">
+                    <SuccessAlert message={isSuccess.successMessage} dismissFunction={setSuccess} />
+                </div> : null
+            }
             <div className="grid place-content-center p-3">
                 <div className="flex text-center gap-3 items-center">
                     <p className="font-medium">Subscribe to learn about new arrivals and our latest news</p>
@@ -497,7 +733,7 @@ export default function Inventory() {
                     </button>
                 </div>
             </div>
-            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} />}
+            {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
         </>
     );
 };

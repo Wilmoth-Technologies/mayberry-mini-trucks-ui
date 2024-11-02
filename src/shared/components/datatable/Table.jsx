@@ -2,12 +2,13 @@ import { IoCloudDownloadOutline, IoAddCircleOutline, IoCaretDown, IoCaretUp } fr
 import { useTable, useSortBy, usePagination, useGlobalFilter } from "react-table";
 import { IoTrashOutline } from "react-icons/io5";
 import { MdOutlineEdit } from "react-icons/md";
+import { IoCopyOutline } from "react-icons/io5";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { GlobalFilter } from "./GlobalFilter";
 import { Link } from "react-router-dom";
 import * as XLSX from "xlsx";
 
-export default function Table({ columns, data, deleteFunction, handleSoldCheckBoxChange, includeSoldInventory }) {
+export default function Table({ columns, data, deleteFunction, handleSoldCheckBoxChange, includeSoldInventory, includeActions = true, includeSoldButton = true, includeFilters = true, includeCopyToClipboard = false, copyToClipboard, tableName }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -37,8 +38,8 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
     const exportToExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(data);  // Convert table data to worksheet
         const workbook = XLSX.utils.book_new();            // Create a new workbook
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Inventory");  // Append worksheet to workbook
-        XLSX.writeFile(workbook, "Inventory.xlsx");        // Export the workbook as an Excel file
+        XLSX.utils.book_append_sheet(workbook, worksheet, tableName);  // Append worksheet to workbook
+        XLSX.writeFile(workbook, `${tableName}.xlsx`);        // Export the workbook as an Excel file
     };
 
     return (
@@ -50,8 +51,16 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                         Export
                     </button>
                     {/* Search input */}
-                    <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-                    <div className="hidden col-span-2 md:flex flex-col justify-center">
+                    {includeCopyToClipboard ?
+                        <div>
+                            <button onClick={copyToClipboard} className="flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
+                                <IoCopyOutline />
+                                Copy Emails
+                            </button>
+                        </div>
+                        : null}
+                    {includeFilters ? <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} /> : null}
+                    {includeSoldButton ? <div className="hidden col-span-2 md:flex flex-col justify-center">
                         <label>
                             <input
                                 className="accent-black rounded-sm mr-1"
@@ -63,18 +72,24 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                             Include Sold Inventory
                         </label>
                     </div>
+                        : null}
+
                 </div>
-                <Link to="/management/add" className="hidden md:flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
-                    <IoAddCircleOutline />
-                    Add
-                </Link>
+                {includeFilters ?
+                    <Link to="/management/add" className="hidden md:flex items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
+                        <IoAddCircleOutline />
+                        Add
+                    </Link>
+                    : null}
             </div>
             <div className="flex gap-2 items-center pb-2">
-                <Link to="/management/add" className="flex md:hidden items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
-                    <IoAddCircleOutline />
-                    Add
-                </Link>
-                <div className="flex col-span-2 md:hidden flex-col justify-center">
+                {includeFilters ?
+                    <Link to="/management/add" className="flex md:hidden items-center gap-1 bg-black rounded-full text-white px-4 h-8 text-xl">
+                        <IoAddCircleOutline />
+                        Add
+                    </Link>
+                    : null}
+                {includeSoldButton ? <div className="flex col-span-2 md:hidden flex-col justify-center">
                     <label>
                         <input
                             className="accent-black rounded-sm mr-1"
@@ -85,7 +100,8 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                         />
                         Include Sold Inventory
                     </label>
-                </div>
+                </div> : null}
+
             </div>
 
 
@@ -118,22 +134,38 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                         return (
                             <tr {...row.getRowProps()} className="hover:bg-gray-50">
                                 {row.cells.map(cell => {
-                                    if (cell.value === "action") {
-                                        return (
-                                            <td {...cell.getCellProps()}
-                                                className="px-4 border-b-2 border-gray-200 text-sm">
-                                                <div className="flex">
-                                                    <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
-                                                        <MdOutlineEdit />
-                                                    </Link>
-                                                    <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
-                                                        <IoTrashOutline />
-                                                    </button>
-                                                </div>
+                                    if (cell.value === "action" && includeActions) {
+                                        if (tableName === "Inventory") {
+                                            return (
+                                                <td {...cell.getCellProps()}
+                                                    className="px-4 border-b-2 border-gray-200 text-sm">
+                                                    <div className="flex">
+                                                        <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
+                                                            <MdOutlineEdit />
+                                                        </Link>
+                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
+                                                            <IoTrashOutline />
+                                                        </button>
+                                                    </div>
 
-                                                {cell.render("Cell")}
-                                            </td>
-                                        )
+                                                    {cell.render("Cell")}
+                                                </td>
+                                            )
+                                        } else {
+                                            return (
+                                                <td {...cell.getCellProps()}
+                                                    className="px-4 border-b-2 border-gray-200 text-sm">
+                                                    <div className="flex">
+                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.id)}>
+                                                            <IoTrashOutline />
+                                                        </button>
+                                                    </div>
+
+                                                    {cell.render("Cell")}
+                                                </td>
+                                            )
+                                        }
+
                                     } else {
                                         return (
                                             <td

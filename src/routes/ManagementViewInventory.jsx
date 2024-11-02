@@ -112,6 +112,10 @@ export default function ManagementViewInventory() {
                 accessor: "status",
             },
             {
+                Header: "Title In Hand",
+                accessor: "titleInHand",
+            },
+            {
                 accessor: "actions",
                 Cell: ({ value }) => (
                     <>
@@ -142,7 +146,7 @@ export default function ManagementViewInventory() {
             }
             {!isLoading ?
                 <div className="container mx-auto px-2 overflow-x-scroll">
-                    <Table columns={columns} data={includeSoldInventory ? fullInventory : notSoldInventory} deleteFunction={handleDeleteClick} handleSoldCheckBoxChange={handleSoldCheckBoxChange} includeSoldInventory={includeSoldInventory} />
+                    <Table columns={columns} data={includeSoldInventory ? fullInventory : notSoldInventory} deleteFunction={handleDeleteClick} handleSoldCheckBoxChange={handleSoldCheckBoxChange} includeSoldInventory={includeSoldInventory} tableName={"Inventory"} />
                 </div> : null
             }
         </>

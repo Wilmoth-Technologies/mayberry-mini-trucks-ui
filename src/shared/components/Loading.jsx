@@ -4,12 +4,6 @@ export default function Loading() {
     const { isLoading } = useLoading();
 
     if (isLoading) {
-        console.log("Show Loading");
-    } else {
-        console.log("Hide Loading");
-    }
-
-    if (isLoading) {
         return (
             <div className={'fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm z-50 flex justify-center items-center text-l'}>
                 <div role="status" className='flex flex-col items-center justify-center'>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { RiFileAddLine } from "react-icons/ri";
+import { HiOutlineMail } from "react-icons/hi";
 import { IoSettingsSharp } from "react-icons/io5";
 import { Link, useLocation } from "react-router-dom";
+import { RiCalendarScheduleLine } from "react-icons/ri";
 import { SuccessAlert } from "../shared/components/SuccessAlert";
 
 export default function Management() {
@@ -20,7 +22,7 @@ export default function Management() {
         <>
             <div className="">
                 <div className="bg-kei-hauler md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg">
-                    <div className="grid grid-cols-2 justify-center items-center h-full gap-4 px-8 text-center text-white text-3xl md:gap-16 md:px-36 lg:px-72">
+                    <div className="grid grid-cols-2 pt-14 justify-center items-center h-full gap-4 px-8 text-center text-white text-3xl md:gap-16 md:px-36 lg:px-72">
                         <Link to="/management/add" className="bg-black bg-opacity-55 backdrop-blur-sm rounded-md p-3">
                             <p>Add</p>
                             <div className="flex justify-center py-2">
@@ -34,6 +36,20 @@ export default function Management() {
                                 <IoSettingsSharp className="text-5xl" />
                             </div>
                             <p>Inventory</p>
+                        </Link>
+                        <Link to="/management/email/list" className="bg-black bg-opacity-55 backdrop-blur-sm rounded-md p-3">
+                            <p>Email</p>
+                            <div className="flex justify-center py-2">
+                                <HiOutlineMail className="text-5xl" />
+                            </div>
+                            <p>List</p>
+                        </Link>
+                        <Link to="/management/schedule/banners" className="bg-black bg-opacity-55 backdrop-blur-sm rounded-md p-3">
+                            <p>Schedule</p>
+                            <div className="flex justify-center py-2">
+                                <RiCalendarScheduleLine className="text-5xl" />
+                            </div>
+                            <p>Banners</p>
                         </Link>
                     </div>
                 </div>
