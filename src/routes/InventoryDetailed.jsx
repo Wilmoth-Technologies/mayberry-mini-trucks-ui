@@ -21,10 +21,21 @@ export default function InventoryDetailed() {
     const [isLoading, setLoading] = useState(false);
     const MAX_CHAR_COUNT = 500;
     const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        description: '',
+    });
+    const [formErrors, setFormErrors] = useState({});
+    const [isContactUsError, setContactUsError] = useState({ isError: false, errorMessage: "" });
+    const [isContactUsSuccess, setContactUsSuccess] = useState({ isSuccess: false, successMessage: "" });
 
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
+        handleChange(event);
     };
 
     useEffect(() => {
@@ -63,6 +74,69 @@ export default function InventoryDetailed() {
         fetchData();
     }, []);
 
+    // Handles form input changes
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    // Validates the form fields
+    const validateForm = () => {
+        const newErrors = {};
+
+        // First name and last name should not be empty
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First Name is required';
+        }
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last Name is required';
+        }
+
+        // Email is required and must be in a valid format
+        if (!formData.email.trim()) {
+            newErrors.email = 'Email is required';
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+            newErrors.email = 'Email is invalid';
+        }
+
+        // Phone is optional but must be in a valid format if provided
+        if (!formData.phoneNumber.trim()) {
+            newErrors.phoneNumber = 'Phone Number is required';
+        } else if (!/^\d{10}$/.test(formData.phoneNumber)) {
+            newErrors.phoneNumber = 'Phone number must be 10 digits';
+        }
+
+        setFormErrors(newErrors);
+        return Object.keys(newErrors).length === 0; // Returns true if no errors
+    };
+
+    // Handles form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (validateForm()) {
+            try {
+                setLoading(true);
+                const response = await axiosInstance.post('/inventory/contactus', { ...formData, vin: vin });
+                setFormData({ firstName: '', lastName: '', email: '', phoneNumber: '', description: '' });
+                setCharCount(0);
+                setCharCountMaxed(false);
+                setContactUsError({ isError: false })
+                setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
+            } catch (error) {
+                setContactUsError({ isError: false, })
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
 
     return (
         <>
@@ -91,21 +165,76 @@ export default function InventoryDetailed() {
                     <h2 className={"text-2xl font-semibold text-action-yellow col-span-2 text-center " + (inventoryData.titleInHand ? '' : 'pb-8')}>{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(inventoryData.price)}</h2>
                     {inventoryData.titleInHand ? <h2 className="text-action-yellow text-lg font-semibold col-span-2 text-center">Title in Hand</h2> : null}
                     <h2 className="text-xl font-medium col-span-2 text-center">Contact for a Viewing or Test Drive</h2>
-                    <div className="grid grid-cols-2 gap-2 text-center col-span-2">
-                        <label className="grid grid-cols-2 col-span-2 gap-2">
-                            <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="First Name*" type="text" required name="firstName" />
-                            <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Last Name*" type="text" required name="lastName" />
-                            <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Email*" type="email" required name="email" />
-                            <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Phone*" type="tel" required name="phone" />
-                            <textarea className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y" maxLength={MAX_CHAR_COUNT} placeholder="Contact Request Details*" type="text" required name="contactRequestDetails" onChange={(event) => updateCharCounter(event)} />
-                        </label>
+                    <form className="grid grid-cols-2 gap-2 text-center col-span-2" onSubmit={handleSubmit}>
+                        <div className="text-left">
+                            <label>First name:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="First Name*"
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange} />
+                            {formErrors.firstName && <p style={{ color: 'red' }}>{formErrors.firstName}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Last name:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Last Name*"
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange} />
+                            {formErrors.lastName && <p style={{ color: 'red' }}>{formErrors.lastName}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Email:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Email*"
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange} />
+                            {formErrors.email && <p style={{ color: 'red' }}>{formErrors.email}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Phone Number:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Phone*"
+                                type="text"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange} />
+                            {formErrors.phoneNumber && <p style={{ color: 'red' }}>{formErrors.phoneNumber}</p>}
+                        </div>
+                        <textarea
+                            className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
+                            maxLength={MAX_CHAR_COUNT}
+                            placeholder="Contact Request Details*"
+                            type="text"
+                            name="description"
+                            value={formData.description}
+                            onChange={(event) => updateCharCounter(event)} />
                         <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
                         <div className="col-span-2 justify-center">
-                            <button className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                            <button type="submit" className="bg-black text-white rounded-full px-3 py-1 shadow-md">
                                 Contact Seller
                             </button>
                         </div>
-                    </div>
+                        {isContactUsSuccess.isSuccess ?
+                            <div className="col-span-2">
+                                <SuccessAlert message={isContactUsSuccess.successMessage} dismissFunction={setContactUsSuccess} />
+                            </div> : null
+                        }
+                        {isContactUsError.isError ?
+                            <div className="col-span-2">
+                                <ErrorAlert errorMessage={isContactUsError.errorMessage} dismissFunction={setContactUsError} />
+                            </div> : null
+                        }
+                    </form>
                 </div>
                 <h2 className="text-xl font-semibold md:col-span-2">Key Specs</h2>
                 <div className="grid grid-cols-2 gap-2 navLineWrapEnd:grid-cols-4 navLineWrapEnd:col-span-2 fourInventoryColBreakPoint:grid-flow-col fourInventoryColBreakPoint:col-span-2">
@@ -152,19 +281,76 @@ export default function InventoryDetailed() {
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-center md:hidden">
                     <p className="col-span-2 text-xl font-semibold">Contact for a Viewing or Test Drive</p>
-                    <label className="grid grid-cols-2 col-span-2 gap-2">
-                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="First Name*" type="text" required name="firstName" />
-                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Last Name*" type="text" required name="lastName" />
-                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Email*" type="email" required name="email" />
-                        <input className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1" placeholder="Phone*" type="tel" required name="phone" />
-                        <textarea className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y" maxLength={MAX_CHAR_COUNT} placeholder="Contact Request Details*" type="text" required name="contactRequestDetails" onChange={(event) => updateCharCounter(event)} />
-                    </label>
-                    <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
-                    <div className="col-span-2 flex justify-center">
-                        <button className="bg-black text-white rounded-full px-3 py-1">
-                            Contact Seller
-                        </button>
-                    </div>
+                    <form className="grid grid-cols-2 gap-2 text-center col-span-2" onSubmit={handleSubmit}>
+                        <div className="text-left">
+                            <label>First name:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="First Name*"
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange} />
+                            {formErrors.firstName && <p style={{ color: 'red' }}>{formErrors.firstName}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Last name:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Last Name*"
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange} />
+                            {formErrors.lastName && <p style={{ color: 'red' }}>{formErrors.lastName}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Email:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Email*"
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange} />
+                            {formErrors.email && <p style={{ color: 'red' }}>{formErrors.email}</p>}
+                        </div>
+                        <div className="text-left">
+                            <label>Phone Number:</label>
+                            <input
+                                className="w-full placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                                placeholder="Phone*"
+                                type="text"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange} />
+                            {formErrors.phoneNumber && <p style={{ color: 'red' }}>{formErrors.phoneNumber}</p>}
+                        </div>
+                        <textarea
+                            className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
+                            maxLength={MAX_CHAR_COUNT}
+                            placeholder="Contact Request Details*"
+                            type="text"
+                            name="description"
+                            value={formData.description}
+                            onChange={(event) => updateCharCounter(event)} />
+                        <p className={"col-span-2 text-end -my-2 text-xs " + (isCharCountMaxed ? 'text-red-600' : 'text-gray-text')}>{charCount}/{MAX_CHAR_COUNT}</p>
+                        <div className="col-span-2 justify-center">
+                            <button type="submit" className="bg-black text-white rounded-full px-3 py-1 shadow-md">
+                                Contact Seller
+                            </button>
+                        </div>
+                        {isContactUsSuccess.isSuccess ?
+                            <div className="col-span-2">
+                                <SuccessAlert message={isContactUsSuccess.successMessage} dismissFunction={setContactUsSuccess} />
+                            </div> : null
+                        }
+                        {isContactUsError.isError ?
+                            <div className="col-span-2">
+                                <ErrorAlert errorMessage={isContactUsError.errorMessage} dismissFunction={setContactUsError} />
+                            </div> : null
+                        }
+                    </form>
                 </div>
                 <p className="text-xl font-semibold md:col-span-2">Description</p>
                 <p className="md:col-span-2">{inventoryData.description}</p>

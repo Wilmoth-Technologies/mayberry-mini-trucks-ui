@@ -52,6 +52,9 @@ export default function NavBar() {
         contactUsTextColor = "text-black";
         testimonialsTextColor = "text-black";
         faqTextColor = "text-black";
+    } else if (location.pathname.includes("/unsubscribed")) {
+        inventoryBgColor = "bg-white";
+        logoHeaderTextColor = "text-white";
     }
 
     const handleAuth = () => {

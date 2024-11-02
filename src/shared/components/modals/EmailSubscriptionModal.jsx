@@ -53,7 +53,7 @@ export default function EmailSubscriptionModal({ onClose, setSuccess }) {
                 setLoading(true);
                 const response = await axiosInstance.post('/add/subscriber', { ...formData });
                 setError({ isError: false })
-                setSuccess({ isSuccess: true, successMessage: `Successfully subscribed via email: ${formData.email}. Please be on the Lookout for Emails from sales@mayberryminitrucks.com`});
+                setSuccess({ isSuccess: true, successMessage: `Successfully subscribed via email: ${formData.email}. Please be on the Lookout for Emails from sales@mayberryminitrucks.com` });
                 onClose();
             } catch (error) {
                 if (error.status === 409) {
@@ -64,7 +64,7 @@ export default function EmailSubscriptionModal({ onClose, setSuccess }) {
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
-            } finally {                
+            } finally {
                 setLoading(false);
             }
         }
@@ -134,7 +134,7 @@ export default function EmailSubscriptionModal({ onClose, setSuccess }) {
                             </div>
                         </div>
                         <span className="flex place-items-end pt-2">
-                            <p className="px-4 md:px-8 text-sm flex-1">By submitting, I agree to receive future communications from Mayberry Mini Trucks and I have read and agree to, Mayberry Mini Trucks Terms and Data Privacy Notice.</p>
+                            <p className="px-4 md:px-8 text-sm flex-1">By submitting, I agree to receive future communications from Mayberry Mini Trucks. You may Unsubscribe anytime via the link at the bottom of all emails.</p>
                         </span>
                     </div>
                 </div>
