@@ -127,7 +127,7 @@ export default function InventoryDetailed() {
                 setContactUsError({ isError: false })
                 setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
             } catch (error) {
-                setContactUsError({ isError: false, })
+                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.'})
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -214,6 +214,7 @@ export default function InventoryDetailed() {
                             className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
                             maxLength={MAX_CHAR_COUNT}
                             placeholder="Contact Request Details*"
+                            required
                             type="text"
                             name="description"
                             value={formData.description}
@@ -251,7 +252,7 @@ export default function InventoryDetailed() {
                         <p className="text-gray-text font-light text-sm">Year</p>
                     </div>
                     <div className="border border-border-gray rounded-md px-2 py-1">
-                        <p className="text-lg font-sem">40,087 mi</p>
+                        <p className="text-lg font-sem">{inventoryData.mileage}</p>
                         <p className="text-gray-text font-light text-sm">Mileage</p>
                     </div>
                     <div className="border border-border-gray rounded-md px-2 py-1">
@@ -330,6 +331,7 @@ export default function InventoryDetailed() {
                             className="placeholder:italic placeholder:text-gray-text bg-search-background border border-border-gray rounded-md py-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 col-span-2 resize-y"
                             maxLength={MAX_CHAR_COUNT}
                             placeholder="Contact Request Details*"
+                            required
                             type="text"
                             name="description"
                             value={formData.description}

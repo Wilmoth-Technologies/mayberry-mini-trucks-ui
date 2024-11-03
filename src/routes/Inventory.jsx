@@ -169,7 +169,7 @@ export default function Inventory() {
                 setContactUsError({ isError: false })
                 setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
             } catch (error) {
-                setContactUsError({ isError: false, })
+                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.'})
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -583,6 +583,7 @@ export default function Inventory() {
                                         maxLength={MAX_CHAR_COUNT}
                                         placeholder="Contact Request Details*"
                                         type="text"
+                                        required
                                         name="description"
                                         value={formData.description}
                                         onChange={(event) => updateCharCounter(event)} />
@@ -667,6 +668,7 @@ export default function Inventory() {
                                 maxLength={MAX_CHAR_COUNT}
                                 placeholder="Contact Request Details*"
                                 type="text"
+                                required
                                 name="description"
                                 value={formData.description}
                                 onChange={(event) => updateCharCounter(event)} />

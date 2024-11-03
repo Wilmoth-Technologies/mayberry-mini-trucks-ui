@@ -38,6 +38,7 @@ export default function Root() {
                 }
 
                 setError({ isError: false });
+                setReviewError({ isError: false });
             } catch (error) {
                 if (error.config.url === '/inventory/getTopTenInventoryMetaData') {
                     setError({ isError: true, errorMessage: "Failed to Load Inventory Data, Please Try Again." });

@@ -45,7 +45,10 @@ export default function NavBar() {
         location.pathname.includes("/management/view") ||
         location.pathname.includes("/management/edit/") ||
         location.pathname.includes("/management/schedule/banners") ||
-        location.pathname.includes("/management/email/list")) {
+        location.pathname.includes("/management/email/list") ||
+        location.pathname.includes("/contact") ||
+        location.pathname.includes("/faq") ||
+        location.pathname.includes("/testimonials")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
