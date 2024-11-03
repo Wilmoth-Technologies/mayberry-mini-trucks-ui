@@ -79,7 +79,7 @@ export default function Inventory() {
                 setContactUsError({ isError: false })
                 setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
             } catch (error) {
-                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.'})
+                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.' })
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -90,11 +90,11 @@ export default function Inventory() {
     };
 
     return (
-        <div className="px-3 pt-6">
+        <div className="px-3 pt-6 pb-3">
             {isLoading ? <LoadingNonProvider /> : null}
             <h1 className="text-center text-xl font-semibold">Proudly serving the entire United States</h1>
             <p className="text-center text-lg">Feel free to Contact Us for all Inquiries Surrounding your Mini Truck Needs!</p>
-            
+
             <h2 className="text-center text-lg py-4 font-semibold">Contact Form:</h2>
             <form className="grid grid-cols-2 gap-2 text-center col-span-2 pb-4" onSubmit={handleSubmit}>
                 <div className="text-left">
@@ -167,6 +167,11 @@ export default function Inventory() {
                     </div> : null
                 }
             </form>
+            <div className="grid justify-center">
+                <div className="w-full h-[450px] sm:w-[600px]">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3209.1481690053!2d-80.74321112361297!3d36.45397538713881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8852273dc6168285%3A0xdca68f6e32ff1ca!2sMayberry%20Mini%20Trucks!5e0!3m2!1sen!2sus!4v1730612306681!5m2!1sen!2sus" width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
         </div>
     );
 }

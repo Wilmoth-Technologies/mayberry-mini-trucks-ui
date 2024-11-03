@@ -23,6 +23,7 @@ import ManagementEmailList from './routes/ManagementEmailList.jsx';
 import Unsubscribe from './routes/Unsubscribe.jsx';
 import ContactUs from './routes/ContactUs.jsx';
 import FAQ from './routes/FAQ.jsx';
+import Testimonials from './routes/Testimonials.jsx';
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,11 @@ const router = createBrowserRouter([
       {
         path: "faq",
         element: <FAQ />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "testimonials",
+        element: <Testimonials />,
         errorElement: <ErrorPage />,
       },
       //Un-Comment in Local
