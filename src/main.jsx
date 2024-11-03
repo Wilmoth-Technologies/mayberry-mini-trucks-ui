@@ -21,6 +21,8 @@ import ManagementEditInventory from './routes/ManagementEditInventory.jsx';
 import ManagementScheduleBanners from './routes/ManagementScheduleBanners.jsx';
 import ManagementEmailList from './routes/ManagementEmailList.jsx';
 import Unsubscribe from './routes/Unsubscribe.jsx';
+import ContactUs from './routes/ContactUs.jsx';
+import FAQ from './routes/FAQ.jsx';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,16 @@ const router = createBrowserRouter([
       {
         path: "unsubscribed",
         element: <Unsubscribe />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "contact",
+        element: <ContactUs />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "faq",
+        element: <FAQ />,
         errorElement: <ErrorPage />,
       },
       //Un-Comment in Local
