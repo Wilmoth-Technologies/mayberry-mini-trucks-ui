@@ -50,14 +50,14 @@ export default function FAQ() {
           {topics.map((topic, index) => (
             <div key={index} className="mb-8">
               <h2 className="text-xl font-semibold mb-4 text-gray-700">{topic.title}</h2>
-              <Accordion alwaysOpen={false}>
+              <Accordion alwaysOpen={false} collapseAll>
                 {topic.questions.map((q, idx) => (
                   <Accordion.Panel key={idx}>
-                    <Accordion.Title>
+                    <Accordion.Title className='text-action-yellow'>
                       {q.question}
                     </Accordion.Title>
                     <Accordion.Content>
-                      <p className="text-gray-600">{q.answer}</p>
+                      <p className="text-grey-primary">{q.answer}</p>
                     </Accordion.Content>
                   </Accordion.Panel>
                 ))}
