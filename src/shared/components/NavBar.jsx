@@ -133,17 +133,8 @@ export default function NavBar() {
                         <Link to='/inventory' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Inventory
                         </Link>
-                        <Link to='/gallery' className="w-full py-6" onClick={() => mobileBurgerClick()}>
-                            Gallery
-                        </Link>
                         <Link to='/testimonials' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Testimonials
-                        </Link>
-                        <Link to='/nc-titling' className="w-full py-6" onClick={() => mobileBurgerClick()}>
-                            NC Titling
-                        </Link>
-                        <Link to='/Linkuto-lenders' className="w-full py-6" onClick={() => mobileBurgerClick()}>
-                            Auto Lenders
                         </Link>
                         <Link to='/faq' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             FAQ
