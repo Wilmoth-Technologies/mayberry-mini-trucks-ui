@@ -698,7 +698,7 @@ export default function Inventory() {
                             Make
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMakeFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 " + (isMakeFilterOpen ? 'block' : 'hidden')}>
                             {makes && makes.map(make => (
                                 <div key={make}>
                                     <input className="accent-black rounded-sm"
@@ -716,7 +716,7 @@ export default function Inventory() {
                             Model
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isModelFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text " + (isModelFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 " + (isModelFilterOpen ? 'block' : 'hidden')}>
                             {models && models.map(model => (
                                 <div key={model}>
                                     <input className="accent-black rounded-sm"
@@ -734,7 +734,7 @@ export default function Inventory() {
                             Price
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isPriceFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text gap-x-4 " + (isPriceFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 gap-x-4 " + (isPriceFilterOpen ? 'block' : 'hidden')}>
                             <label>Min</label>
                             <label>Max</label>
                             <input
@@ -758,7 +758,7 @@ export default function Inventory() {
                             Year
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isYearFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-3 text-gray-text " + (isYearFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-3 " + (isYearFilterOpen ? 'block' : 'hidden')}>
                             {years && years.map(year => (
                                 <div key={year}>
                                     <input className="accent-black rounded-sm"
@@ -776,7 +776,7 @@ export default function Inventory() {
                             Mileage
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMileageFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text gap-x-4 " + (isMileageFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 gap-x-4 " + (isMileageFilterOpen ? 'block' : 'hidden')}>
                             <label>Min</label>
                             <label>Max</label>
                             <input
@@ -800,7 +800,7 @@ export default function Inventory() {
                             Engine
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isEngineFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text " + (isEngineFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 " + (isEngineFilterOpen ? 'block' : 'hidden')}>
                             {engines && engines.map(engine => (
                                 <div key={engine}>
                                     <input className="accent-black rounded-sm"
@@ -818,7 +818,7 @@ export default function Inventory() {
                             Transmission
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isTransmissionFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text " + (isTransmissionFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 " + (isTransmissionFilterOpen ? 'block' : 'hidden')}>
                             {transmissions && transmissions.map(transmission => (
                                 <div key={transmission}>
                                     <input className="accent-black rounded-sm"
@@ -836,7 +836,7 @@ export default function Inventory() {
                             Options
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isOptionsFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-2 text-gray-text " + (isOptionsFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-2 " + (isOptionsFilterOpen ? 'block' : 'hidden')}>
                             {options && options.map(option => (
                                 <div key={option}>
                                     <input className="accent-black rounded-sm"

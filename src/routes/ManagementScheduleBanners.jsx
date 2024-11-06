@@ -93,6 +93,7 @@ export default function ManagementScheduleBanners() {
     const handleDeleteClick = async (id) => {
         try {
             setLoading(true);
+            setNotificationList([]);
             await axiosInstance.delete('/management/deleteNotification', { params: { id: id } });
             setDeleteError({ isError: false })
         } catch (error) {
