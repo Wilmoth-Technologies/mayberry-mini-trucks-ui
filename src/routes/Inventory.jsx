@@ -1,30 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { TbTrash } from "react-icons/tb";
 import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
-import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, DRIVE_TRAIN_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON } from "../shared/AppConstants";
+import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON, OPTIONS_BUTTON } from "../shared/AppConstants";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
 import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
-import { isStringEmpty } from "../shared/AppFunctions";
 import { SuccessAlert } from "../shared/components/SuccessAlert";
+import { useClickOutside } from "../shared/hooks/UseClickOutside";
 
 export default function Inventory() {
+    const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
     const [isKeiComparisonOpen, setKeiComparisonOpen] = useState(false);
-    const [isMakeFilterOpen, setMakeFilterOpen] = useState(true);
-    const [isModelFilterOpen, setModelFilterOpen] = useState(true);
-    const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
-    const [isYearFilterOpen, setYearFilterOpen] = useState(true);
-    const [isMileageFilterOpen, setMileageFilterOpen] = useState(true);
-    const [isEngineFilterOpen, setEngineFilterOpen] = useState(true);
-    const [isDriveTrainFilterOpen, setDriveTrainFilterOpen] = useState(true);
-    const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(true);
+    const [isMakeFilterOpen, setMakeFilterOpen] = useState(false);
+    const [isModelFilterOpen, setModelFilterOpen] = useState(false);
+    const [isPriceFilterOpen, setPriceFilterOpen] = useState(false);
+    const [isYearFilterOpen, setYearFilterOpen] = useState(false);
+    const [isMileageFilterOpen, setMileageFilterOpen] = useState(false);
+    const [isEngineFilterOpen, setEngineFilterOpen] = useState(false);
+    const [isOptionsFilterOpen, setOptionsFilterOpen] = useState(false);
+    const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [inventory, setInventory] = useState([]);
-    const [inventoryWithMetaData, setInventoryWithMetaData] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [currentPage, setCurrentPage] = useState(0);
@@ -45,6 +45,25 @@ export default function Inventory() {
     const [isContactUsError, setContactUsError] = useState({ isError: false, errorMessage: "" });
     const [isContactUsSuccess, setContactUsSuccess] = useState({ isSuccess: false, successMessage: "" });
 
+    //Filtering States:
+    const [makes, setMakes] = useState([]);
+    const [models, setModels] = useState([]);
+    const [years, setYears] = useState([]);
+    const [engines, setEngines] = useState([]);
+    const [transmissions, setTransmissions] = useState([]);
+    const [options, setOptions] = useState([]);
+    const [filteredInventory, setFilteredInventory] = useState([]);
+    const [selectedFilters, setSelectedFilters] = useState({
+        make: [],
+        model: [],
+        year: [],
+        engine: [],
+        transmission: [],
+        option: [],
+        price: { min: 0, max: 0 },  // Example range for price
+        mileage: { min: 0, max: 0 } // Example range for mileage
+    });
+
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
@@ -56,41 +75,24 @@ export default function Inventory() {
         setCurrentPage(selected);
     };
 
-    // Filter items based on the search term
-    const filteredDataVins = inventoryWithMetaData.filter(item => Object.values(item).some(value => typeof value == "string" ? value.toLowerCase().includes(search.toLowerCase()) : false)).map(item => item.vin);
-    const filteredInventory = inventory.filter(item => filteredDataVins.includes(item.vin))
-
-    // Calculate pagination based on filtered data
-    const offset = currentPage * itemsPerPage;
-    let currentItems = [];
-    let pageCount = 0;
-    if (isStringEmpty(search)) {
-        currentItems = inventory.slice(offset, offset + itemsPerPage);
-        pageCount = Math.ceil(inventory.length / itemsPerPage);
-    } else {
-        currentItems = filteredInventory.slice(offset, offset + itemsPerPage);
-        pageCount = Math.ceil(filteredInventory.length / itemsPerPage);
-    }
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const response = await axiosInstance.get('/inventory/getInventoryMetaData');
                 setInventory(response.data);
-                const listOfObjectFlattenedMetaData = response?.data.map(item => {
-                    //Flatten the options list of object and create elements at the top
-                    //level object based on each option + index to allow for searching
-                    const optionsObject = item.options.reduce((acc, option, index) => {
-                        acc[`option${index}`] = option.option;
-                        return acc;
-                    }, {});
+                setFilteredInventory(response.data);
 
-                    delete item.options;
-                    return { ...item, ...optionsObject };
-                });
-                setInventoryWithMetaData(listOfObjectFlattenedMetaData);
+                const allOptions = response?.data.flatMap(item =>
+                    Array.isArray(item.options) ? item.options.map(opt => opt.option) : []
+                );
+                setOptions([...new Set(allOptions)]);
+
+                setMakes([...new Set(response?.data.map(item => item.make))]);
+                setModels([...new Set(response?.data.map(item => item.model))]);
+                setYears([...new Set(response?.data.map(item => item.year))]);
+                setEngines([...new Set(response?.data.map(item => item.engine))]);
+                setTransmissions([...new Set(response?.data.map(item => item.transmission))]);
 
                 setError({ isError: false });
             } catch (error) {
@@ -116,8 +118,8 @@ export default function Inventory() {
         setCurrentPage(0); // Reset to first page on new search
     };
 
-     // Handles form input changes
-     const handleChange = (e) => {
+    // Handles form input changes
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
@@ -169,7 +171,7 @@ export default function Inventory() {
                 setContactUsError({ isError: false })
                 setContactUsSuccess({ isSuccess: true, successMessage: `Successfully sent Contact Request.` });
             } catch (error) {
-                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.'})
+                setContactUsError({ isError: true, errorMessage: 'Contact Request Failed, Please Try Again.' })
                 console.error(error.response
                     ? error.response.data.message
                     : error.message)
@@ -178,6 +180,112 @@ export default function Inventory() {
             }
         }
     };
+
+    const handleClearAllClick = () => {
+        setSelectedFilters({
+            make: [],
+            model: [],
+            year: [],
+            engine: [],
+            transmission: [],
+            option: [],
+            price: { min: 0, max: 0 },  // Example range for price
+            mileage: { min: 0, max: 0 } // Example range for mileage
+        });
+    }
+
+    // Handle checkbox selection
+    const handleFilterChange = (filterType, value) => {
+        setCurrentPage(0);
+        setSelectedFilters(prevFilters => {
+            const updatedFilters = { ...prevFilters };
+            updatedFilters[filterType] = updatedFilters[filterType].includes(value)
+                ? updatedFilters[filterType].filter(item => item !== value)
+                : [...updatedFilters[filterType], value];
+            return updatedFilters;
+        });
+    };
+
+    // Calculate pagination based on filtered data
+    const offset = currentPage * itemsPerPage;
+    let currentItems = [];
+    let pageCount = 0;
+    currentItems = filteredInventory.slice(offset, offset + itemsPerPage);
+    pageCount = Math.ceil(filteredInventory.length / itemsPerPage);
+
+    function findMatchingObjects(data, searchString) {
+        // Convert searchString to lowercase for case-insensitive matching
+        const searchLower = searchString.toLowerCase();
+
+        return data.filter(item => {
+            // Check if any option contains the search string
+            const optionsMatch = item.options.some(option =>
+                option.option.toLowerCase().includes(searchLower)
+            );
+
+            // Check if any other field (like make, model, year) contains the search string
+            const fieldsMatch = [
+                item.make,
+                item.model,
+                item.year,
+                item.exteriorColor,
+                item.interiorColor,
+                item.transmission,
+                item.engine,
+                item.description
+            ].some(field => field && field.toLowerCase().includes(searchLower));
+
+            // Return true if either the options or other fields match
+            return optionsMatch || fieldsMatch;
+        });
+    }
+
+    useEffect(() => {
+        const applyFilters = () => {
+            setCurrentPage(0);
+            // Step 1: Filter inventory based on selected filters
+            const newFilteredInventory = inventory.filter(item => {
+                return Object.keys(selectedFilters).every(filterType => {
+                    if (selectedFilters[filterType].length === 0) return true;  // No filter for this type
+                    if (filterType === "option") {
+                        return selectedFilters[filterType].every(opt => item.options.some(o => o.option === opt));
+                    }
+                    if (filterType === "price") {
+                        // Check if price is within the specified range
+                        const minPrice = selectedFilters.price.min || 0;
+                        const maxPrice = selectedFilters.price.max || Infinity;
+                        return item.price >= minPrice && item.price <= maxPrice;
+                    }
+
+                    if (filterType === "mileage") {
+                        // Check if mileage is within the specified range
+                        const minMileage = selectedFilters.mileage.min || 0;
+                        const maxMileage = selectedFilters.mileage.max || Infinity;
+                        return item.mileage >= minMileage && item.mileage <= maxMileage;
+                    }
+                    return selectedFilters[filterType].includes(item[filterType]);
+                });
+            });
+
+            // Step 2: Further filter by the search term
+            const filteredDataVins = findMatchingObjects(newFilteredInventory, search).map(item => item.vin);
+
+            // Step 3: Final filter of inventory based on both filters and search
+            const finalFilteredInventory = inventory.filter(item => filteredDataVins.includes(item.vin));
+            setFilteredInventory(finalFilteredInventory);
+        };
+
+        applyFilters();
+    }, [selectedFilters, inventory, search]);
+
+    const mobileFilterClick = () => {
+        setMobileFilterOpen(prevMobileFilterState => !prevMobileFilterState);
+    };
+
+    const wrapperRef = useRef("mobileFilter");
+    useClickOutside(wrapperRef, () => {
+        setMobileFilterOpen(false);
+    })
 
     return (
         <>
@@ -397,23 +505,182 @@ export default function Inventory() {
                             type="text"
                             name="search" />
                     </label>
-                    <button className="flex items-center text-lg">
+                    <button className="flex items-center text-lg" onClick={() => mobileFilterClick()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-filter" viewBox="0 0 16 16">
                             <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5" />
                         </svg>
                         <p className="pl-2">Filter</p>
                     </button>
                 </div>
-                <div className="flex gap-2 pt-2 items-center">
-                    <button className="border border-border-gray rounded-full text-gray-text py-1 px-3 largerMobile:px-6">Make</button>
-                    <button className="border border-border-gray rounded-full text-gray-text py-1 px-3 largerMobile:px-6">Model</button>
-                    <button className="border border-border-gray rounded-full text-gray-text py-1 px-3 largerMobile:px-6">Price</button>
-                    <button className="flex items-center gap-1">
-                        <div className="w-2 h-2 border-black border-r-2 border-b-2 transform rotate-45 -mt-2" />
-                        <p>Sort by price</p>
-                    </button>
+            </div>
+            <div ref={wrapperRef} className={"fixed right-0 top-0 bg-white z-50 bg-opacity-90 w-3/4 text-black h-full flex-col justify-content-center origin-top animate-open-menu " + (isMobileFilterOpen ? 'flex' : 'hidden')} >
+                <div className="m-4 flex flex-col border border-x-black border-y-black">
+                    <div className="flex w-full p-1 justify-between">
+                        <p className="font-semibold text-lg">Filters</p>
+                        <button className="flex items-center" onClick={handleClearAllClick}>
+                            <p className="pr-1 font-semibold text-lg">Clear All</p>
+                            <TbTrash />
+                        </button>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={MAKE_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setMakeFilterOpen(!isMakeFilterOpen)}>
+                            Make
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMakeFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black " + (isMakeFilterOpen ? 'block' : 'hidden')}>
+                            {makes && makes.map(make => (
+                                <div key={make}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={make}
+                                        checked={selectedFilters.make.includes(make)}
+                                        onChange={() => handleFilterChange('make', make)} />
+                                    <label className="px-1">{make}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={MODEL_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setModelFilterOpen(!isModelFilterOpen)}>
+                            Model
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isModelFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black " + (isModelFilterOpen ? 'block' : 'hidden')}>
+                            {models && models.map(model => (
+                                <div key={model}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={model}
+                                        checked={selectedFilters.model.includes(model)}
+                                        onChange={() => handleFilterChange('model', model)} />
+                                    <label className="px-1">{model}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={PRICE_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setPriceFilterOpen(!isPriceFilterOpen)}>
+                            Price
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isPriceFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black gap-x-4 " + (isPriceFilterOpen ? 'block' : 'hidden')}>
+                            <label>Min</label>
+                            <label>Max</label>
+                            <input
+                                type="number"
+                                placeholder="Min Price"
+                                value={selectedFilters.price.min}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, min: parseInt(e.target.value) || 0 } })}
+                                className="border p-1 rounded"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Max Price"
+                                value={selectedFilters.price.max}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, max: parseInt(e.target.value) || Infinity } })}
+                                className="border p-1 rounded"
+                            />
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={YEAR_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setYearFilterOpen(!isYearFilterOpen)}>
+                            Year
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isYearFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-3 text-black " + (isYearFilterOpen ? 'block' : 'hidden')}>
+                            {years && years.map(year => (
+                                <div key={year}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={year}
+                                        checked={selectedFilters.year.includes(year)}
+                                        onChange={() => handleFilterChange('year', year)} />
+                                    <label className="px-1">{year}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={MILEAGE_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setMileageFilterOpen(!isMileageFilterOpen)}>
+                            Mileage
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMileageFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black gap-x-4 " + (isMileageFilterOpen ? 'block' : 'hidden')}>
+                            <label>Min</label>
+                            <label>Max</label>
+                            <input
+                                type="number"
+                                placeholder="Min Mileage"
+                                value={selectedFilters.mileage.min}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, min: parseInt(e.target.value) || 0 } })}
+                                className="border p-1 rounded"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Max Mileage"
+                                value={selectedFilters.mileage.max}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, max: parseInt(e.target.value) || Infinity } })}
+                                className="border p-1 rounded"
+                            />
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={ENGINE_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setEngineFilterOpen(!isEngineFilterOpen)}>
+                            Engine
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isEngineFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black " + (isEngineFilterOpen ? 'block' : 'hidden')}>
+                            {engines && engines.map(engine => (
+                                <div key={engine}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={engine}
+                                        checked={selectedFilters.engine.includes(engine)}
+                                        onChange={() => handleFilterChange('engine', engine)} />
+                                    <label className="px-1">{engine}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={TRANSMISSION_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setTransmissionFilterOpen(!isTransmissionFilterOpen)}>
+                            Transmission
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isTransmissionFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black " + (isTransmissionFilterOpen ? 'block' : 'hidden')}>
+                            {transmissions && transmissions.map(transmission => (
+                                <div key={transmission}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={transmission}
+                                        checked={selectedFilters.transmission.includes(transmission)}
+                                        onChange={() => handleFilterChange('transmission', transmission)} />
+                                    <label className="px-1">{transmission}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-black p-1">
+                        <button id={OPTIONS_BUTTON} className="flex w-full justify-between font-semibold" onClick={() => setOptionsFilterOpen(!isOptionsFilterOpen)}>
+                            Options
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isOptionsFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-black " + (isOptionsFilterOpen ? 'block' : 'hidden')}>
+                            {options && options.map(option => (
+                                <div key={option}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={option}
+                                        checked={selectedFilters.option.includes(option)}
+                                        onChange={() => handleFilterChange('option', option)} />
+                                    <label className="px-1">{option}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
+            {/* End Filtering Menu Mobile */}
 
             {/* Filtering Menu Medium Screens and Above */}
             <div className="hidden md:grid md:grid-cols-[320px_auto] md:px-3 gap-3">
@@ -421,7 +688,7 @@ export default function Inventory() {
                 <div className="flex flex-col border border-x-border-gray">
                     <div className="flex w-full p-1 justify-between">
                         <p className="">Filters</p>
-                        <button className="flex items-center">
+                        <button className="flex items-center" onClick={handleClearAllClick}>
                             <p className="pr-1">Clear All</p>
                             <TbTrash />
                         </button>
@@ -431,35 +698,17 @@ export default function Inventory() {
                             Make
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMakeFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-3 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="honda" />
-                                <label className="px-1" htmlFor="honda">Honda</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="suzki" />
-                                <label className="px-1" htmlFor="suzki">Suzki</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="daihatsu" />
-                                <label className="px-1" htmlFor="daihatsu">Daihatsu</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="mitsubishi" />
-                                <label className="px-1" htmlFor="mitsubishi">Mitsubishi</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="subaru" />
-                                <label className="px-1" htmlFor="subaru">Subaru</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="toyota" />
-                                <label className="px-1" htmlFor="toyota">Toyota</label>
-                            </div>
-                            <div>
-                                <input className="accent-black rounded-sm" type="checkbox" id="mazda" />
-                                <label className="px-1" htmlFor="mazda">Mazda</label>
-                            </div>
+                        <div className={"grid grid-cols-2 text-gray-text " + (isMakeFilterOpen ? 'block' : 'hidden')}>
+                            {makes && makes.map(make => (
+                                <div key={make}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={make}
+                                        checked={selectedFilters.make.includes(make)}
+                                        onChange={() => handleFilterChange('make', make)} />
+                                    <label className="px-1">{make}</label>
+                                </div>
+                            ))}
                         </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
@@ -467,42 +716,138 @@ export default function Inventory() {
                             Model
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isModelFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
+                        <div className={"grid grid-cols-2 text-gray-text " + (isModelFilterOpen ? 'block' : 'hidden')}>
+                            {models && models.map(model => (
+                                <div key={model}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={model}
+                                        checked={selectedFilters.model.includes(model)}
+                                        onChange={() => handleFilterChange('model', model)} />
+                                    <label className="px-1">{model}</label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
                         <button id={PRICE_BUTTON} className="flex w-full justify-between" onClick={() => setPriceFilterOpen(!isPriceFilterOpen)}>
                             Price
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isPriceFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
+                        <div className={"grid grid-cols-2 text-gray-text gap-x-4 " + (isPriceFilterOpen ? 'block' : 'hidden')}>
+                            <label>Min</label>
+                            <label>Max</label>
+                            <input
+                                type="number"
+                                placeholder="Min Price"
+                                value={selectedFilters.price.min}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, min: parseInt(e.target.value) || 0 } })}
+                                className="border p-1 rounded"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Max Price"
+                                value={selectedFilters.price.max}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, max: parseInt(e.target.value) || Infinity } })}
+                                className="border p-1 rounded"
+                            />
+                        </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
                         <button id={YEAR_BUTTON} className="flex w-full justify-between" onClick={() => setYearFilterOpen(!isYearFilterOpen)}>
                             Year
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isYearFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
+                        <div className={"grid grid-cols-3 text-gray-text " + (isYearFilterOpen ? 'block' : 'hidden')}>
+                            {years && years.map(year => (
+                                <div key={year}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={year}
+                                        checked={selectedFilters.year.includes(year)}
+                                        onChange={() => handleFilterChange('year', year)} />
+                                    <label className="px-1">{year}</label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
                         <button id={MILEAGE_BUTTON} className="flex w-full justify-between" onClick={() => setMileageFilterOpen(!isMileageFilterOpen)}>
                             Mileage
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isMileageFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
+                        <div className={"grid grid-cols-2 text-gray-text gap-x-4 " + (isMileageFilterOpen ? 'block' : 'hidden')}>
+                            <label>Min</label>
+                            <label>Max</label>
+                            <input
+                                type="number"
+                                placeholder="Min Mileage"
+                                value={selectedFilters.mileage.min}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, min: parseInt(e.target.value) || 0 } })}
+                                className="border p-1 rounded"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Max Mileage"
+                                value={selectedFilters.mileage.max}
+                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, max: parseInt(e.target.value) || Infinity } })}
+                                className="border p-1 rounded"
+                            />
+                        </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
                         <button id={ENGINE_BUTTON} className="flex w-full justify-between" onClick={() => setEngineFilterOpen(!isEngineFilterOpen)}>
                             Engine
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isEngineFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                    </div>
-                    <div className="border-y border-y-border-gray p-1">
-                        <button id={DRIVE_TRAIN_BUTTON} className="flex w-full justify-between" onClick={() => setDriveTrainFilterOpen(!isDriveTrainFilterOpen)}>
-                            Drive Train
-                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isDriveTrainFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
-                        </button>
+                        <div className={"grid grid-cols-2 text-gray-text " + (isEngineFilterOpen ? 'block' : 'hidden')}>
+                            {engines && engines.map(engine => (
+                                <div key={engine}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={engine}
+                                        checked={selectedFilters.engine.includes(engine)}
+                                        onChange={() => handleFilterChange('engine', engine)} />
+                                    <label className="px-1">{engine}</label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className="border-y border-y-border-gray p-1">
                         <button id={TRANSMISSION_BUTTON} className="flex w-full justify-between" onClick={() => setTransmissionFilterOpen(!isTransmissionFilterOpen)}>
                             Transmission
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isTransmissionFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
+                        <div className={"grid grid-cols-2 text-gray-text " + (isTransmissionFilterOpen ? 'block' : 'hidden')}>
+                            {transmissions && transmissions.map(transmission => (
+                                <div key={transmission}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={transmission}
+                                        checked={selectedFilters.transmission.includes(transmission)}
+                                        onChange={() => handleFilterChange('transmission', transmission)} />
+                                    <label className="px-1">{transmission}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="border-y border-y-border-gray p-1">
+                        <button id={OPTIONS_BUTTON} className="flex w-full justify-between" onClick={() => setOptionsFilterOpen(!isOptionsFilterOpen)}>
+                            Options
+                            <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isOptionsFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
+                        </button>
+                        <div className={"grid grid-cols-2 text-gray-text " + (isOptionsFilterOpen ? 'block' : 'hidden')}>
+                            {options && options.map(option => (
+                                <div key={option}>
+                                    <input className="accent-black rounded-sm"
+                                        type="checkbox"
+                                        value={option}
+                                        checked={selectedFilters.option.includes(option)}
+                                        onChange={() => handleFilterChange('option', option)} />
+                                    <label className="px-1">{option}</label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-2">

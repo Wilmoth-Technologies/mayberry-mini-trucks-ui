@@ -5,5 +5,5 @@ export const PRICE_BUTTON = 'priceButton';
 export const YEAR_BUTTON = 'yearButton';
 export const MILEAGE_BUTTON = 'mileageButton';
 export const ENGINE_BUTTON = 'engineButton';
-export const DRIVE_TRAIN_BUTTON = 'driveTrainButton';
+export const OPTIONS_BUTTON = 'optionsButton';
 export const TRANSMISSION_BUTTON = 'transmissionButton';
