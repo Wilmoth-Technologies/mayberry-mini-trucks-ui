@@ -6,6 +6,10 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { jwtDecode } from "jwt-decode";
 import { useLoading } from "../providers/Loading";
 import ScrollToTop from "./ScrollToTop";
+import { getCurrentDate } from "../AppFunctions";
+import { GeneralAlert } from "./GeneralAlert";
+import LoadingNonProvider from "./LoadingNonProvider";
+import axiosInstance from "../AxiosConfig";
 
 export default function NavBar() {
     const location = useLocation();
@@ -13,6 +17,9 @@ export default function NavBar() {
     const [isBurgerOpen, setBurgerOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
     const { showLoading, hideLoading } = useLoading();
+    const [isGeneralAlert, setGeneralAlert] = useState({ isAlertOpen: false, message: "" });
+    const [notificationList, setNotificationList] = useState([]);
+    const [isLoading, setLoading] = useState(false);
 
     const mobileBurgerClick = () => {
         setBurgerOpen(prevBurgerState => !prevBurgerState);
@@ -47,21 +54,21 @@ export default function NavBar() {
         contactUsTextColor = "text-action-yellow";
         testimonialsTextColor = "text-black";
         faqTextColor = "text-black";
-     } else if (location.pathname.includes("/testimonials")) {
+    } else if (location.pathname.includes("/testimonials")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
         contactUsTextColor = "text-black";
         testimonialsTextColor = "text-action-yellow";
         faqTextColor = "text-black";
-     } else if (location.pathname.includes("/faq")) {
+    } else if (location.pathname.includes("/faq")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
         contactUsTextColor = "text-black";
         testimonialsTextColor = "text-black";
         faqTextColor = "text-action-yellow";
-     } else if (location.pathname.includes("/unauthorized") ||
+    } else if (location.pathname.includes("/unauthorized") ||
         location.pathname.includes("/management/add") ||
         location.pathname.includes("/management/view") ||
         location.pathname.includes("/management/edit/") ||
@@ -69,7 +76,8 @@ export default function NavBar() {
         location.pathname.includes("/management/email/list") ||
         location.pathname.includes("/contact") ||
         location.pathname.includes("/faq") ||
-        location.pathname.includes("/testimonials")) {
+        location.pathname.includes("/testimonials") ||
+        location.pathname.includes("/lenders")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
         inventoryTextColor = "text-black";
@@ -113,8 +121,31 @@ export default function NavBar() {
         fetchPermissions();
     }, [isAuthenticated, getAccessTokenSilently]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+
+                const notificationResponse = await axiosInstance.get('/notification/getNotification', { params: { date: getCurrentDate() } });
+                setNotificationList(notificationResponse.data);
+                if (notificationResponse.data.length) {
+                    setGeneralAlert({ isAlertOpen: true, message: notificationResponse.data[0].description })
+                }
+            } catch (error) {
+                console.error(error.response
+                    ? error.response.data.message
+                    : error.message)
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <>
+            {isLoading ? <LoadingNonProvider /> : null}
             <ScrollToTop />
             <nav className='flex flex-row pt-4 md:text-center z-30 sticky' ref={wrapperRef}>
                 <button className={'basis-1/6 text-center my-auto ' + (isBurgerOpen ? 'hidden' : 'md:block')} onClick={() => mobileBurgerClick()}>
@@ -163,6 +194,12 @@ export default function NavBar() {
                         <Link to='/contact' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Contact Us
                         </Link>
+                        <Link to='/lenders' className="w-full py-6" onClick={() => mobileBurgerClick()}>
+                            Auto Lenders
+                        </Link>
+                        <a className="w-full py-6" href="https://www.lulu.com/spotlight/tkojames" target="_blank" rel="noopener noreferrer" onClick={() => mobileBurgerClick()}>
+                            Manuals
+                        </a>
                         <button onClick={() => handleAuth()} className="w-full py-6">
                             {isAuthenticated ? 'Logout' : 'Log In'}
                         </button>
@@ -172,6 +209,10 @@ export default function NavBar() {
                     </nav>
                 </div>
             </nav>
+            {isGeneralAlert.isAlertOpen ?
+                <div className="absolute inset-0 pt-20 z-20 px-3 pb-2">
+                    <GeneralAlert message={notificationList[0].description} dismissFunction={setGeneralAlert} />
+                </div> : null}
             <Outlet />
         </>
     )

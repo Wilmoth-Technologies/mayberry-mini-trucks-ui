@@ -6,19 +6,15 @@ import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptio
 import axiosInstance from "../shared/AxiosConfig.js";
 import { ErrorAlert } from "../shared/components/ErrorAlert.jsx";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider.jsx";
-import { getCurrentDate } from "../shared/AppFunctions.js";
-import { GeneralAlert } from "../shared/components/GeneralAlert.jsx";
 import { SuccessAlert } from "../shared/components/SuccessAlert.jsx";
 
 export default function Root() {
     const [modalOpen, setModalOpen] = useState(false);
     const [reviewData, setReviewData] = useState([]);
     const [inventory, setInventory] = useState([]);
-    const [notificationList, setNotificationList] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [isReviewError, setReviewError] = useState({ isError: false, errorMessage: "" });
-    const [isGeneralAlert, setGeneralAlert] = useState({ isAlertOpen: false, message: "" });
     const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
 
     useEffect(() => {
@@ -30,12 +26,6 @@ export default function Root() {
 
                 const reviewResponse = await axiosInstance.get('/review/getBusinessDetails')
                 setReviewData(reviewResponse.data);
-
-                const notificationResponse = await axiosInstance.get('/notification/getNotification', { params: { date: getCurrentDate() } });
-                setNotificationList(notificationResponse.data);
-                if (notificationResponse.data.length) {
-                    setGeneralAlert({ isAlertOpen: true, message: notificationResponse.data[0].description })
-                }
 
                 setError({ isError: false });
                 setReviewError({ isError: false });
@@ -62,10 +52,6 @@ export default function Root() {
             {isLoading ? <LoadingNonProvider /> : null}
             <div className="bg-mobile-landing-page md:bg-desktop-landing-page md:h-screen h-[600px] bg-cover bg-no-repeat -mt-28 bg-top drop-shadow-lg" />
             {/* About Us */}
-            {isGeneralAlert.isAlertOpen ?
-                <div className="absolute inset-0 pt-20 px-3 pb-2">
-                    <GeneralAlert message={notificationList[0].description} dismissFunction={setGeneralAlert} />
-                </div> : null}
             <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">About Us</h1>
             <div className="flex flex-col-reverse justify-center sm:flex-row items-center p-6 gap-8">
                 <img className="h-[188px] bg-contain bg-no-repeat bg-center drop-shadow-lg" src="/LandingKeiLineUp2.png" />
