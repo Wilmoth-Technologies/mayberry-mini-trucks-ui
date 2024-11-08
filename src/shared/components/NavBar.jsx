@@ -40,7 +40,28 @@ export default function NavBar() {
         inventoryBgColor = "bg-white";
         logoHeaderTextColor = "text-white";
         inventoryTextColor = "text-black";
-    } else if (location.pathname.includes("/unauthorized") ||
+    } else if (location.pathname.includes("/contact")) {
+        inventoryBgColor = "bg-black";
+        logoHeaderTextColor = "text-black";
+        inventoryTextColor = "text-black";
+        contactUsTextColor = "text-action-yellow";
+        testimonialsTextColor = "text-black";
+        faqTextColor = "text-black";
+     } else if (location.pathname.includes("/testimonials")) {
+        inventoryBgColor = "bg-black";
+        logoHeaderTextColor = "text-black";
+        inventoryTextColor = "text-black";
+        contactUsTextColor = "text-black";
+        testimonialsTextColor = "text-action-yellow";
+        faqTextColor = "text-black";
+     } else if (location.pathname.includes("/faq")) {
+        inventoryBgColor = "bg-black";
+        logoHeaderTextColor = "text-black";
+        inventoryTextColor = "text-black";
+        contactUsTextColor = "text-black";
+        testimonialsTextColor = "text-black";
+        faqTextColor = "text-action-yellow";
+     } else if (location.pathname.includes("/unauthorized") ||
         location.pathname.includes("/management/add") ||
         location.pathname.includes("/management/view") ||
         location.pathname.includes("/management/edit/") ||

@@ -81,8 +81,7 @@ export default function Root() {
                     <p className="text-lg text-center md:text-left pb-4">HB 179 was signed by Governor Cooper on June 21, 2019. Japanese mini trucks can be licensed and driven on the NC roadways. Many thanks to House Rep Sarah Stevens, Senator Deanna Ballard and their staff for partnering with Mayberry Mini Trucks to overcome this significant legal hurdle. We at Mayberry Mini Trucks would like to invite you to now partner with us to help you with all your mini truck needs.</p>
                     <img className="h-[188px] bg-contain bg-no-repeat bg-center rounded-md pb-4 md:row-span-4 md:hidden" src="/MiniHauler.png" />
                     <h2 className="text-center text-lg md:text-xl font-medium pb-2">Doorstep Delivery!</h2>
-                    <p className="text-lg text-center md:text-left pb-2">Here at Mayberry Mini Trucks we make our customers the priority. With that we offer delivery services. We’ll deliver your truck right to where you need it, whether that is a place of business, residence, or anywhere else. We’ll work with you to get the truck where it needs to go. Let us know when and where you need your truck delivered!</p>
-                    <Link className="mx-16 bg-action-yellow text-black font-medium rounded-full p-2 text-center mb-6" to="/tempLink">VIEW DETAILS HERE</Link>
+                    <p className="text-lg text-center md:text-left pb-2 mb-4 md:mb-10">Here at Mayberry Mini Trucks we make our customers the priority. With that we offer delivery services. We’ll deliver your truck right to where you need it, whether that is a place of business, residence, or anywhere else. We’ll work with you to get the truck where it needs to go. Let us know when and where you need your truck delivered!</p>
                 </div>
                 <div className="flex-row text-center space-y-2 md:mx-6 md:-mt-10">
                     {isError.isError ?
@@ -90,7 +89,7 @@ export default function Root() {
                             <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
                         </div> : null
                     }
-                    <h2 className="text-lg md:text-xl font-medium">See Our Inventory</h2>
+                    <h2 className="text-lg md:text-xl font-medium xl:mt-12">See Our Inventory</h2>
                     <InventoryScroller className="basis-full" inventory={inventory} />
                 </div>
                 <div className="flex-row text-center space-y-2 md:mx-6 mt-4">
