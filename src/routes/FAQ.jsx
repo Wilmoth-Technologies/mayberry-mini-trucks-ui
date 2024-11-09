@@ -26,19 +26,19 @@ const topics = [
         },
       ]
     },
-    {
-      title: 'How Our Process Works',
-      questions: [
-        {
-          question: 'What payment methods do you accept?',
-          answer: 'To be Determined...'
-        },
-        {
-          question: 'How do I get the Title and How long does it take?',
-          answer: 'To be Determined...'
-        },
-      ]
-    },
+    // {
+    //   title: 'How Our Process Works',
+    //   questions: [
+    //     {
+    //       question: 'What payment methods do you accept?',
+    //       answer: 'To be Determined...'
+    //     },
+    //     {
+    //       question: 'How do I get the Title and How long does it take?',
+    //       answer: 'To be Determined...'
+    //     },
+    //   ]
+    // },
   ];
   
 
