@@ -10,7 +10,7 @@ export function GeneralAlert({ message, dismissFunction }) {
       onDismiss={() => (dismissFunction({isAlertOpen: false}))}
       rounded
     >
-      <span className="font-medium">{message}</span>
+      <span className="font-semibold text-2xl">{message}</span>
     </Alert>
   );
 }

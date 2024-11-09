@@ -1,3 +1,5 @@
+import { MapLink } from "./MapLink";
+
 export default function Footer() {
     return (
         <footer className="grid grid-cols-3 bg-grey-footer justify-center text-center text-white gap-y-3">
@@ -21,9 +23,7 @@ export default function Footer() {
                     <p className="font-bold w-5/12">
                         Address
                     </p>
-                    <p className="w-7/12">
-                        407 Snow Lane Mt Airy, NC 27030
-                    </p>
+                    <MapLink className="w-7/12"/>
                 </div>
                 <div className="w-full flex">
                     <p className="font-bold w-5/12">
