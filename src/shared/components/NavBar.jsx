@@ -30,8 +30,8 @@ export default function NavBar() {
         setBurgerOpen(false);
     })
 
-    let logoHeaderTextColor = "text-black md:text-white";
-    let inventoryBgColor = "bg-black md:bg-white";
+    let logoHeaderTextColor = "text-white";
+    let inventoryBgColor = "bg-white";
     let inventoryTextColor = "text-white";
     let contactUsTextColor = "text-white";
     let testimonialsTextColor = "text-white";
@@ -44,9 +44,9 @@ export default function NavBar() {
         testimonialsTextColor = "text-black";
         faqTextColor = "text-black";
     } else if (location.pathname.includes("/inventory")) {
+        inventoryTextColor = "text-action-yellow";
         inventoryBgColor = "bg-white";
         logoHeaderTextColor = "text-white";
-        inventoryTextColor = "text-black";
     } else if (location.pathname.includes("/contact")) {
         inventoryBgColor = "bg-black";
         logoHeaderTextColor = "text-black";
