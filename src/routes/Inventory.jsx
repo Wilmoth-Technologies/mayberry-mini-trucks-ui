@@ -291,7 +291,7 @@ export default function Inventory() {
         <>
             {/* Header Background */}
             <div className="p-3">
-                <div className="bg-inventory-kei-banner md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg"></div>
+                <div className="bg-inventory-kei-banner-mobile md:bg-inventory-kei-banner md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg"></div>
             </div>
 
             {/* Kei Truck Comparison DropDown */}
