@@ -53,10 +53,10 @@ export default function ManagementViewInventory() {
         fetchData();
     }, [isDeleteApiTriggered]);
 
-    const handleDeleteClick = async (vin) => {
+    const handleDeleteClick = async (vin, year) => {
         try {
             setLoading(true);
-            await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin } });
+            await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin, year: year } });
             setError({ isError: false })
         } catch (error) {
             setError({ isError: true, errorMessage: "Failed to Delete Inventory, Please Try Again." })

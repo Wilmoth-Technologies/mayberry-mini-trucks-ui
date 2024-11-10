@@ -143,7 +143,7 @@ export default function Table({ columns, data, deleteFunction, handleSoldCheckBo
                                                         <Link to={"/management/edit/" + row.original.vin} className="px-2 text-2xl">
                                                             <MdOutlineEdit />
                                                         </Link>
-                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin)}>
+                                                        <button className="px-2 text-2xl" onClick={() => deleteFunction(row.original.vin, row.original.year)}>
                                                             <IoTrashOutline />
                                                         </button>
                                                     </div>
