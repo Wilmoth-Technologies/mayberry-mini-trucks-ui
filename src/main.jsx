@@ -24,6 +24,7 @@ import Unsubscribe from './routes/Unsubscribe.jsx';
 import ContactUs from './routes/ContactUs.jsx';
 import FAQ from './routes/FAQ.jsx';
 import Testimonials from './routes/Testimonials.jsx';
+import Lenders from './routes/Lenders.jsx';
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,11 @@ const router = createBrowserRouter([
       {
         path: "testimonials",
         element: <Testimonials />,
+        errorElement: <ErrorPage />,
+      },
+      {
+        path: "lenders",
+        element: <Lenders />,
         errorElement: <ErrorPage />,
       },
       //Un-Comment in Local
@@ -107,7 +113,6 @@ const router = createBrowserRouter([
       //   ),
       //   errorElement: <ErrorPage />,
       // },
-
       //Start Comment in Local
       {
         path: "/management",
@@ -176,7 +181,7 @@ createRoot(document.getElementById('root')).render(
   // <StrictMode>
     <LoadingProvider>
       <Auth0Provider
-        domain="auth.mayberry-mini-trucks-ui.dev.kubernetes-wilmoth.com"
+        domain="auth.mayberryminitrucks.com"
         clientId="vxJbnpUaMKkjSDMZ9BKenoUKoy9SZZWn"
         authorizationParams={{
           redirect_uri: window.location.origin,
