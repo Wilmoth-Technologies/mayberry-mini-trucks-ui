@@ -5,22 +5,25 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 import axiosInstance from "../shared/AxiosConfig";
 import Table from "../shared/components/datatable/Table";
+import { useAccessToken } from "../shared/hooks/UseAccessToken";
 
 export default function ManagementEmailList() {
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
     const [subscriberList, setSubscriberList] = useState([]);
 
+    const getAccessToken = useAccessToken();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get('/management/getSubscriberList');
+                const token = await getAccessToken();
+                const response = await axiosInstance.get('/management/getSubscriberList', { headers: { Authorization: `Bearer ${token}` }, });
                 const formatedData = response.data.map(subscriber => {
                     const date = new Date(subscriber.subscribeDate);
                     const formattedDate = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 
-                    return {...subscriber, subscribeDate: formattedDate};
+                    return { ...subscriber, subscribeDate: formattedDate };
                 })
                 setSubscriberList(formatedData);
 

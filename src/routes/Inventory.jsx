@@ -301,7 +301,7 @@ export default function Inventory() {
                     <ErrorAlert errorMessage={isError.errorMessage} dismissFunction={setError} />
                 </div> : null
             }
-            <div className="pb-1">
+            {/* <div className="pb-1">
                 <button className="flex px-3 gap-2 largerMobile:gap-4 items-center md:w-full md:justify-center" onClick={() => keiComparisonClick()}>
                     <h2 className="font-medium text-2xl">Kei Truck Comparison</h2>
                     <div className="bg-gray-300 h-0.5 w-16 largerMobile:w-28 md:w-96 rounded-full" />
@@ -482,7 +482,7 @@ export default function Inventory() {
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </div> */}
 
             {/* Filtering Menu Mobile */}
             <div className="flex flex-col px-3 gap-y-1 md:hidden">

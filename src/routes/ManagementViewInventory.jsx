@@ -7,6 +7,7 @@ import { ErrorAlert } from "../shared/components/ErrorAlert";
 import { CURRENCY_FORMAT_STYLE } from "../shared/AppConstants";
 import { numberFormatter, milageFormatter } from "../shared/AppFunctions";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
+import { useAccessToken } from "../shared/hooks/UseAccessToken";
 
 export default function ManagementViewInventory() {
     const [fullInventory, setFullInventory] = useState([]);
@@ -20,11 +21,13 @@ export default function ManagementViewInventory() {
         setIncludeSoldInventory(event.target.checked);
     };
 
+    const getAccessToken = useAccessToken();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get('/management/getAllInventory');
+                const token = await getAccessToken();
+                const response = await axiosInstance.get('/management/getAllInventory', { headers: { Authorization: `Bearer ${token}` }, });
                 setFullInventory(response.data.map(inventoryItem => {
                     return {
                         ...inventoryItem,
@@ -56,7 +59,8 @@ export default function ManagementViewInventory() {
     const handleDeleteClick = async (vin, year) => {
         try {
             setLoading(true);
-            await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin, year: year } });
+            const token = await getAccessToken();
+            await axiosInstance.delete('/management/deleteInventory', { params: { vin: vin, year: year }, headers: { Authorization: `Bearer ${token}` }, });
             setError({ isError: false })
         } catch (error) {
             setError({ isError: true, errorMessage: "Failed to Delete Inventory, Please Try Again." })
