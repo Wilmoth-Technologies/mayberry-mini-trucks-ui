@@ -7,6 +7,7 @@ import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
 import { isStringEmpty, milageFormatter } from "../shared/AppFunctions";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
+import { useAccessToken } from "../shared/hooks/UseAccessToken";
 
 //TODO: Need to add in functionality that allows for Description Templating....
 export default function ManagementAddInventory() {
@@ -20,11 +21,13 @@ export default function ManagementAddInventory() {
     const [isLoading, setLoading] = useState(false);
     const [isDescriptionModified, setDescriptionModified] = useState(false);
 
+    const getAccessToken = useAccessToken();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get('/management/getAllVin');
+                const token = await getAccessToken();
+                const response = await axiosInstance.get('/management/getAllVin', { headers: { Authorization: `Bearer ${token}` }, });
                 setExistingVins(response.data);
                 setError({ isError: false });
             } catch (error) {

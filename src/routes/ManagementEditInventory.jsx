@@ -7,6 +7,7 @@ import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
 import { isStringEmpty } from "../shared/AppFunctions";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
+import { useAccessToken } from "../shared/hooks/UseAccessToken";
 
 //TODO: Need to add in functionality that allows for Description Templating....
 export default function ManagementEditInventory() {
@@ -21,11 +22,13 @@ export default function ManagementEditInventory() {
     const [isPreviewRendered, setPreviewRendered] = useState(false);
     const [isLoading, setLoading] = useState(false);
 
+    const getAccessToken = useAccessToken();
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get('/management/getInventoryItem', { params: { vin: vin } });
+                const token = await getAccessToken();
+                const response = await axiosInstance.get('/management/getInventoryItem', { params: { vin: vin }, headers: { Authorization: `Bearer ${token}` }, });
                 setExistingInventoryData(response.data);
                 const inventoryResponse = response.data[0];
 
@@ -70,7 +73,7 @@ export default function ManagementEditInventory() {
                 });
 
                 //TODO: Take care of Error Handling here....
-                const { data } = await axiosInstance.get('/management/getInventoryPhotos', { params: { vin: vin } });
+                const { data } = await axiosInstance.get('/management/getInventoryPhotos', { params: { vin: vin }, headers: { Authorization: `Bearer ${token}` }, });
                 const imageObjects = data.map((img, index) => {
                     // Convert binary data back into a Blob for preview
                     const byteCharacters = img.binaryData.map(b => String.fromCharCode(parseInt(b, 10))).join('');

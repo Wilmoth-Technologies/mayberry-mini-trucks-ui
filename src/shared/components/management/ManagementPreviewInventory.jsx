@@ -7,6 +7,7 @@ import axiosInstance from "../../AxiosConfig";
 import { useLoading } from "../../providers/Loading";
 import { ErrorAlert } from "../ErrorAlert";
 import { useNavigate } from 'react-router-dom';
+import { useAccessToken } from "../../hooks/UseAccessToken";
 
 export default function ManagementPreviewInventory({ formValues, selectedOptions, selectedFiles, setPreviewRendered, isAddInventory = true, areImagesUpdated = false, existingInventoryData = {} }) {
     const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
         window.scrollTo(0, 0);
     }, []);
 
+    const getAccessToken = useAccessToken();
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -47,11 +49,14 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                 formData.append('image', selectedFiles[i].file);
             }
 
+            const token = await getAccessToken();
+
             if (isAddInventory) {
                 const response = await axiosInstance.post('/management/addInventory', formData, {
                     timeout: 60000,
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
                     },
                 });
 
@@ -70,6 +75,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                     params: { areImagesUpdated: areImagesUpdated },
                     headers: {
                         'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`,
                     },
                 });
 

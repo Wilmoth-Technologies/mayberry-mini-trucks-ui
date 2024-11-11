@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import { Label, Textarea } from "flowbite-react";
 import 'react-datepicker/dist/react-datepicker.css';
 import { SuccessAlert } from "../shared/components/SuccessAlert";
+import { useAccessToken } from "../shared/hooks/UseAccessToken";
 
 
 export default function ManagementScheduleBanners() {
@@ -26,6 +27,7 @@ export default function ManagementScheduleBanners() {
     });
     const [validationErrors, setValidationErrors] = useState({});
     const [isSuccess, setSuccess] = useState({ isAlertOpen: false, message: "" });
+    const getAccessToken = useAccessToken();
 
     const handleChange = (name, value) => {
         setFormData({ ...formData, [name]: value });
@@ -48,7 +50,8 @@ export default function ManagementScheduleBanners() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get('/management/getNotificationList');
+                const token = await getAccessToken();
+                const response = await axiosInstance.get('/management/getNotificationList', { headers: { Authorization: `Bearer ${token}` }, });
                 setNotificationList(response.data);
 
                 setError({ isError: false });
@@ -94,7 +97,8 @@ export default function ManagementScheduleBanners() {
         try {
             setLoading(true);
             setNotificationList([]);
-            await axiosInstance.delete('/management/deleteNotification', { params: { id: id } });
+            const token = await getAccessToken();
+            await axiosInstance.delete('/management/deleteNotification', { params: { id: id }, headers: { Authorization: `Bearer ${token}` }, });
             setDeleteError({ isError: false })
         } catch (error) {
             setDeleteError({ isError: true, errorMessage: "Failed to Delete Notification, Please Try Again." })
@@ -120,11 +124,12 @@ export default function ManagementScheduleBanners() {
         if (validateForm()) {
             try {
                 setLoading(true);
+                const token = await getAccessToken();
                 const response = await axiosInstance.post('/management/addNotification', {
                     ...formData,
                     startDate: formData.startDate.toISOString().split('T')[0],
                     endDate: formData.endDate.toISOString().split('T')[0],
-                });
+                }, { headers: { Authorization: `Bearer ${token}` }});
                 setSuccess({ isAlertOpen: true, message: `Successfully added Notification for Dates: ${formatDate(formData.startDate)} - ${formatDate(formData.endDate)}.` });
                 setAddError({ isError: false })
             } catch (error) {
