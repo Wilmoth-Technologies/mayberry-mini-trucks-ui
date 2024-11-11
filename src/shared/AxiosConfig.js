@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'https://api.mayberryminitrucks.com',
-  timeout: 30000, //30 Second Request Timeout
+  timeout: 45000, //30 Second Request Timeout
   headers: {
     'Content-Type': 'application/json',
   },
