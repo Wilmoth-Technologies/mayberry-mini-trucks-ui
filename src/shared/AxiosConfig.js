@@ -22,6 +22,8 @@ axiosInstance.interceptors.request.use(async (config) => {
   if (config.method !== 'get') {
     try {
       console.log("HERE AFTER");
+      // Log the cookies to verify availability
+      console.log("Cookies available: ", document.cookie);
       // Get the CSRF token from the cookie if it exists
       const csrfToken = document.cookie
         .split('; ')
