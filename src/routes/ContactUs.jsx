@@ -72,7 +72,7 @@ export default function Inventory() {
         if (validateForm()) {
             try {
                 setLoading(true);
-                const response = await axiosInstance.post('/inventory/contactus', { ...formData, isFailedFilter: true });
+                const response = await axiosInstance.post('/contactus', { ...formData, isFailedFilter: false });
                 setFormData({ firstName: '', lastName: '', email: '', phoneNumber: '', description: '' });
                 setCharCount(0);
                 setCharCountMaxed(false);

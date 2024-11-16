@@ -56,10 +56,6 @@ export default function ManagementEmailList() {
                 accessor: "email",
             },
             {
-                Header: "Phone Number",
-                accessor: "phoneNumber",
-            },
-            {
                 Header: "Subscribe Date",
                 accessor: "subscribeDate",
             }
