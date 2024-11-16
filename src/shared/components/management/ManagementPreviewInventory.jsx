@@ -53,7 +53,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
 
             if (isAddInventory) {
                 const response = await axiosInstance.post('/management/addInventory', formData, {
-                    timeout: 60000,
+                    timeout: 120000,
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                 }
             } else {
                 const response = await axiosInstance.put('/management/updateInventory', formData, {
-                    timeout: 60000,
+                    timeout: 120000,
                     params: { areImagesUpdated: areImagesUpdated },
                     headers: {
                         'Content-Type': 'multipart/form-data',
