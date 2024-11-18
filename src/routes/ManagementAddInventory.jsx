@@ -20,6 +20,7 @@ export default function ManagementAddInventory() {
     const [isPreviewRendered, setPreviewRendered] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const [isDescriptionModified, setDescriptionModified] = useState(false);
+    const [isCompressing, setIsCompressing] = useState(false);
 
     const getAccessToken = useAccessToken();
     useEffect(() => {
@@ -300,14 +301,89 @@ export default function ManagementAddInventory() {
         (checkbox) => selectedOptions[checkbox]
     );
 
-    // Handle file selection and generate previews
-    const handleFileChange = (e) => {
-        const files = Array.from(e.target.files); // Convert FileList to array
-        const filesWithPreviews = files.map((file) => {
-            const preview = URL.createObjectURL(file); // Create preview URL for each file
-            return { file, preview };
+    const compressImage = (file, maxWidth = 800, maxHeight = 844, quality = 0.6) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    // Calculate new dimensions
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert to blob
+                    canvas.toBlob(
+                        (blob) => {
+                            const compressedFile = new File([blob], file.name, {
+                                type: 'image/jpeg',
+                                lastModified: Date.now(),
+                            });
+                            resolve(compressedFile);
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+            };
         });
-        setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithPreviews]); // Append new files to existing ones
+    };
+
+    // Handle file selection and generate previews
+    const handleFileChange = async (e) => {
+        const files = Array.from(e.target.files); // Convert FileList to array
+
+        setIsCompressing(true);
+
+        try {
+            // Compress all files and create preview URLs
+            const compressedFilesWithPreviews = await Promise.all(
+                files.map(async (file) => {
+                    const compressedFile = await compressImage(file);
+                    const preview = URL.createObjectURL(compressedFile);
+                    console.log((file.size / 1024).toFixed(2));
+                    console.log((compressedFile.size / 1024).toFixed(2));
+            
+                    return {
+                        file: compressedFile,
+                        preview
+                    };
+                })
+            );
+
+            setSelectedFiles(prevFiles => [...prevFiles, ...compressedFilesWithPreviews]);
+        } catch (error) {
+            console.error('Error compressing images:', error);
+        } finally {
+            setIsCompressing(false);
+        }
+
+        // const filesWithPreviews = files.map((file) => {
+        //     const preview = URL.createObjectURL(file); // Create preview URL for each file
+        //     return { file, preview };
+        // });
+
+        // setSelectedFiles((prevFiles) => [...prevFiles, ...filesWithPreviews]); // Append new files to existing ones
     };
 
     // Remove a selected file
@@ -337,7 +413,7 @@ export default function ManagementAddInventory() {
 
     return (
         <>
-            {isLoading ? <LoadingNonProvider /> : null}
+            {isLoading || isCompressing ? <LoadingNonProvider /> : null}
             {!isPreviewRendered ?
                 <form onSubmit={handleSubmit}>
                     {/* Header */}

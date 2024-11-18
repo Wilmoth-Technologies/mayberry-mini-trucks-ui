@@ -7,7 +7,7 @@ export default function InventoryCard({ make, model, year, price, mileage, statu
     return (
         <div className="justify-center text-center bg-white w-[180px] largerMobile:w-[190px] text-black rounded-lg drop-shadow-lg">
             
-            <img className="h-[170px] bg-contain bg-no-repeat bg-center rounded-t-lg" src={imgLink} />
+            <img className="h-[170px] w-full object-cover rounded-t-lg" src={imgLink} />
             {status === 'Pending Sale' ? <h3 className='bg-red-400 -mt-6 relative'>Pending Sale</h3> : null}
             <h3 className="text-lg text-grey-primary font-medium">{year}</h3>
             <h3 className="text-lg font-semibold">{make} {model}</h3>

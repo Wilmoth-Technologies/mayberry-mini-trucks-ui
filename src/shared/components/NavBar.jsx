@@ -143,18 +143,18 @@ export default function NavBar() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        // Fetch CSRF token when app initializes
-        const fetchCsrfToken = async () => {
-            try {
-                await axiosInstance.get('/csrfToken');
-            } catch (error) {
-                console.error('Error fetching CSRF token:', error);
-            }
-        };
+    // useEffect(() => {
+    //     // Fetch CSRF token when app initializes
+    //     const fetchCsrfToken = async () => {
+    //         try {
+    //             await axiosInstance.get('/csrfToken');
+    //         } catch (error) {
+    //             console.error('Error fetching CSRF token:', error);
+    //         }
+    //     };
 
-        fetchCsrfToken();
-    }, []);
+    //     fetchCsrfToken();
+    // }, []);
 
     return (
         <>
