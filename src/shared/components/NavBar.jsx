@@ -223,7 +223,7 @@ export default function NavBar() {
                 </div>
             </nav>
             {isGeneralAlert.isAlertOpen ?
-                <div className="absolute inset-0 pt-20 z-20 px-3 pb-2">
+                <div className="absolute -top-4 left-0 right-0 pt-20 z-20 px-3 pb-2">
                     <GeneralAlert message={notificationList[0].description} dismissFunction={setGeneralAlert} />
                 </div> : null}
             <Outlet />
