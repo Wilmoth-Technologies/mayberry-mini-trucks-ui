@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
-import { FileInput, Label, Button } from "flowbite-react";
+import { FileInput, Label } from "flowbite-react";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import axiosInstance from "../shared/AxiosConfig";
 import ManagementPreviewInventory from "../shared/components/management/ManagementPreviewInventory";
