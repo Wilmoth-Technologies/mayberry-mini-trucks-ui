@@ -506,6 +506,7 @@ export default function ManagementAddInventory() {
                                 onChange={handleInputChange}
                             >
                                 <option value="In Stock">In Stock</option>
+                                <option value="Out of Service">Out of Service</option>
                                 <option value="Pending Sale">Pending Sale</option>
                                 <option value="Sold">Sold</option>
                             </select>
