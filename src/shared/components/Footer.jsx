@@ -23,7 +23,7 @@ export default function Footer() {
                     <p className="font-bold w-5/12">
                         Address
                     </p>
-                    <MapLink className="w-7/12"/>
+                    <MapLink className="w-7/12" />
                 </div>
                 <div className="w-full flex">
                     <p className="font-bold w-5/12">
@@ -55,9 +55,14 @@ export default function Footer() {
                 <p className="md:text-left md:pl-4 md:flex-1">
                     © 2024 Mayberry Mini Trucks
                 </p>
-                <p className="pb-1 md:pr-4">
+                <a
+                    href="https://wilmothtechnologyservices.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="pb-1 md:pr-4 no-underline hover:underline"
+                >
                     Website Built & Maintained - © Wilmoth Technology Services LLC
-                </p>
+                </a>
             </div>
         </footer>
     );
