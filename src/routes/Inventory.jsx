@@ -11,6 +11,7 @@ import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
 import { SuccessAlert } from "../shared/components/SuccessAlert";
 import { useClickOutside } from "../shared/hooks/UseClickOutside";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 export default function Inventory() {
     const [isMobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -64,6 +65,55 @@ export default function Inventory() {
         mileage: { min: 0, max: 0 } // Example range for mileage
     });
 
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+    //initialize filters from URL params
+    useEffect(() => {
+        const params = Object.fromEntries(searchParams.entries());
+        const initialFilters = {
+            make: params.make ? params.make.split(',') : [],
+            model: params.model ? params.model.split(',') : [],
+            year: params.year ? params.year.split(',').map(Number) : [],
+            engine: params.engine ? params.engine.split(',') : [],
+            transmission: params.transmission ? params.transmission.split(',') : [],
+            option: params.option ? params.option.split(',') : [],
+            price: {
+                min: parseInt(params.priceMin) || 0,
+                max: parseInt(params.priceMax) || 0
+            },
+            mileage: {
+                min: parseInt(params.mileageMin) || 0,
+                max: parseInt(params.mileageMax) || 0
+            }
+        };
+        
+        // Set initial filter states
+        setSelectedFilters(initialFilters);
+        
+        // Open filter menus that have active filters
+        setMakeFilterOpen(initialFilters.make.length > 0);
+        setModelFilterOpen(initialFilters.model.length > 0);
+        setYearFilterOpen(initialFilters.year.length > 0);
+        setEngineFilterOpen(initialFilters.engine.length > 0);
+        setTransmissionFilterOpen(initialFilters.transmission.length > 0);
+        setOptionsFilterOpen(initialFilters.option.length > 0);
+        
+        // Open price filter if either min or max is set
+        setPriceFilterOpen(
+            (initialFilters.price.min > 0 || initialFilters.price.max > 0)
+        );
+        
+        // Open mileage filter if either min or max is set
+        setMileageFilterOpen(
+            (initialFilters.mileage.min > 0 || initialFilters.mileage.max > 0)
+        );
+
+        if (params.search) {
+            setSearch(params.search);
+        }
+    }, []);
+
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
         setCharCountMaxed(event.target.value.length === MAX_CHAR_COUNT);
@@ -116,6 +166,14 @@ export default function Inventory() {
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
         setCurrentPage(0); // Reset to first page on new search
+
+        const params = new URLSearchParams(searchParams);
+        if (value) {
+            params.set('search', value);
+        } else {
+            params.delete('search');
+        }
+        setSearchParams(params);
     };
 
     // Handles form input changes
@@ -182,6 +240,7 @@ export default function Inventory() {
     };
 
     const handleClearAllClick = () => {
+        // Clear all filters
         setSelectedFilters({
             make: [],
             model: [],
@@ -189,9 +248,21 @@ export default function Inventory() {
             engine: [],
             transmission: [],
             option: [],
-            price: { min: 0, max: 0 },  // Example range for price
-            mileage: { min: 0, max: 0 } // Example range for mileage
+            price: { min: 0, max: 0 },
+            mileage: { min: 0, max: 0 }
         });
+        
+        // Close all filter menus
+        setMakeFilterOpen(false);
+        setModelFilterOpen(false);
+        setPriceFilterOpen(false);
+        setYearFilterOpen(false);
+        setMileageFilterOpen(false);
+        setEngineFilterOpen(false);
+        setOptionsFilterOpen(false);
+        setTransmissionFilterOpen(false);
+        
+        setSearchParams({}); // Clear all URL params
     }
 
     // Handle checkbox selection
@@ -202,7 +273,55 @@ export default function Inventory() {
             updatedFilters[filterType] = updatedFilters[filterType].includes(value)
                 ? updatedFilters[filterType].filter(item => item !== value)
                 : [...updatedFilters[filterType], value];
+
+            // Update URL params
+            const params = new URLSearchParams(searchParams);
+            if (updatedFilters[filterType].length > 0) {
+                params.set(filterType, updatedFilters[filterType].join(','));
+            } else {
+                params.delete(filterType);
+            }
+            setSearchParams(params);
+
             return updatedFilters;
+        });
+    };
+
+    // Modify price/mileage range handlers
+    const handleRangeChange = (filterType, minMax, value) => {
+        const numValue = parseInt(value) || 0;
+        setSelectedFilters(prev => {
+            const updated = {
+                ...prev,
+                [filterType]: {
+                    ...prev[filterType],
+                    [minMax]: numValue
+                }
+            };
+
+            // Update URL params
+            const params = new URLSearchParams(searchParams);
+            
+            // Handle min value
+            if (minMax === 'min') {
+                if (numValue > 0) {
+                    params.set(`${filterType}Min`, numValue.toString());
+                } else {
+                    params.delete(`${filterType}Min`);
+                }
+            }
+            
+            // Handle max value
+            if (minMax === 'max') {
+                if (numValue > 0) {
+                    params.set(`${filterType}Max`, numValue.toString());
+                } else {
+                    params.delete(`${filterType}Max`);
+                }
+            }
+            
+            setSearchParams(params);
+            return updated;
         });
     };
 
@@ -570,14 +689,14 @@ export default function Inventory() {
                                 type="number"
                                 placeholder="Min Price"
                                 value={selectedFilters.price.min}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, min: parseInt(e.target.value) || 0 } })}
+                                onChange={(e) => handleRangeChange('price', 'min', e.target.value)}
                                 className="border p-1 rounded"
                             />
                             <input
                                 type="number"
                                 placeholder="Max Price"
                                 value={selectedFilters.price.max}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, max: parseInt(e.target.value) || Infinity } })}
+                                onChange={(e) => handleRangeChange('price', 'max', e.target.value)}
                                 className="border p-1 rounded"
                             />
                         </div>
@@ -612,14 +731,14 @@ export default function Inventory() {
                                 type="number"
                                 placeholder="Min Mileage"
                                 value={selectedFilters.mileage.min}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, min: parseInt(e.target.value) || 0 } })}
+                                onChange={(e) => handleRangeChange('mileage', 'min', e.target.value)}
                                 className="border p-1 rounded"
                             />
                             <input
                                 type="number"
                                 placeholder="Max Mileage"
                                 value={selectedFilters.mileage.max}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, max: parseInt(e.target.value) || Infinity } })}
+                                onChange={(e) => handleRangeChange('mileage', 'max', e.target.value)}
                                 className="border p-1 rounded"
                             />
                         </div>
@@ -741,14 +860,14 @@ export default function Inventory() {
                                 type="number"
                                 placeholder="Min Price"
                                 value={selectedFilters.price.min}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, min: parseInt(e.target.value) || 0 } })}
+                                onChange={(e) => handleRangeChange('price', 'min', e.target.value)}
                                 className="border p-1 rounded"
                             />
                             <input
                                 type="number"
                                 placeholder="Max Price"
                                 value={selectedFilters.price.max}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, price: { ...selectedFilters.price, max: parseInt(e.target.value) || Infinity } })}
+                                onChange={(e) => handleRangeChange('price', 'max', e.target.value)}
                                 className="border p-1 rounded"
                             />
                         </div>
@@ -783,14 +902,14 @@ export default function Inventory() {
                                 type="number"
                                 placeholder="Min Mileage"
                                 value={selectedFilters.mileage.min}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, min: parseInt(e.target.value) || 0 } })}
+                                onChange={(e) => handleRangeChange('mileage', 'min', e.target.value)}
                                 className="border p-1 rounded"
                             />
                             <input
                                 type="number"
                                 placeholder="Max Mileage"
                                 value={selectedFilters.mileage.max}
-                                onChange={(e) => setSelectedFilters({ ...selectedFilters, mileage: { ...selectedFilters.mileage, max: parseInt(e.target.value) || Infinity } })}
+                                onChange={(e) => handleRangeChange('mileage', 'max', e.target.value)}
                                 className="border p-1 rounded"
                             />
                         </div>

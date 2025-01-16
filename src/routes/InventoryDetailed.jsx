@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { isStringEmpty, numberFormatter } from '../shared/AppFunctions';
 import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
@@ -31,6 +31,12 @@ export default function InventoryDetailed() {
     const [formErrors, setFormErrors] = useState({});
     const [isContactUsError, setContactUsError] = useState({ isError: false, errorMessage: "" });
     const [isContactUsSuccess, setContactUsSuccess] = useState({ isSuccess: false, successMessage: "" });
+    const navigate = useNavigate();
+
+    const handleBack = (e) => {
+        e.preventDefault();
+        navigate(-1);
+    };
 
     const updateCharCounter = (event) => {
         setCharCount(event.target.value.length);
@@ -147,10 +153,10 @@ export default function InventoryDetailed() {
                 </div> : null
             }
             <div className="grid p-3 gap-3 md:grid-cols-2">
-                <Link to={'/inventory'} className="flex items-center md:col-span-2">
+                <a href="#" onClick={handleBack} className="flex items-center md:col-span-2">
                     <IoArrowBackOutline />
                     <p>Back to Inventory</p>
-                </Link>
+                </a>
                 {inventoryData.status === "Pending Sale" ? <h1 className="md:col-span-2 bg-red-400 text-center font-bold">Pending Sale</h1> : null}
                 <div className="flex justify-between md:hidden">
                     <h2 className="text-xl font-semibold">{inventoryData.year} {inventoryData.make} {inventoryData.model}</h2>
