@@ -72,12 +72,13 @@ export default function Inventory() {
     useEffect(() => {
         const params = Object.fromEntries(searchParams.entries());
         const initialFilters = {
-            make: params.make ? params.make.split(',') : [],
-            model: params.model ? params.model.split(',') : [],
-            year: params.year ? params.year.split(',').map(Number) : [],
-            engine: params.engine ? params.engine.split(',') : [],
-            transmission: params.transmission ? params.transmission.split(',') : [],
-            option: params.option ? params.option.split(',') : [],
+            make: params.make ? params.make.split(',').map(val => decodeURIComponent(val)) : [],
+            model: params.model ? params.model.split(',').map(val => decodeURIComponent(val)) : [],
+            // Convert year strings to numbers after splitting
+            year: params.year ? params.year.split(',').map(val => parseInt(val)) : [],
+            engine: params.engine ? params.engine.split(',').map(val => decodeURIComponent(val)) : [],
+            transmission: params.transmission ? params.transmission.split(',').map(val => decodeURIComponent(val)) : [],
+            option: params.option ? params.option.split(',').map(val => decodeURIComponent(val)) : [],
             price: {
                 min: parseInt(params.priceMin) || 0,
                 max: parseInt(params.priceMax) || 0
@@ -270,14 +271,20 @@ export default function Inventory() {
         setCurrentPage(0);
         setSelectedFilters(prevFilters => {
             const updatedFilters = { ...prevFilters };
-            updatedFilters[filterType] = updatedFilters[filterType].includes(value)
-                ? updatedFilters[filterType].filter(item => item !== value)
-                : [...updatedFilters[filterType], value];
+            // Convert value to number if filterType is year
+            const processedValue = filterType === 'year' ? parseInt(value) : value;
+            
+            updatedFilters[filterType] = updatedFilters[filterType].includes(processedValue)
+                ? updatedFilters[filterType].filter(item => item !== processedValue)
+                : [...updatedFilters[filterType], processedValue];
 
             // Update URL params
             const params = new URLSearchParams(searchParams);
             if (updatedFilters[filterType].length > 0) {
-                params.set(filterType, updatedFilters[filterType].join(','));
+                const encodedValues = updatedFilters[filterType]
+                    .map(val => encodeURIComponent(val))
+                    .join(',');
+                params.set(filterType, encodedValues);
             } else {
                 params.delete(filterType);
             }
@@ -366,21 +373,23 @@ export default function Inventory() {
             const newFilteredInventory = inventory.filter(item => {
                 return Object.keys(selectedFilters).every(filterType => {
                     if (selectedFilters[filterType].length === 0) return true;  // No filter for this type
+                    
                     if (filterType === "option") {
                         return selectedFilters[filterType].every(opt => item.options.some(o => o.option === opt));
                     }
                     if (filterType === "price") {
-                        // Check if price is within the specified range
                         const minPrice = selectedFilters.price.min || 0;
                         const maxPrice = selectedFilters.price.max || Infinity;
                         return item.price >= minPrice && item.price <= maxPrice;
                     }
-
                     if (filterType === "mileage") {
-                        // Check if mileage is within the specified range
                         const minMileage = selectedFilters.mileage.min || 0;
                         const maxMileage = selectedFilters.mileage.max || Infinity;
                         return item.mileage >= minMileage && item.mileage <= maxMileage;
+                    }
+                    // Convert both the item value and filter value to numbers for year comparison
+                    if (filterType === "year") {
+                        return selectedFilters[filterType].includes(Number(item[filterType]));
                     }
                     return selectedFilters[filterType].includes(item[filterType]);
                 });
@@ -706,13 +715,13 @@ export default function Inventory() {
                             Year
                             <span className={"pointer-events-none w-3 h-3 border-black border-r-2 border-b-2 transform mr-1 " + (isYearFilterOpen ? '-rotate-135 mt-2' : 'rotate-45 mt-1')} />
                         </button>
-                        <div className={"grid grid-cols-3 text-black " + (isYearFilterOpen ? 'block' : 'hidden')}>
+                        <div className={"grid grid-cols-3 " + (isYearFilterOpen ? 'block' : 'hidden')}>
                             {years && years.map(year => (
                                 <div key={year}>
                                     <input className="accent-black rounded-sm"
                                         type="checkbox"
                                         value={year}
-                                        checked={selectedFilters.year.includes(year)}
+                                        checked={selectedFilters.year.includes(Number(year))}
                                         onChange={() => handleFilterChange('year', year)} />
                                     <label className="px-1">{year}</label>
                                 </div>
@@ -883,7 +892,7 @@ export default function Inventory() {
                                     <input className="accent-black rounded-sm"
                                         type="checkbox"
                                         value={year}
-                                        checked={selectedFilters.year.includes(year)}
+                                        checked={selectedFilters.year.includes(Number(year))}
                                         onChange={() => handleFilterChange('year', year)} />
                                     <label className="px-1">{year}</label>
                                 </div>
