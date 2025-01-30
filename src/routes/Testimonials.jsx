@@ -33,6 +33,12 @@ export default function Testimonials() {
             {isLoading ? <LoadingNonProvider /> : null}
             <h1 className="text-center text-2xl font-semibold">What our Customers Are Saying</h1>
             {isLoading ? null : <GoogleReviews reviewData={reviewData} isError={isReviewError} setReviewError={setReviewError} />}
+            <div className="w-full flex justify-center py-3">
+                <a type="submit" href="https://g.page/r/CcrxL-P2aMoNEAI/review" target="_blank" rel="noopener noreferrer"
+                    className="bg-action-yellow text-white font-semibold rounded-full px-3 py-1 shadow-md">
+                    Leave us a Review!
+                </a>
+            </div>
             <h1 className="text-center text-2xl font-semibold">Additional Customer Feedback</h1>
             <div className="grid grid-cols-2 gap-3 pt-3">
                 <div className="col-span-2 md:col-span-1 w-full flex justify-center items-center">
