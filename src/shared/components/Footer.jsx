@@ -53,7 +53,7 @@ export default function Footer() {
             <div className='col-span-3 md:col-span-1 bg-kei-footer h-[210px] bg-contain bg-no-repeat bg-center' />
             <div className="col-span-3 text-xs md:text-base md:flex">
                 <p className="md:text-left md:pl-4 md:flex-1">
-                    © 2024 Mayberry Mini Trucks
+                    © {new Date().getFullYear()} Mayberry Mini Trucks
                 </p>
                 <a
                     href="https://wilmothtechnologyservices.com/"
