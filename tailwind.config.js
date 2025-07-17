@@ -51,6 +51,7 @@ export default {
         'navLineWrapStart': '1425px',
         'threeInventoryColBreakPoint': '950px',
         'fourInventoryColBreakPoint': '1160px',
+        'fourInventoryColBreakPoint2': '1412px',
         'fiveInventoryColBreakPoint': '1600px',
         'sixInventoryColBreakPoint': '1790px',
         'eightInventoryColBreakPoint': '1929px',
