@@ -243,8 +243,8 @@ export default function InventoryDetailed() {
                         }
                     </form>
                 </div>
-                <h2 className="text-xl font-semibold md:col-span-2">Key Specs</h2>
-                <div className="grid grid-cols-2 gap-2 navLineWrapEnd:grid-cols-4 navLineWrapEnd:col-span-2 fourInventoryColBreakPoint:grid-flow-col fourInventoryColBreakPoint:col-span-2">
+                <h2 className="text-xl font-semibold md:col-span-2">Key Specs</h2> 
+                <div className="grid grid-cols-2 gap-2 navLineWrapEnd:grid-cols-4 navLineWrapEnd:col-span-2 fourInventoryColBreakPoint2:grid-flow-col fourInventoryColBreakPoint2:col-span-2">
                     <div className="border border-border-gray rounded-md px-2 py-1">
                         <p className="text-lg">{inventoryData.make}</p>
                         <p className="text-gray-text font-light text-sm">Make</p>
