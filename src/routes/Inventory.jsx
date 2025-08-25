@@ -139,11 +139,11 @@ export default function Inventory() {
                 );
                 setOptions([...new Set(allOptions)]);
 
-                setMakes([...new Set(response?.data.map(item => item.make))]);
-                setModels([...new Set(response?.data.map(item => item.model))]);
-                setYears([...new Set(response?.data.map(item => item.year))]);
-                setEngines([...new Set(response?.data.map(item => item.engine))]);
-                setTransmissions([...new Set(response?.data.map(item => item.transmission))]);
+                setMakes([...new Set(response?.data.map(item => item.make?.trim()))]);
+                setModels([...new Set(response?.data.map(item => item.model?.trim()))]);
+                setYears([...new Set(response?.data.map(item => item.year?.trim()))]);
+                setEngines([...new Set(response?.data.map(item => item.engine?.trim()))]);
+                setTransmissions([...new Set(response?.data.map(item => item.transmission?.trim()))]);
 
                 setError({ isError: false });
             } catch (error) {
