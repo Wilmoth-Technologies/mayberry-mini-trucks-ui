@@ -73,19 +73,38 @@ export default function ManagementEditInventory() {
                     }));
                 });
 
-                // Use imageLinks from the inventory response and convert GCS URLs to CDN URLs
-                const imageObjects = inventoryResponse.imageLinks.map((url, index) => {
-                    // Replace GCS URL with CDN URL
-                    const cdnUrl = url.replace(
-                        'https://storage.googleapis.com/mayberry-mini-trucks-inventory-images',
-                        'https://cdn.mayberryminitrucks.com'
-                    );
-                    return { 
-                        file: null, // No file object needed for existing images
-                        preview: cdnUrl, // Use the CDN URL directly for preview
-                        isUrl: true // Flag to indicate this is a URL, not a File
-                    };
-                });
+                // Fetch existing images from CDN and convert to File objects for submission
+                const imageObjects = await Promise.all(
+                    inventoryResponse.imageLinks.map(async (url, index) => {
+                        // Replace GCS URL with CDN URL
+                        const cdnUrl = url.replace(
+                            'https://storage.googleapis.com/mayberry-mini-trucks-inventory-images',
+                            'https://cdn.mayberryminitrucks.com'
+                        );
+                        
+                        // Fetch the image from CDN and convert to File object
+                        try {
+                            const response = await fetch(cdnUrl);
+                            const blob = await response.blob();
+                            const fileName = cdnUrl.split('/').pop() || `image-${index}`;
+                            const file = new File([blob], fileName, { type: blob.type });
+                            
+                            return {
+                                file: file, // File object for submission
+                                preview: cdnUrl, // CDN URL for preview
+                                isUrl: false // Now it's a File, not just a URL
+                            };
+                        } catch (error) {
+                            console.error(`Failed to fetch image ${index}:`, error);
+                            // Fallback: return with null file if fetch fails
+                            return {
+                                file: null,
+                                preview: cdnUrl,
+                                isUrl: true
+                            };
+                        }
+                    })
+                );
 
                 setSelectedFiles((prevFiles) => [...prevFiles, ...imageObjects]);
 
