@@ -73,38 +73,19 @@ export default function ManagementEditInventory() {
                     }));
                 });
 
-                // Fetch existing images from CDN and convert to File objects for submission
-                const imageObjects = await Promise.all(
-                    inventoryResponse.imageLinks.map(async (url, index) => {
-                        // Replace GCS URL with CDN URL
-                        const cdnUrl = url.replace(
-                            'https://storage.googleapis.com/mayberry-mini-trucks-inventory-images',
-                            'https://cdn.mayberryminitrucks.com'
-                        );
-                        
-                        // Fetch the image from CDN and convert to File object
-                        try {
-                            const response = await fetch(cdnUrl);
-                            const blob = await response.blob();
-                            const fileName = cdnUrl.split('/').pop() || `image-${index}`;
-                            const file = new File([blob], fileName, { type: blob.type });
-                            
-                            return {
-                                file: file, // File object for submission
-                                preview: cdnUrl, // CDN URL for preview
-                                isUrl: false // Now it's a File, not just a URL
-                            };
-                        } catch (error) {
-                            console.error(`Failed to fetch image ${index}:`, error);
-                            // Fallback: return with null file if fetch fails
-                            return {
-                                file: null,
-                                preview: cdnUrl,
-                                isUrl: true
-                            };
-                        }
-                    })
-                );
+                //TODO: Take care of Error Handling here....
+                const { data } = await axiosInstance.get('/management/getInventoryPhotos', { params: { vin: vin }, headers: { Authorization: `Bearer ${token}` }, });
+                const imageObjects = data.map((img, index) => {
+                    // Convert binary data back into a Blob for preview
+                    const byteCharacters = img.binaryData.map(b => String.fromCharCode(parseInt(b, 10))).join('');
+                    const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: img.contentType });
+                    const file = new File([blob], `image-${index}`, { type: img.contentType });
+                    const preview = URL.createObjectURL(blob);
+
+                    return { file, preview };
+                });
 
                 setSelectedFiles((prevFiles) => [...prevFiles, ...imageObjects]);
 

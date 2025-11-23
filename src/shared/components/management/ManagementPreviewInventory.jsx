@@ -38,23 +38,15 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
 
             const formData = new FormData();
             if (!isAddInventory && !areImagesUpdated) {
-                // Images haven't changed, use existing imageLinks
                 formValues['imageLinks'] = existingInventoryData[0]?.imageLinks;
                 formData.append('inventory', JSON.stringify(formValues));
             } else {
-                // Images have been updated - send all Files (both existing and new)
-                // Use preview URLs to maintain order (backend will generate new URLs for all)
-                const imageLinks = selectedFiles.map(fileObj => fileObj.preview);
-                
-                formValues['imageLinks'] = imageLinks;
                 formData.append('inventory', JSON.stringify(formValues));
             }
 
-            // Append all files to the form data (both existing CDN images and new uploads)
+            // Append files to the form data (allowing multiple files)
             for (let i = 0; i < selectedFiles.length; i++) {
-                if (selectedFiles[i].file) {
-                    formData.append('image', selectedFiles[i].file);
-                }
+                formData.append('image', selectedFiles[i].file);
             }
 
             const token = await getAccessToken();
