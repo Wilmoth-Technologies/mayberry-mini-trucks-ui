@@ -51,17 +51,17 @@ export default function InventoryDetailed() {
                 const response = await axiosInstance.get('/inventory/getInventoryItem', { params: { vin: vin } });
                 setInventoryData(response.data[0]);
 
-                const { data } = await axiosInstance.get('/inventory/getInventoryItemPhotos', { params: { vin: vin } });
-                const imageObjects = data.map((img, index) => {
-                    // Convert binary data back into a Blob for preview
-                    const byteCharacters = img.binaryData.map(b => String.fromCharCode(parseInt(b, 10))).join('');
-                    const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
-                    const byteArray = new Uint8Array(byteNumbers);
-                    const blob = new Blob([byteArray], { type: img.contentType });
-                    const file = new File([blob], `image-${index}`, { type: img.contentType });
-                    const preview = URL.createObjectURL(blob);
-
-                    return { file, preview };
+                // Use imageLinks from the inventory response and convert GCS URLs to CDN URLs
+                const imageObjects = response.data[0].imageLinks.map((url, index) => {
+                    // Replace GCS URL with CDN URL
+                    const cdnUrl = url.replace(
+                        'https://storage.googleapis.com/mayberry-mini-trucks-inventory-images',
+                        'https://cdn.mayberryminitrucks.com'
+                    );
+                    return { 
+                        file: null, // No file object needed for CDN images
+                        preview: cdnUrl // Use the CDN URL directly for preview
+                    };
                 });
 
                 setImages((prevFiles) => [...prevFiles, ...imageObjects]);
