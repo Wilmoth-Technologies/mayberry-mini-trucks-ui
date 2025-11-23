@@ -165,7 +165,8 @@ export default function Inventory() {
 
     // Handle search input change
     const handleSearchChange = (e) => {
-        setSearch(e.target.value);
+        const value = e.target.value;
+        setSearch(value);
         setCurrentPage(0); // Reset to first page on new search
 
         const params = new URLSearchParams(searchParams);
@@ -349,11 +350,12 @@ export default function Inventory() {
                 option.option.toLowerCase().includes(searchLower)
             );
 
-            // Check if any other field (like make, model, year) contains the search string
+            // Check if any other field (like make, model, year, vin) contains the search string
             const fieldsMatch = [
                 item.make,
                 item.model,
                 item.year,
+                item.vin,
                 item.exteriorColor,
                 item.interiorColor,
                 item.transmission,
