@@ -90,6 +90,8 @@ export default function ManagementAddInventory() {
         'Ultra Low Reverse': false,
         'Van': false,
         'Van w Deck': false,
+        'Jumbo': false,
+        'Attack': false,
     })
 
     // State to store the selected files and previews

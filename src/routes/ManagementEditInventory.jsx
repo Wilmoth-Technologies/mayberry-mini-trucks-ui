@@ -149,6 +149,8 @@ export default function ManagementEditInventory() {
         'Ultra Low Reverse': false,
         'Van': false,
         'Van w Deck': false,
+        'Jumbo': false,
+        'Attack': false,
     })
 
     // State to store the selected files and previews
