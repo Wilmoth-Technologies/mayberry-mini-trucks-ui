@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { IoArrowBackOutline } from "react-icons/io5";
+import { FaYoutube } from "react-icons/fa";
 import { isStringEmpty, numberFormatter } from '../shared/AppFunctions';
-import { CURRENCY_FORMAT_STYLE } from '../shared/AppConstants';
+import { CURRENCY_FORMAT_STYLE, YOUTUBE_CHANNEL_URL } from '../shared/AppConstants';
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
+import YouTubePopover from "../shared/components/modals/YouTubePopover";
 import axiosInstance from "../shared/AxiosConfig";
 import SwipeableCarousel from "../shared/components/SwipeableCarousel";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
@@ -18,6 +20,7 @@ export default function InventoryDetailed() {
     const [charCount, setCharCount] = useState(0);
     const [isCharCountMaxed, setCharCountMaxed] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+    const [youtubePopoverOpen, setYoutubePopoverOpen] = useState(false);
     const [isLoading, setLoading] = useState(false);
     const MAX_CHAR_COUNT = 500;
     const [isSuccess, setSuccess] = useState({ isSuccess: false, successMessage: "" });
@@ -243,7 +246,17 @@ export default function InventoryDetailed() {
                         }
                     </form>
                 </div>
-                <h2 className="text-xl font-semibold md:col-span-2">Key Specs</h2> 
+                <div className="md:col-span-2 flex flex-col md:flex-row items-center md:items-center md:justify-between gap-3 md:gap-0">
+                    <h2 className="text-xl font-semibold">Key Specs</h2>
+                    <button 
+                        onClick={() => setYoutubePopoverOpen(true)}
+                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white rounded-full px-4 py-2 transition-all duration-300 whitespace-nowrap"
+                        aria-label="Check out our YouTube"
+                    >
+                        <FaYoutube className="text-xl" />
+                        <span className="text-sm md:text-base whitespace-nowrap">Check out our YouTube</span>
+                    </button>
+                </div> 
                 <div className="grid grid-cols-2 gap-2 navLineWrapEnd:grid-cols-4 navLineWrapEnd:col-span-2 fourInventoryColBreakPoint2:grid-flow-col fourInventoryColBreakPoint2:col-span-2">
                     <div className="border border-border-gray rounded-md px-2 py-1">
                         <p className="text-lg">{inventoryData.make}</p>
@@ -388,6 +401,7 @@ export default function InventoryDetailed() {
                     </div>
                 </div>
                 {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
+                {youtubePopoverOpen && <YouTubePopover onClose={() => setYoutubePopoverOpen(false)} youtubeUrl={YOUTUBE_CHANNEL_URL} />}
             </div>
         </>
     );

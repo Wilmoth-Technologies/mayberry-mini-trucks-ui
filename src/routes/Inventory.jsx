@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { TbTrash } from "react-icons/tb";
 import ReactPaginate from "react-paginate";
 import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { FaYoutube } from "react-icons/fa";
 import InventoryCard from "../shared/components/inventory/InventoryCard";
-import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON, OPTIONS_BUTTON } from "../shared/AppConstants";
+import { MAKE_BUTTON, MILEAGE_BUTTON, PRICE_BUTTON, MODEL_BUTTON, YEAR_BUTTON, TRANSMISSION_BUTTON, ENGINE_BUTTON, OPTIONS_BUTTON, YOUTUBE_CHANNEL_URL } from "../shared/AppConstants";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal";
+import YouTubePopover from "../shared/components/modals/YouTubePopover";
 import axiosInstance from "../shared/AxiosConfig";
 import { ErrorAlert } from "../shared/components/ErrorAlert";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider";
@@ -25,6 +27,7 @@ export default function Inventory() {
     const [isOptionsFilterOpen, setOptionsFilterOpen] = useState(false);
     const [isTransmissionFilterOpen, setTransmissionFilterOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+    const [youtubePopoverOpen, setYoutubePopoverOpen] = useState(false);
     const [inventory, setInventory] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState({ isError: false, errorMessage: "" });
@@ -421,7 +424,16 @@ export default function Inventory() {
         <>
             {/* Header Background */}
             <div className="p-3">
-                <div className="bg-inventory-kei-banner-mobile md:bg-inventory-kei-banner md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg"></div>
+                <div className="relative bg-inventory-kei-banner-mobile md:bg-inventory-kei-banner md:h-[700px] h-[400px] bg-cover bg-no-repeat -mt-14 bg-right md:bg-top drop-shadow-lg">
+                    <button 
+                        onClick={() => setYoutubePopoverOpen(true)}
+                        className="absolute bottom-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 bg-red-600 hover:bg-red-700 text-white rounded-full px-4 py-2 md:px-6 md:py-3 transition-all duration-300 flex items-center gap-2 shadow-lg whitespace-nowrap"
+                        aria-label="Check out our YouTube"
+                    >
+                        <FaYoutube className="text-xl md:text-2xl" />
+                        <span className="text-sm md:text-base font-medium whitespace-nowrap">Check out our YouTube</span>
+                    </button>
+                </div>
             </div>
 
             {/* Kei Truck Comparison DropDown */}
@@ -1211,6 +1223,7 @@ export default function Inventory() {
                 </div>
             </div>
             {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
+            {youtubePopoverOpen && <YouTubePopover onClose={() => setYoutubePopoverOpen(false)} youtubeUrl={YOUTUBE_CHANNEL_URL} />}
         </>
     );
 };

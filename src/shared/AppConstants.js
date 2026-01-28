@@ -7,3 +7,4 @@ export const MILEAGE_BUTTON = 'mileageButton';
 export const ENGINE_BUTTON = 'engineButton';
 export const OPTIONS_BUTTON = 'optionsButton';
 export const TRANSMISSION_BUTTON = 'transmissionButton';
+export const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@minitrucks';

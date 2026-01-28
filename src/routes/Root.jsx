@@ -3,13 +3,17 @@ import { Link } from "react-router-dom";
 import GoogleReviews from "../shared/components/reviews/GoogleReviews.jsx";
 import InventoryScroller from "../shared/components/inventory/InventoryScroller.jsx";
 import EmailSubscriptionModal from "../shared/components/modals/EmailSubscriptionModal.jsx";
+import YouTubePopover from "../shared/components/modals/YouTubePopover.jsx";
 import axiosInstance from "../shared/AxiosConfig.js";
 import { ErrorAlert } from "../shared/components/ErrorAlert.jsx";
 import LoadingNonProvider from "../shared/components/LoadingNonProvider.jsx";
 import { SuccessAlert } from "../shared/components/SuccessAlert.jsx";
+import { YOUTUBE_CHANNEL_URL } from "../shared/AppConstants.js";
+import { FaYoutube } from "react-icons/fa";
 
 export default function Root() {
     const [modalOpen, setModalOpen] = useState(false);
+    const [youtubePopoverOpen, setYoutubePopoverOpen] = useState(false);
     const [reviewData, setReviewData] = useState([]);
     const [inventory, setInventory] = useState([]);
     const [isLoading, setLoading] = useState(false);
@@ -50,7 +54,16 @@ export default function Root() {
     return (
         <>
             {isLoading ? <LoadingNonProvider /> : null}
-            <div className="bg-mobile-landing-page md:bg-desktop-landing-page md:h-screen h-[600px] bg-cover bg-no-repeat -mt-28 bg-top drop-shadow-lg" />
+            <div className="relative bg-mobile-landing-page md:bg-desktop-landing-page md:h-screen h-[600px] bg-cover bg-no-repeat -mt-28 bg-top drop-shadow-lg">
+                <button 
+                    onClick={() => setYoutubePopoverOpen(true)}
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:bottom-8 md:right-8 bg-red-600 hover:bg-red-700 text-white rounded-full px-4 py-2 md:px-6 md:py-3 transition-all duration-300 flex items-center gap-2 shadow-lg whitespace-nowrap"
+                    aria-label="Check out our YouTube"
+                >
+                    <FaYoutube className="text-xl md:text-2xl" />
+                    <span className="text-sm md:text-base font-medium whitespace-nowrap">Check out our YouTube</span>
+                </button>
+            </div>
             {/* About Us */}
             <h1 className="w-full text-center text-xl md:text-3xl font-semibold pt-2 md:pt-4">About Us</h1>
             <div className="flex flex-col-reverse justify-center sm:flex-row items-center p-6 gap-8">
@@ -99,6 +112,7 @@ export default function Root() {
                 </div>
             </div>
             {modalOpen && <EmailSubscriptionModal onClose={() => setModalOpen(false)} setSuccess={setSuccess} />}
+            {youtubePopoverOpen && <YouTubePopover onClose={() => setYoutubePopoverOpen(false)} youtubeUrl={YOUTUBE_CHANNEL_URL} />}
         </>
     );
 }

@@ -3,6 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useClickOutside } from "../hooks/UseClickOutside";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
+import { FaYoutube } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 import { useLoading } from "../providers/Loading";
 import ScrollToTop from "./ScrollToTop";
@@ -10,11 +11,14 @@ import { getCurrentDate } from "../AppFunctions";
 import { GeneralAlert } from "./GeneralAlert";
 import LoadingNonProvider from "./LoadingNonProvider";
 import axiosInstance from "../AxiosConfig";
+import YouTubePopover from "./modals/YouTubePopover";
+import { YOUTUBE_CHANNEL_URL } from "../AppConstants";
 
 export default function NavBar() {
     const location = useLocation();
     const { isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0();
     const [isBurgerOpen, setBurgerOpen] = useState(false);
+    const [youtubePopoverOpen, setYoutubePopoverOpen] = useState(false);
     const [userPermissions, setUserPermissions] = useState([]);
     const { showLoading, hideLoading } = useLoading();
     const [isGeneralAlert, setGeneralAlert] = useState({ isAlertOpen: false, message: "" });
@@ -195,6 +199,16 @@ export default function NavBar() {
                         </Link>
                     </div>
                     <nav className="flex flex-col min-h-screen items-center text-center py-8 text-3xl hover:opacity-80" aria-label="mobile">
+                        <button 
+                            className="w-full py-6 flex items-center justify-center gap-2 text-red-600 hover:text-red-700"
+                            onClick={() => {
+                                setYoutubePopoverOpen(true);
+                                mobileBurgerClick();
+                            }}
+                        >
+                            <FaYoutube className="text-3xl" />
+                            <span>Check out our YouTube</span>
+                        </button>
                         <Link to='/inventory' className="w-full py-6" onClick={() => mobileBurgerClick()}>
                             Inventory
                         </Link>
@@ -226,6 +240,7 @@ export default function NavBar() {
                 <div className="absolute -top-4 left-0 right-0 pt-20 z-20 px-3 pb-2">
                     <GeneralAlert message={notificationList[0].description} dismissFunction={setGeneralAlert} />
                 </div> : null}
+            {youtubePopoverOpen && <YouTubePopover onClose={() => setYoutubePopoverOpen(false)} youtubeUrl={YOUTUBE_CHANNEL_URL} />}
             <Outlet />
         </>
     )
