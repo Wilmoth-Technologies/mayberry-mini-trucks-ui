@@ -499,7 +499,7 @@ export default function ManagementEditInventory() {
                                     <div className="flex flex-col" key={index}>
                                         <div className="flex gap-2">
                                             <p>{field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1)}</p>
-                                            {field === "vin" || field === "year" ? <p className="text-gray-400">Note: Field is Disabled in Edit Mode</p> : null}
+                                            {field === "vin" ? <p className="text-gray-400">Note: Field is Disabled in Edit Mode</p> : null}
 
                                             {validationErrors[field] && <p style={{ color: 'red' }}>{validationErrors[field]}</p>}
                                         </div>
@@ -508,7 +508,7 @@ export default function ManagementEditInventory() {
                                             placeholder={field.charAt(0).toUpperCase() + field.replace(/([A-Z])/g, ' $1').trim().substring(1) + (field === 'embeddedVideoLink' ? '' : '*')}
                                             type="text"
                                             name={field}
-                                            disabled={field === "vin" || field === "year"}
+                                            disabled={field === "vin"}
                                             value={formValues[field]}
                                             onChange={handleInputChange}
                                         />
