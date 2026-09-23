@@ -147,14 +147,12 @@ export default function ManagementPreviewInventory({ formValues, selectedOptions
                 <h2 className="text-xl font-semibold">{formValues.year} {formValues.make} {formValues.model}</h2>
                 <h2 className="text-xl font-semibold text-action-yellow">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
             </div>
-            {formValues.titleInHand ? <h2 className="md:hidden text-action-yellow text-lg font-semibold text-center">Title in Hand</h2> : null}
             <div className="h-72 sm:h-64 md:h-[400px]">
                 <SwipeableCarousel images={selectedFiles?.map(file => { return file.preview })} />
             </div>
             <div className="hidden md:grid md:grid-cols-2 md:gap-x-8">
                 <h2 className="text-3xl font-semibold col-span-2 text-center">{formValues.year} {formValues.make} {formValues.model}</h2>
-                <h2 className={"text-2xl font-semibold text-action-yellow col-span-2 text-center " + (formValues.titleInHand ? '' : 'pb-8')}>{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
-                {formValues.titleInHand ? <h2 className="text-action-yellow text-lg font-semibold col-span-2 text-center">Title in Hand</h2> : null}
+                <h2 className="text-2xl font-semibold text-action-yellow col-span-2 text-center pb-8">{numberFormatter(CURRENCY_FORMAT_STYLE, 2).format(formValues.price)}</h2>
                 <h2 className="text-xl font-medium col-span-2 text-center">Contact for a Viewing or Test Drive</h2>
                 <div className="grid grid-cols-2 gap-2 text-center col-span-2">
                     <label className="grid grid-cols-2 col-span-2 gap-2">
