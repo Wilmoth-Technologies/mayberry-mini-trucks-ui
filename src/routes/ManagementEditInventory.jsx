@@ -151,6 +151,7 @@ export default function ManagementEditInventory() {
         'Van w Deck': false,
         'Jumbo': false,
         'Attack': false,
+        'Automatic': false,
     })
 
     // State to store the selected files and previews
@@ -312,15 +313,10 @@ export default function ManagementEditInventory() {
     // Handler for checkbox change
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
-        // Update the state for the particular checkbox
-        if (name === 'titleInHand') {
-            setFormValues({ ...formValues, [name]: checked });
-        } else {
-            setSelectedOptions((prevCheckboxes) => ({
-                ...prevCheckboxes,
-                [name]: checked
-            }));
-        }
+        setSelectedOptions((prevCheckboxes) => ({
+            ...prevCheckboxes,
+            [name]: checked
+        }));
     };
 
     // Get all selected checkboxes (those that are true)
@@ -481,18 +477,6 @@ export default function ManagementEditInventory() {
                     {/* Details */}
                     <div className="grid grid-cols-2 gap-2 items-center p-4">
                         <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
-                        <div className="col-span-2 flex flex-col justify-center">
-                            <label>
-                                <input
-                                    className="accent-black rounded-sm mr-1"
-                                    type="checkbox"
-                                    name="titleInHand"
-                                    checked={formValues['titleInHand']}
-                                    onChange={handleCheckboxChange}
-                                />
-                                Title in Hand
-                            </label>
-                        </div>
                         {
                             Object.keys(formValues).map((field, index) => (
                                 field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :

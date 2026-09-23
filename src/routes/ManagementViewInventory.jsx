@@ -116,10 +116,6 @@ export default function ManagementViewInventory() {
                 accessor: "status",
             },
             {
-                Header: "Title In Hand",
-                accessor: "titleInHand",
-            },
-            {
                 accessor: "actions",
                 Cell: ({ value }) => (
                     <>

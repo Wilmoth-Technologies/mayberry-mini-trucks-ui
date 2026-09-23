@@ -92,6 +92,7 @@ export default function ManagementAddInventory() {
         'Van w Deck': false,
         'Jumbo': false,
         'Attack': false,
+        'Automatic': false,
     })
 
     // State to store the selected files and previews
@@ -198,9 +199,11 @@ export default function ManagementAddInventory() {
 
     // Function to dynamically generate the description
     const updateDescription = (values) => {
-        const { make, model, mileage } = values;
+        const { stockNumber, year, make, model, mileage } = values;
+        const stockPrefix = isStringEmpty(stockNumber) ? '' : `Stock #${stockNumber} - `;
+        const yearText = isStringEmpty(year) ? '' : `${year} `;
         // Insert values into the description template
-        return `This ${make} ${model} is a Street Legal Vehicle. The vehicle has ${isStringEmpty(mileage) ? '{mileage}' : milageFormatter().format(mileage).toString()} miles, is in great condition and works well! It has been completely serviced with full synthetic fluids, oil filter, and an air filter. We have strict guidelines for purchasing in Japan, so the vehicles that we sell are tight and ready for many years of reliable performance. Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. The NCDMV special titles department requires 8 to 10 weeks to process a title. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible. While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.`;
+        return `${stockPrefix}This ${yearText}${make} ${model} is a Street Legal Vehicle. The vehicle has ${isStringEmpty(mileage) ? '{mileage}' : milageFormatter().format(mileage).toString()} miles, is in great condition and works well! It has been completely serviced with full synthetic fluids, oil filter, and an air filter. We have strict guidelines for purchasing in Japan, so the vehicles that we sell are tight and ready for many years of reliable performance. Mayberry Mini Trucks is responsible for mini trucks being street legal in North Carolina. We introduced the legislation and petitioned the governor to sign the bill into law. Mayberry Mini Trucks will follow up with the NCDMV on a regular basis, to make sure the process is completed as soon as administratively feasible. While many states will transfer a North Carolina title and allow mini trucks to be driven on their roadways, Mayberry Mini Trucks, Inc. makes no claims and bears no responsibility regarding which states will or will not allow mini trucks to operate on their roadways.`;
     };
 
 
@@ -287,15 +290,10 @@ export default function ManagementAddInventory() {
     // Handler for checkbox change
     const handleCheckboxChange = (e) => {
         const { name, checked } = e.target;
-        // Update the state for the particular checkbox
-        if (name === 'titleInHand') {
-            setFormValues({ ...formValues, [name]: checked });
-        } else {
-            setSelectedOptions((prevCheckboxes) => ({
-                ...prevCheckboxes,
-                [name]: checked
-            }));
-        }
+        setSelectedOptions((prevCheckboxes) => ({
+            ...prevCheckboxes,
+            [name]: checked
+        }));
     };
 
     // Get all selected checkboxes (those that are true)
@@ -467,18 +465,6 @@ export default function ManagementAddInventory() {
                     {/* Details */}
                     <div className="grid grid-cols-2 gap-2 items-center p-4">
                         <h2 className="col-span-2 font-medium text-xl text-center md:text-left">Details</h2>
-                        <div className="col-span-2 flex flex-col justify-center">
-                            <label>
-                                <input
-                                    className="accent-black rounded-sm mr-1"
-                                    type="checkbox"
-                                    name="titleInHand"
-                                    checked={formValues['titleInHand']}
-                                    onChange={handleCheckboxChange}
-                                />
-                                Title in Hand
-                            </label>
-                        </div>
                         {
                             Object.keys(formValues).map((field, index) => (
                                 field === 'make' || field === 'model' || field === 'description' || field === 'titleInHand' || field === 'status' ? null :
